@@ -28,34 +28,168 @@
 - **Feel free to use personas. You can create your personas as part of this Markdown file, or add a link to an external site (for example, [Xtensio](https://xtensio.com/user-persona/)).**
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
+#### Problem raised by Merto's AI
+Dealership managers currently rely on manual spot-checks, basic CRM reports, and largely unmonitored AI agents to oversee customer interactions. These approaches are time-consuming, provide limited visibility into AI performance, and may introduce errors or missed follow-ups to go undetected.
 
-> Short (1 - 2 min' read max)
+#### Benefits of our applications
+#### 1. Manager-Facing Analytics Dashboard
 
-- We want you to "connect the dots" for us - Why does your product (as described in your answer to Q1) fits the needs of your users (as described in your answer to Q2)?
-- Explain the benefits of your product explicitly & clearly. For example:
-  - Save users time (how and how much?)
-  - Allow users to discover new information (which information? And, why couldn't they discover it before?)
-  - Provide users with more accurate and/or informative data (what kind of data? Why is it useful to them?)
-  - Does this application exist in another form? If so, how does your differ and provide value to the users?
-  - How does this align with your partner's organization's values/mission/mandate?
+Provides managers with clear, actionable performance metrics such as response time, escalation rate, appointment bookings, and conversion barriers. The dashboard gives managers greater visibility into AI agent performance and customer interactions, helping them identify trends and potential issues.
+#### 2. Automated Conversation Evaluation Pipeline
 
+Replaces time-consuming manual transcript reviews with an automated scoring system that evaluates conversations and flags risky or low-quality interactions for human review. This allows managers to focus on conversations that require intervention, as well as helping identify and correct AI mistakes before they harm customer relationships.
+#### 3. Automatic Follow-Up System
+
+Automatically re-engage unconverted or inactive leads according to structured follow-up cadences. This reduces manual workload while ensuring that leads receive consistent and timely follow-up instead of being overlooked.
+#### Alignment with Merto's AI mandate
+These systems work together to support Merto.ai's goal of delivering reliable, production-grade AI for automotive dealerships by combining automation, quality control, and executive visibility.
 #### Q4: What are the user stories that make up the Minumum Viable Product (MVP)?
+We will be implementing three main features, in the following priority:
 
-- At least 5 user stories concerning the main features of the application - note that this can broken down further
-- You must follow proper user story format (as taught in lecture) `As a <user of the app>, I want to <do something in the app> in order to <accomplish some goal>`
-- User stories must contain acceptance criteria. Examples of user stories with different formats can be found here: https://www.justinmind.com/blog/user-story-examples/. **It is important that you provide a link to an artifact containing your user stories**.
-- If you have a partner, these must be reviewed and accepted by them. You need to include the evidence of partner approval (e.g., screenshot from email) or at least communication to the partner (e.g., email you sent)
+1. AI CRM Dashboard
 
+
+2. Conversation Evaluation
+3. Follow-up System
+
+Prototype link: https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1&t=GLdQLfJDAHl8pu7w-1&code-node-id=0-6
+## CRM/Dashboard
+### US1: View Buyer and Deal History
+
+#### User Story
+
+As a dealership manager, I want to view a dashboard of buyers and their deal history in order to understand the current status of each buyer.
+
+#### Acceptance Criteria
+
+- The dashboard displays a list of buyers.
+
+- Each buyer has a corresponding deal/conversation history.
+
+- The history includes relevant information such as appointments, trade-ins, promises, and follow-up status when available.
+
+- The manager can select a buyer to view their details.
+
+### US2: Shared Buyer Record
+As a dealership employee, I want to view a shared buyer record in order to understand what has happened with a buyer without having to ask other employees.
+
+#### Acceptance Criteria
+
+- The buyer record is accessible to authorized employees.
+- The record displays relevant interactions and recorded information in chronological order.
+
+- Information recorded by different employees is visible within the same buyer record.
+
+- The system distinguishes unresolved or pending items when applicable.
+### US3: Review AI Activity
+
+#### User Story
+
+As a dealership manager, I want to review AI agent activity for a buyer in order to monitor what the AI has communicated to customers.
+
+#### Acceptance Criteria
+
+- The manager can access AI-generated conversations from a buyer's record.
+
+- Conversations show the relevant messages/interactions in chronological order.
+
+- The manager can distinguish AI activity from human activity.
+
+- The manager can identify conversations that require human attention.
+
+
+### US4: View Unresolved Work
+
+#### User Story
+
+As a dealership manager, I want to see unresolved work associated with buyers in order to ensure that important customer actions are not overlooked.
+
+#### Acceptance Criteria
+
+- Buyer records identify unresolved or pending actions when detectable.
+
+- The manager can view unresolved items from the dashboard or buyer record.
+
+- Each item provides enough context for the manager to understand what needs attention.
+
+- Completed or resolved items are distinguishable from unresolved items.
+
+## Conversation Evaluation
+
+
+### US5: Evaluate AI Conversations
+
+#### User Story
+
+As a dealership manager, I want AI conversations to be automatically evaluated in order to identify responses that may require human review.
+
+#### Acceptance Criteria
+
+- The system evaluates completed AI conversations.
+
+- Each evaluated conversation receives an evaluation result based on defined criteria.
+
+- Potentially problematic AI responses are flagged.
+The manager can view the reason or criteria associated with a flag.
+
+- Unflagged conversations remain accessible for review.
+
+## Follow-Up System
+### US6: Identify Buyers Requiring Follow-Up
+
+#### User Story
+
+As a dealership sales representative, I want the system to identify buyers who have not received a required follow-up in order to prevent potential sales opportunities from going cold.
+
+#### Acceptance Criteria
+
+- The system identifies buyers who meet the defined criteria for follow-up.
+
+- Follow-up status is visible to the sales representative.
+
+- Buyers who have already received the required follow-up are not incorrectly marked as needing follow-up.
+
+- The system records when a follow-up occurs.
+
+
+### US7: Schedule Follow-Up
+
+#### User Story
+
+As a dealership sales representative, I want to send or schedule follow-ups for buyers in order to maintain communication and move potential sales forward.
+
+#### Acceptance Criteria
+
+- The representative can initiate or schedule a follow-up for an eligible buyer.
+
+- The follow-up timing is recorded.
+The follow-up status is updated after the action occurs.
+
+- The buyer's history reflects the follow-up.
 #### Q5: Have you decided on how you will build it? Share what you know now or tell us the options you are considering.
+#### Technology Stack
 
-> Short (1-2 min' read max)
+Our project will be developed as a standalone application that Merto can integrate into their existing proudct later. Currently we are considering:
 
-- What is the technology stack? Specify languages, frameworks, libraries, PaaS products or tools to be used or being considered.
-- How will you deploy the application?
-- Describe the architecture - what are the high level components or patterns you will use? Diagrams are useful here.
-- Will you be using third party applications or APIs? If so, what are they?
+- Frontend: Next.js, React, TypeScript
+- Backend: TypeScript/Node.js with REST API
+- Database: PostgresSQL, potentially through Supabase
+- Conversation Evaluation: Python may be used for ML/conversation scoring
+- Development Tools: Git, GitHub for collaboration
 
----
+#### Deployment
+
+We are considering a cloud-based deployment using services compatible with our chosen stack, such as Vercel for Next.js frontend and Supabasefor PostgreSQL database and backend services.
+
+The final deployment approach will be determined after we finalize the prototype and architecture with Merto.
+
+#### High-Level Architecture
+
+![Architecture Diagram](architecture_diagram.png)
+
+#### Third-Party Applications and APIs
+
+Merto will provide access to its existing data through a scoped API. Therefore, we will work with Merto's existing data and infrastructure rather than requiring access to third-party applications/APIs.
 
 ## Intellectual Property Confidentiality Agreement
 
