@@ -7,25 +7,46 @@
 
 #### Q1: What is the product?
 
-> Short (1 - 2 min' read)
+**A web-based workspace that lets car dealership managers see, in one place, every buyer their AI agents and staff are working with, how well those conversations are going, and which buyers are falling through the cracks.**
 
-- Start with a single sentence, high-level description of the product.
-- Be clear - Describe the problem you are solving in simple terms.
-- Specify if you have a partner, who they are (role/title), and the organization information.
-- Be concrete. For example:
-  - What are you planning to build? Is it a website, mobile app, browser extension, command-line app, etc.?
-  - When describing the problem/need, give concrete examples of common use cases.
-  - Assume the reader knows nothing about the partner or the problem domain and provide the necessary context.
-- Focus on _what_ your product does, and avoid discussing _how_ you're going to implement it.  
-  For example: This is not the time or the place to talk about which programming language and/or framework you are planning to use.
-- **Feel free (and very much encouraged) to include useful diagrams, mock-ups and/or links**.
+**Partner.** Our partner is Merto, a startup building the data "infrastructure layer" for AI-assisted car sales. Our contacts are Muneeb and Oliver, the leads of Merto's development team. Muneeb is our primary point of contact (admin@merto.ai); Oliver is our secondary contact.
+
+**The problem.** Buying a car involves a long chain of people. A buyer who sends an online inquiry is typically answered first by an AI agent or a BDC (Business Development Centre) representative, then handed to a salesperson for a test drive, an appraiser for their trade-in, a sales manager to negotiate price, and finally a finance manager. Each handoff loses information. For example:
+
+- An AI agent tells a buyer over text that the dealership can "probably get close to $59,500 out the door", but the sales manager who picks up the deal the next day has no idea this was said.
+- A buyer mentions a competing offer from another dealership and a 5 p.m. deadline, but nobody notices until it has passed.
+- A buyer asks for financing information, receives an automated reply, and then hears nothing for three days before buying elsewhere.
+
+Dealerships are increasingly putting AI agents in front of buyers, which makes this worse: managers can no longer easily see what was said on the dealership's behalf, or whether it was said well.
+
+**What we are building.** Merto's long-term vision is a single shared buyer and deal history (trade-ins, appointments, promises made) that every person and AI agent involved in a sale can rely on. Our project is a **standalone web application** built on top of that idea, which Merto plans to integrate into its product later. It has three modules, in the priority order Merto set:
+
+1. **Manager dashboard (priority 1).** A live overview of all active buyers and deals: which stage each is at, which AI agent and staff members are handling it, key metrics (response time, appointments booked, escalation rate), a log of everything the AI agents did, and a queue of unresolved items that need a human decision.
+2. **Conversation evaluation.** Scores each AI-buyer conversation for quality and flags weak or risky AI responses (for example, an incorrect price quote or an unanswered question) so managers can review them.
+3. **Follow-up tracking.** Detects buyers who have not been followed up on in time and surfaces what they still need (a quote, a document, a callback) so the sale is not lost.
+
+**First mockup:** [Manager Analytics Dashboard (Figma Make)](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1)
 
 #### Q2: Who are your target users?
 
-> Short (1 - 2 min' read max)
+Our users are staff at franchise or independent car dealerships that use AI agents to handle buyer inquiries. We have three personas, in priority order:
 
-- Be specific (e.g. a 'a third-year university student taking CSC301 and studying Computer Science' and not 'a student')
-- **Feel free to use personas. You can create your personas as part of this Markdown file, or add a link to an external site (for example, [Xtensio](https://xtensio.com/user-persona/)).**
+**1. Primary user: the dealership sales manager (e.g., "Dana", General Sales Manager)**
+- Oversees 8–15 salespeople and BDC reps, plus several AI agents that answer web, phone and text leads.
+- Is judged on monthly units sold and gross profit per deal, so a single lost buyer matters.
+- Spends much of the day approving prices, handling escalations and chasing staff for updates, often from the showroom floor between customer conversations.
+- **Needs:** one screen showing which deals need her decision right now, what the AI agents have told buyers, and whether the team is responding fast enough.
+
+**2. Secondary user: the salesperson or BDC representative (e.g., "Marcus", Sales Consultant)**
+- Takes over buyers after the AI agent qualifies them or books an appointment.
+- Juggles 20–40 active buyers at a time across phone, text and email.
+- **Needs:** the full history of a buyer he is picking up (vehicle of interest, trade-in, what was promised) and a reminder when a buyer is due for follow-up.
+
+**3. Secondary user: the finance manager (e.g., "Priya", F&I Manager)**
+- Arranges financing at the end of the sale and depends on documents and information collected earlier.
+- **Needs:** to see which buyers are waiting on her and what they have already been told about rates and terms.
+
+**Indirect stakeholder: Merto's team.** Merto will integrate our modules into its product, so the data model and interfaces must be clear and well documented for their developers.
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
 
@@ -185,19 +206,32 @@ Based on the current project description, success will involve delivering functi
 
 #### Q13. What are some potential risks to your project?
 
-- Now that you have defined your project, what risks can you identify that might impact it?
-- Some examples of risks at this planning stage could include:
-  - Uncertainties regarding a specific feature
-  - Misaligned expectations or conflicts
-  - Lack of clarity in execution or decision-making
-  - Limited access to data, systems, or other dependencies
-  - User stories that are too abstract or too simple
-- For each risk, provide a brief bullet point and then explain the risk in detail.
+- **R1. Changing requirements.** Merto is an early-stage company that is actively developing its own product. Muneeb told us that goals may change or expand as Merto's work progresses, and that the requirements will become clearer only after we present a prototype. Features we build early may therefore need to be reworked or dropped.
+
+- **R2. Undefined business rules.** Two of our three modules depend on rules that nobody has defined yet: the criteria for scoring an AI conversation as "good" or "poor", and the rules for when a buyer needs a follow-up and when a follow-up sequence should stop. We do not yet know whether Merto will provide these rules or expects us to design them.
+
+- **R3. Dependence on partner data.** We start from an empty repository and have no access to real dealership data. All development depends on mock conversation transcripts and a data schema that Merto has agreed to provide but has not yet sent. If the data arrives late, or does not contain what the dashboard needs (conversation status, lead stage, contact history, previous follow-ups), our work will be blocked or built on guesses.
+
+- **R4. Integration mismatch.** Our project is standalone, but Merto plans to integrate it into its own product later. If our data model or interfaces diverge from Merto's internal design, integration could require a large rewrite and the work may not be adopted.
+
+- **R5. Limited domain knowledge.** None of our team members has worked in car sales. Terms and workflows such as BDC, out-the-door (OTD) pricing, trade-in appraisal and F&I are new to us. We risk building features that look reasonable but do not match how a dealership actually operates.
+
+- **R6. Scope versus timeline.** Three modules (dashboard, conversation evaluation, follow-up tracking) is a large scope for one term, and Merto meets with us about once a week. If we spread our effort evenly, we may end the term with three half-finished features instead of one polished one.
+
+- **R7. Reliability and cost of AI-based evaluation.** Conversation evaluation will likely rely on a large language model. Its scores may be inconsistent between runs, may disagree with a manager's judgement, and could incur API costs that nobody has budgeted for.
 
 #### Q14. What are some potential mitigation strategies for the risks you identified?
 
-- Examples of mitigation strategies:
-  - More communication with the partner might help with improving clarity.
-  - Adding more details for an user story might make it less abstract.
-  - Adding an extra user story might increase the project complexity, making it less simple.
-- It's ok if you are unable to find mitigation strategies for all the risks right now.
+- **R1 (changing requirements):** Work in short iterations and demo progress at every weekly partner meeting so changes are caught early. Record each decision in our meeting minutes and confirm it with Muneeb by email. Build the priority-1 dashboard first so the most stable requirement gets the most effort.
+
+- **R2 (undefined rules):** Ask Muneeb directly whether Merto will supply the scoring and follow-up rules. If not, draft a first version ourselves (e.g., "flag any buyer with no outbound contact in 24 hours"), get it approved by the partner, and keep the rules in configuration rather than hard-coded logic so they are cheap to change.
+
+- **R3 (partner data):** Request the mock transcripts and JSON schema in writing with a target date. In the meantime, write our own realistic seed data based on the scenarios discussed in meetings, so frontend work is not blocked. Define a clear import format early so that swapping in Merto's data later is a small change.
+
+- **R4 (integration):** Adopt the stack Merto already uses (Next.js, React, TypeScript, Supabase/PostgreSQL). Share our database schema and API design with Merto for review before building on it, and document interfaces in the README.
+
+- **R5 (domain knowledge):** Ask Muneeb to walk us through a typical buyer's journey and the day of a sales manager. Keep a shared glossary of dealership terms in the repository. Validate each mockup screen with the partner before implementing it.
+
+- **R6 (scope):** Follow Merto's stated priority order (dashboard → conversation evaluation → follow-up). Define a small MVP for each module, treat everything beyond it as a stretch goal, and re-check scope with the partner and our TA at each deliverable.
+
+- **R7 (AI evaluation):** Start with a simple, explainable rubric (e.g., response time, whether the buyer's question was answered, whether a price was quoted) and add LLM-based scoring only where it clearly helps. Test scores against a small hand-labelled set of conversations, and confirm with Merto who pays for any API usage.
