@@ -124,29 +124,62 @@ We will also use GitHub for our code and may use GitHub Issues for tracking spec
 
 **Communications:**
 
-- What is the expected frequency? What methods/channels will be used?
-- If you have a partner project, what is your process for communicating with your partner? Who is responsible?
+Our team plans to hold at least one internal meeting per week to discuss project progress, assign tasks, identify technical challenges, and establish goals for the following week.
+
+We will use Discord for daily communication, GitHub for code collaboration and task tracing, and use Google Doc as shared documents for meeting notes and project documentations.
+
+We will establish a regular communication channel with our industry partner, Merto, to provide progress updates, clarify technical requirements, and receive feedback. One designated team member will be responsible for coordinating communication with the partner and ensuring that important information is shared with the entire team.
+
 
 **Collaboration:**
 
-- How are people held accountable for attending meetings, completing action items? What is your process?
-- How will you address the issue if one person doesn't contribute or is not responsive?
+We will divide the project into clearly defined tasks and assign each task an owner and an expected completion date. We will track progress using GitHub Issues and review outstanding tasks during our weekly meetings.
+
+All team members are expected to attend scheduled meetings, actively participate in discussions, and complete their assigned tasks by the agreed deadlines. If a member cannot attend a meeting or complete a task on time, they should notify the team in advance.
+
+If a team member consistently fails to contribute or respond, we will first communicate with them privately to understand the situation and offer support. If the problem continues, we will discuss possible solutions as a team, redistribute tasks when necessary, and consult our course instructor or teaching assistant if we cannot resolve the issue internally.
+
 
 ## Organisation Details
 
 #### Q11. How does your team fit within the overall team organisation of the partner?
 
-- Given the team structure of your partner, what role do you think your team will play?
-- Examples include product development that includes developing new features, or quality assurance that includes developing features that test the product reliability, or software maintenance that includes fixing crucial bugs in the product.
-- Provide examples of why you think you fit this role.
+Our team will primarily serve as a product development and quality assurance team within Merto's broader AI agent platform development.
+
+While Merto focuses on its core AI voice, text, and email agents for automotive dealerships, our team will contribute supporting features that improve the platform's reliability, usability, and overall effectiveness.
+
+Our responsibilities will include developing a management analytics dashboard, implementing automated conversation evaluation to identify potential errors or hallucinations, and building automated follow-up workflows for unconverted sales leads.
+
+These responsibilities combine product development, quality assurance, and workflow automation. Our team will work alongside Merto's internal development team to ensure that the new features are compatible with the existing platform and address the needs of dealership sales representatives and managers.
+
+By developing these supporting capabilities, our team will help Merto monitor agent performance, improve conversation quality, and provide measurable insights into the impact of its AI agents.
+
 
 #### Q12. How does your project fit within the overall product from the partner?
 
-- Look at the big picture of the product and think about how your project fits into this product.
-- Is your project the first step towards building this product? Is it the first prototype? Are you developing the frontend of a product whose backend is developed by the partner? Are you building the release pipelines for a product that is developed by the partner? Are you building a core feature set and take full ownership of these features?
-- You should also provide details of who else is contributing to what parts of the product, if you have this information. This is more important if the project that you will be working on has strong coupling with parts that will be contributed to by members other than your team (e.g., from a partner).
-- You can be creative for these questions and even use a graphical or pictorial representation to demonstrate the fit.
-- Briefly specify what your partner considers a success for this project. Do they want you to build specific features? Publish a usable product? Just a prototype? Be as specific as you can be at this point.
+Our project will extend Merto's existing AI agent platform by developing additional features for performance monitoring, quality evaluation, and automated customer follow-up.
+
+Rather than building a new AI agent from scratch, our team will focus on creating supporting components that integrate with Merto's existing system.
+
+Our project consists of four main deliverables:
+1. Management Analytics Dashboard
+We will develop a dashboard that allows dealership sales representatives and managers to monitor key performance indicators, including AI-assisted appointments, response rates, and conversation escalations.
+
+2. Automated Conversation Evaluation
+We will implement a system that automatically identifies potentially problematic AI conversations, including factual errors, hallucinations, and inappropriate tone. Flagged conversations will be presented for human review.
+
+3. Automated Lead Follow-Up
+We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days.
+
+4. Performance Comparison
+We will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
+
+These components will rely on information generated by Merto's existing AI agents. We expect to collaborate with Merto's internal team to understand the available interfaces, data structures, and integration requirements.
+
+Our team will primarily take responsibility for developing these supporting features, while Merto will continue developing and maintaining its core AI agent platform.
+
+Based on the current project description, success will involve delivering functional implementations of the specified features and demonstrating how they improve the platform's monitoring, evaluation, and follow-up capabilities. The expected level of integration and final deployment requirements will be confirmed with our industry partner.
+
 
 ## Potential Risks
 
