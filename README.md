@@ -44,9 +44,17 @@ The [D1 project plan](deliverables/D1/planning.md) lists additional options unde
 
 ## Deployment and Github Workflow
 
+Deployment options under consideration are Vercel for the Next.js frontend and Supabase for PostgreSQL and backend services. The final deployment approach is to be confirmed with Merto after the prototype and architecture are finalized.
+
 The team plans to use Git and GitHub for code collaboration, GitHub Issues to track tasks, and Discord for daily communication and task updates. Each task will have an owner and an expected completion date, with outstanding work reviewed during weekly meetings.
 
-Deployment options under consideration are Vercel for the Next.js frontend and Supabase for PostgreSQL and backend services. The final deployment approach is to be confirmed with Merto after the prototype and architecture are finalized.
+The general Github Workflow is outlined as follows:
+1. Create branch, checkout locally
+2. Write code and commit frequently
+3. When the entire task is complete, push branch to remote
+4. Submit a Pull Request to be reviewed by another team member
+5. Discuss the changes made. If there are no issues, merge
+6. Re-build application
 
 ## Coding Standards and Guidelines
 
