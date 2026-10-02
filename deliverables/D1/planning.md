@@ -1,5 +1,4 @@
-# YOUR PRODUCT/TEAM NAME
-
+# Merto.ai: shared Voice AI Agent Intelligence Suite - zgrnf
 > _Note:_ This document will evolve throughout your project. You commit regularly to this file while working on the project (especially edits/additions/deletions to the _Highlights_ section).
 > **This document will serve as a master plan between your team, your partner and your TA.**
 
@@ -52,7 +51,7 @@ Our users are staff at franchise or independent car dealerships that use AI agen
 **Indirect stakeholder: Merto's team.** Merto will integrate our modules into its product, so the data model and interfaces must be clear and well documented for their developers.
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
-#### Problem raised by Merto's AI
+#### Problem raised by Merto
 Dealership managers currently rely on manual spot-checks, basic CRM reports, and largely unmonitored AI agents to oversee customer interactions. These approaches are time-consuming, provide limited visibility into AI performance, and may introduce errors or missed follow-ups to go undetected.
 
 #### Benefits of our applications
@@ -65,8 +64,8 @@ Replaces time-consuming manual transcript reviews with an automated scoring syst
 #### 3. Automatic Follow-Up System
 
 Automatically re-engage unconverted or inactive leads according to structured follow-up cadences. This reduces manual workload while ensuring that leads receive consistent and timely follow-up instead of being overlooked.
-#### Alignment with Merto's AI mandate
-These systems work together to support Merto.ai's goal of delivering reliable, production-grade AI for automotive dealerships by combining automation, quality control, and executive visibility.
+#### Alignment with Merto's goal
+These systems work together to support Merto's goal of delivering reliable, production-grade AI for automotive dealerships by combining automation, quality control, and executive visibility.
 #### Q4: What are the user stories that make up the Minumum Viable Product (MVP)?
 We will be implementing three main features, in the following priority:
 
@@ -76,7 +75,11 @@ We will be implementing three main features, in the following priority:
 2. Conversation Evaluation
 3. Follow-up System
 
-Prototype link: https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1&t=GLdQLfJDAHl8pu7w-1&code-node-id=0-6
+[Prototype link](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1&t=GLdQLfJDAHl8pu7w-1&code-node-id=0-6)
+
+Proof of email sent to Merto for review - we are waiting for their response: ![proof](user_stories_proof.png)
+
+[MVP User Stories Document](https://docs.google.com/document/d/1yg3esHyt-RnPB9wjFAQH4QmIQXnQlQ_VI15gEHXh6RY/edit?tab=t.0#heading=h.hew2tzilrl7z)
 ## CRM/Dashboard
 ### US1: View Buyer and Deal History
 
