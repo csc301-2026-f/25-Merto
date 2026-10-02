@@ -21,6 +21,8 @@ The project is a standalone application that Merto plans to integrate into its p
 
 ## Instructions
 
+Will be updated once development begins.
+
 ## Development requirements
 
 Merto recommended the following technologies based on its existing stack.
@@ -30,12 +32,36 @@ Merto recommended the following technologies based on its existing stack.
 | Frontend | Next.js, React, TypeScript |
 | Backend and database | Supabase, PostgreSQL |
 
+Technical requirements, set-up instructions will be updated once development begins.
+
 ## Deployment and Github Workflow
 
-## Coding Standards and Guidelines
+The general procedure is outlined as follows:
+1. Create branch, checkout locally
+2. Write code and commit frequently
+3. When the entire task is complete, push branch to remote
+4. Submit a Pull Request to be reviewed by another team member
+5. Discuss the changes made. If there are no issues, merge
+6. Re-build application
 
-## Licenses
+<!-- TODO: Discuss coding standards and guidelines
+Keep this section brief, a maximum of 2-3 lines. You would want to read through thttps://www.geeksforgeeks.org/coding-standards-and-guidelines/ to get more context about what this section is for before attempting to answer.
+-->
+
+<!-- TODO: Discuss IP agreement with Merto and decide on a license
+Template:​
+Keep this section as brief as possible. You may read https://help.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository for a start.​
+
+What type of license will you apply to your codebase? And why?
+What affect does it have on the development and use of your codebase?
+-->
+## License
+No license has been set yet.
 
 ## Deployed URL / Access Instructions
 
+Will be updated after first deployment.
+
 ## D3 Improvement Highlight
+
+Will be updated after D2 is submitted.
