@@ -1,5 +1,4 @@
-# YOUR PRODUCT/TEAM NAME
-
+# Merto.ai: shared Voice AI Agent Intelligence Suite - zgrnf
 > _Note:_ This document will evolve throughout your project. You commit regularly to this file while working on the project (especially edits/additions/deletions to the _Highlights_ section).
 > **This document will serve as a master plan between your team, your partner and your TA.**
 
@@ -32,51 +31,192 @@ Dealerships are increasingly putting AI agents in front of buyers, which makes t
 Our users are staff at franchise or independent car dealerships that use AI agents to handle buyer inquiries. We have three personas, in priority order:
 
 **1. Primary user: the dealership sales manager (e.g., "Dana", General Sales Manager)**
+
 - Oversees 8–15 salespeople and BDC reps, plus several AI agents that answer web, phone and text leads.
 - Is judged on monthly units sold and gross profit per deal, so a single lost buyer matters.
 - Spends much of the day approving prices, handling escalations and chasing staff for updates, often from the showroom floor between customer conversations.
 - **Needs:** one screen showing which deals need her decision right now, what the AI agents have told buyers, and whether the team is responding fast enough.
 
 **2. Secondary user: the salesperson or BDC representative (e.g., "Marcus", Sales Consultant)**
+
 - Takes over buyers after the AI agent qualifies them or books an appointment.
 - Juggles 20–40 active buyers at a time across phone, text and email.
 - **Needs:** the full history of a buyer he is picking up (vehicle of interest, trade-in, what was promised) and a reminder when a buyer is due for follow-up.
 
 **3. Secondary user: the finance manager (e.g., "Priya", F&I Manager)**
+
 - Arranges financing at the end of the sale and depends on documents and information collected earlier.
 - **Needs:** to see which buyers are waiting on her and what they have already been told about rates and terms.
 
 **Indirect stakeholder: Merto's team.** Merto will integrate our modules into its product, so the data model and interfaces must be clear and well documented for their developers.
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
+#### Problem raised by Merto
+Dealership managers currently rely on manual spot-checks, basic CRM reports, and largely unmonitored AI agents to oversee customer interactions. These approaches are time-consuming, provide limited visibility into AI performance, and may introduce errors or missed follow-ups to go undetected.
 
-> Short (1 - 2 min' read max)
+#### Benefits of our applications
+#### 1. Manager-Facing Analytics Dashboard
 
-- We want you to "connect the dots" for us - Why does your product (as described in your answer to Q1) fits the needs of your users (as described in your answer to Q2)?
-- Explain the benefits of your product explicitly & clearly. For example:
-  - Save users time (how and how much?)
-  - Allow users to discover new information (which information? And, why couldn't they discover it before?)
-  - Provide users with more accurate and/or informative data (what kind of data? Why is it useful to them?)
-  - Does this application exist in another form? If so, how does your differ and provide value to the users?
-  - How does this align with your partner's organization's values/mission/mandate?
+Provides managers with clear, actionable performance metrics such as response time, escalation rate, appointment bookings, and conversion barriers. The dashboard gives managers greater visibility into AI agent performance and customer interactions, helping them identify trends and potential issues.
+#### 2. Automated Conversation Evaluation Pipeline
 
+Replaces time-consuming manual transcript reviews with an automated scoring system that evaluates conversations and flags risky or low-quality interactions for human review. This allows managers to focus on conversations that require intervention, as well as helping identify and correct AI mistakes before they harm customer relationships.
+#### 3. Automatic Follow-Up System
+
+Automatically re-engage unconverted or inactive leads according to structured follow-up cadences. This reduces manual workload while ensuring that leads receive consistent and timely follow-up instead of being overlooked.
+#### Alignment with Merto's goal
+These systems work together to support Merto's goal of delivering reliable, production-grade AI for automotive dealerships by combining automation, quality control, and executive visibility.
 #### Q4: What are the user stories that make up the Minumum Viable Product (MVP)?
+We will be implementing three main features, in the following priority:
 
-- At least 5 user stories concerning the main features of the application - note that this can broken down further
-- You must follow proper user story format (as taught in lecture) `As a <user of the app>, I want to <do something in the app> in order to <accomplish some goal>`
-- User stories must contain acceptance criteria. Examples of user stories with different formats can be found here: https://www.justinmind.com/blog/user-story-examples/. **It is important that you provide a link to an artifact containing your user stories**.
-- If you have a partner, these must be reviewed and accepted by them. You need to include the evidence of partner approval (e.g., screenshot from email) or at least communication to the partner (e.g., email you sent)
+1. AI CRM Dashboard
 
+
+2. Conversation Evaluation
+3. Follow-up System
+
+[Prototype link](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1&t=GLdQLfJDAHl8pu7w-1&code-node-id=0-6)
+
+Proof of email sent to Merto for review - we are waiting for their response: ![proof](user_stories_proof.png)
+
+[MVP User Stories Document](https://docs.google.com/document/d/1yg3esHyt-RnPB9wjFAQH4QmIQXnQlQ_VI15gEHXh6RY/edit?tab=t.0#heading=h.hew2tzilrl7z)
+## CRM/Dashboard
+### US1: View Buyer and Deal History
+
+#### User Story
+
+As a dealership manager, I want to view a dashboard of buyers and their deal history in order to understand the current status of each buyer.
+
+#### Acceptance Criteria
+
+- The dashboard displays a list of buyers.
+
+- Each buyer has a corresponding deal/conversation history.
+
+- The history includes relevant information such as appointments, trade-ins, promises, and follow-up status when available.
+
+- The manager can select a buyer to view their details.
+
+### US2: Shared Buyer Record
+As a dealership employee, I want to view a shared buyer record in order to understand what has happened with a buyer without having to ask other employees.
+
+#### Acceptance Criteria
+
+- The buyer record is accessible to authorized employees.
+- The record displays relevant interactions and recorded information in chronological order.
+
+- Information recorded by different employees is visible within the same buyer record.
+
+- The system distinguishes unresolved or pending items when applicable.
+### US3: Review AI Activity
+
+#### User Story
+
+As a dealership manager, I want to review AI agent activity for a buyer in order to monitor what the AI has communicated to customers.
+
+#### Acceptance Criteria
+
+- The manager can access AI-generated conversations from a buyer's record.
+
+- Conversations show the relevant messages/interactions in chronological order.
+
+- The manager can distinguish AI activity from human activity.
+
+- The manager can identify conversations that require human attention.
+
+
+### US4: View Unresolved Work
+
+#### User Story
+
+As a dealership manager, I want to see unresolved work associated with buyers in order to ensure that important customer actions are not overlooked.
+
+#### Acceptance Criteria
+
+- Buyer records identify unresolved or pending actions when detectable.
+
+- The manager can view unresolved items from the dashboard or buyer record.
+
+- Each item provides enough context for the manager to understand what needs attention.
+
+- Completed or resolved items are distinguishable from unresolved items.
+
+## Conversation Evaluation
+
+
+### US5: Evaluate AI Conversations
+
+#### User Story
+
+As a dealership manager, I want AI conversations to be automatically evaluated in order to identify responses that may require human review.
+
+#### Acceptance Criteria
+
+- The system evaluates completed AI conversations.
+
+- Each evaluated conversation receives an evaluation result based on defined criteria.
+
+- Potentially problematic AI responses are flagged.
+The manager can view the reason or criteria associated with a flag.
+
+- Unflagged conversations remain accessible for review.
+
+## Follow-Up System
+### US6: Identify Buyers Requiring Follow-Up
+
+#### User Story
+
+As a dealership sales representative, I want the system to identify buyers who have not received a required follow-up in order to prevent potential sales opportunities from going cold.
+
+#### Acceptance Criteria
+
+- The system identifies buyers who meet the defined criteria for follow-up.
+
+- Follow-up status is visible to the sales representative.
+
+- Buyers who have already received the required follow-up are not incorrectly marked as needing follow-up.
+
+- The system records when a follow-up occurs.
+
+
+### US7: Schedule Follow-Up
+
+#### User Story
+
+As a dealership sales representative, I want to send or schedule follow-ups for buyers in order to maintain communication and move potential sales forward.
+
+#### Acceptance Criteria
+
+- The representative can initiate or schedule a follow-up for an eligible buyer.
+
+- The follow-up timing is recorded.
+The follow-up status is updated after the action occurs.
+
+- The buyer's history reflects the follow-up.
 #### Q5: Have you decided on how you will build it? Share what you know now or tell us the options you are considering.
+#### Technology Stack
 
-> Short (1-2 min' read max)
+Our project will be developed as a standalone application that Merto can integrate into their existing proudct later. Currently we are considering:
 
-- What is the technology stack? Specify languages, frameworks, libraries, PaaS products or tools to be used or being considered.
-- How will you deploy the application?
-- Describe the architecture - what are the high level components or patterns you will use? Diagrams are useful here.
-- Will you be using third party applications or APIs? If so, what are they?
+- Frontend: Next.js, React, TypeScript
+- Backend: TypeScript/Node.js with REST API
+- Database: PostgresSQL, potentially through Supabase
+- Conversation Evaluation: Python may be used for ML/conversation scoring
+- Development Tools: Git, GitHub for collaboration
 
----
+#### Deployment
+
+We are considering a cloud-based deployment using services compatible with our chosen stack, such as Vercel for Next.js frontend and Supabasefor PostgreSQL database and backend services.
+
+The final deployment approach will be determined after we finalize the prototype and architecture with Merto.
+
+#### High-Level Architecture
+
+![Architecture Diagram](architecture_diagram.png)
+
+#### Third-Party Applications and APIs
+
+Merto will provide access to its existing data through a scoped API. Therefore, we will work with Merto's existing data and infrastructure rather than requiring access to third-party applications/APIs.
 
 ## Intellectual Property Confidentiality Agreement
 
@@ -131,15 +271,15 @@ Everyone will still contribute to the code and help with testing, documentation,
 
 We will have a weekly team meeting every Saturday from 11 AM–12 PM on Zoom. The purpose of this meeting is to check in on everyone’s progress, discuss any issues, and plan tasks for the upcoming week.
 
-We will also have a weekly meeting with our project partner every Sunday at 7 PM on Google Meet. These meetings will be used to provide progress updates, ask questions, get feedback, and discuss next steps for the project.
+In our meetings with the project partner, we discussed the project goals, dealership workflow, possible MVP features, conversation quality review, follow-up workflows, and management analytics. We also used the meetings to clarify requirements and decide on next steps.
+
+For the rest of the term, we will meet with our project partner every Sunday at 7 PM on Google Meet to share progress, ask questions, get feedback, and discuss next steps.
 
 #### Q9: How will you organize your team?
 
 We will mainly use Discord to organize our team and keep track of work. We will have different channels for general discussion, questions, sharing resources, task assignments, and project updates. Our TA and project partner will be given access to the relevant channels.
 
 Tasks will be assigned and tracked through Discord based on each person's role and current workload. We will prioritize tasks based on deadlines, importance, and whether other work depends on them. Team members will post updates as tasks move from to-do, to in progress, to completed.
-
-We will also use GitHub for our code and may use GitHub Issues for tracking specific technical tasks or bugs.
 
 #### Q10: What are the rules regarding how your team works?
 
@@ -151,7 +291,6 @@ We will use Discord for daily communication, GitHub for code collaboration and t
 
 We will establish a regular communication channel with our industry partner, Merto, to provide progress updates, clarify technical requirements, and receive feedback. One designated team member will be responsible for coordinating communication with the partner and ensuring that important information is shared with the entire team.
 
-
 **Collaboration:**
 
 We will divide the project into clearly defined tasks and assign each task an owner and an expected completion date. We will track progress using GitHub Issues and review outstanding tasks during our weekly meetings.
@@ -159,7 +298,6 @@ We will divide the project into clearly defined tasks and assign each task an ow
 All team members are expected to attend scheduled meetings, actively participate in discussions, and complete their assigned tasks by the agreed deadlines. If a member cannot attend a meeting or complete a task on time, they should notify the team in advance.
 
 If a team member consistently fails to contribute or respond, we will first communicate with them privately to understand the situation and offer support. If the problem continues, we will discuss possible solutions as a team, redistribute tasks when necessary, and consult our course instructor or teaching assistant if we cannot resolve the issue internally.
-
 
 ## Organisation Details
 
@@ -175,7 +313,6 @@ These responsibilities combine product development, quality assurance, and workf
 
 By developing these supporting capabilities, our team will help Merto monitor agent performance, improve conversation quality, and provide measurable insights into the impact of its AI agents.
 
-
 #### Q12. How does your project fit within the overall product from the partner?
 
 Our project will extend Merto's existing AI agent platform by developing additional features for performance monitoring, quality evaluation, and automated customer follow-up.
@@ -183,24 +320,24 @@ Our project will extend Merto's existing AI agent platform by developing additio
 Rather than building a new AI agent from scratch, our team will focus on creating supporting components that integrate with Merto's existing system.
 
 Our project consists of four main deliverables:
+
 1. Management Analytics Dashboard
-We will develop a dashboard that allows dealership sales representatives and managers to monitor key performance indicators, including AI-assisted appointments, response rates, and conversation escalations.
+   We will develop a dashboard that allows dealership sales representatives and managers to monitor key performance indicators, including AI-assisted appointments, response rates, and conversation escalations.
 
 2. Automated Conversation Evaluation
-We will implement a system that automatically identifies potentially problematic AI conversations, including factual errors, hallucinations, and inappropriate tone. Flagged conversations will be presented for human review.
+   We will implement a system that automatically identifies potentially problematic AI conversations, including factual errors, hallucinations, and inappropriate tone. Flagged conversations will be presented for human review.
 
 3. Automated Lead Follow-Up
-We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days.
+   We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days.
 
 4. Performance Comparison
-We will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
+   We will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
 
 These components will rely on information generated by Merto's existing AI agents. We expect to collaborate with Merto's internal team to understand the available interfaces, data structures, and integration requirements.
 
 Our team will primarily take responsibility for developing these supporting features, while Merto will continue developing and maintaining its core AI agent platform.
 
 Based on the current project description, success will involve delivering functional implementations of the specified features and demonstrating how they improve the platform's monitoring, evaluation, and follow-up capabilities. The expected level of integration and final deployment requirements will be confirmed with our industry partner.
-
 
 ## Potential Risks
 
