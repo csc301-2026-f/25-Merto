@@ -32,17 +32,20 @@ Dealerships are increasingly putting AI agents in front of buyers, which makes t
 Our users are staff at franchise or independent car dealerships that use AI agents to handle buyer inquiries. We have three personas, in priority order:
 
 **1. Primary user: the dealership sales manager (e.g., "Dana", General Sales Manager)**
+
 - Oversees 8–15 salespeople and BDC reps, plus several AI agents that answer web, phone and text leads.
 - Is judged on monthly units sold and gross profit per deal, so a single lost buyer matters.
 - Spends much of the day approving prices, handling escalations and chasing staff for updates, often from the showroom floor between customer conversations.
 - **Needs:** one screen showing which deals need her decision right now, what the AI agents have told buyers, and whether the team is responding fast enough.
 
 **2. Secondary user: the salesperson or BDC representative (e.g., "Marcus", Sales Consultant)**
+
 - Takes over buyers after the AI agent qualifies them or books an appointment.
 - Juggles 20–40 active buyers at a time across phone, text and email.
 - **Needs:** the full history of a buyer he is picking up (vehicle of interest, trade-in, what was promised) and a reminder when a buyer is due for follow-up.
 
 **3. Secondary user: the finance manager (e.g., "Priya", F&I Manager)**
+
 - Arranges financing at the end of the sale and depends on documents and information collected earlier.
 - **Needs:** to see which buyers are waiting on her and what they have already been told about rates and terms.
 
@@ -265,15 +268,15 @@ Everyone will still contribute to the code and help with testing, documentation,
 
 We will have a weekly team meeting every Saturday from 11 AM–12 PM on Zoom. The purpose of this meeting is to check in on everyone’s progress, discuss any issues, and plan tasks for the upcoming week.
 
-We will also have a weekly meeting with our project partner every Sunday at 7 PM on Google Meet. These meetings will be used to provide progress updates, ask questions, get feedback, and discuss next steps for the project.
+In our meetings with the project partner, we discussed the project goals, dealership workflow, possible MVP features, conversation quality review, follow-up workflows, and management analytics. We also used the meetings to clarify requirements and decide on next steps.
+
+For the rest of the term, we will meet with our project partner every Sunday at 7 PM on Google Meet to share progress, ask questions, get feedback, and discuss next steps.
 
 #### Q9: How will you organize your team?
 
 We will mainly use Discord to organize our team and keep track of work. We will have different channels for general discussion, questions, sharing resources, task assignments, and project updates. Our TA and project partner will be given access to the relevant channels.
 
 Tasks will be assigned and tracked through Discord based on each person's role and current workload. We will prioritize tasks based on deadlines, importance, and whether other work depends on them. Team members will post updates as tasks move from to-do, to in progress, to completed.
-
-We will also use GitHub for our code and may use GitHub Issues for tracking specific technical tasks or bugs.
 
 #### Q10: What are the rules regarding how your team works?
 
@@ -285,7 +288,6 @@ We will use Discord for daily communication, GitHub for code collaboration and t
 
 We will establish a regular communication channel with our industry partner, Merto, to provide progress updates, clarify technical requirements, and receive feedback. One designated team member will be responsible for coordinating communication with the partner and ensuring that important information is shared with the entire team.
 
-
 **Collaboration:**
 
 We will divide the project into clearly defined tasks and assign each task an owner and an expected completion date. We will track progress using GitHub Issues and review outstanding tasks during our weekly meetings.
@@ -293,7 +295,6 @@ We will divide the project into clearly defined tasks and assign each task an ow
 All team members are expected to attend scheduled meetings, actively participate in discussions, and complete their assigned tasks by the agreed deadlines. If a member cannot attend a meeting or complete a task on time, they should notify the team in advance.
 
 If a team member consistently fails to contribute or respond, we will first communicate with them privately to understand the situation and offer support. If the problem continues, we will discuss possible solutions as a team, redistribute tasks when necessary, and consult our course instructor or teaching assistant if we cannot resolve the issue internally.
-
 
 ## Organisation Details
 
@@ -309,7 +310,6 @@ These responsibilities combine product development, quality assurance, and workf
 
 By developing these supporting capabilities, our team will help Merto monitor agent performance, improve conversation quality, and provide measurable insights into the impact of its AI agents.
 
-
 #### Q12. How does your project fit within the overall product from the partner?
 
 Our project will extend Merto's existing AI agent platform by developing additional features for performance monitoring, quality evaluation, and automated customer follow-up.
@@ -317,24 +317,24 @@ Our project will extend Merto's existing AI agent platform by developing additio
 Rather than building a new AI agent from scratch, our team will focus on creating supporting components that integrate with Merto's existing system.
 
 Our project consists of four main deliverables:
+
 1. Management Analytics Dashboard
-We will develop a dashboard that allows dealership sales representatives and managers to monitor key performance indicators, including AI-assisted appointments, response rates, and conversation escalations.
+   We will develop a dashboard that allows dealership sales representatives and managers to monitor key performance indicators, including AI-assisted appointments, response rates, and conversation escalations.
 
 2. Automated Conversation Evaluation
-We will implement a system that automatically identifies potentially problematic AI conversations, including factual errors, hallucinations, and inappropriate tone. Flagged conversations will be presented for human review.
+   We will implement a system that automatically identifies potentially problematic AI conversations, including factual errors, hallucinations, and inappropriate tone. Flagged conversations will be presented for human review.
 
 3. Automated Lead Follow-Up
-We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days.
+   We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days.
 
 4. Performance Comparison
-We will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
+   We will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
 
 These components will rely on information generated by Merto's existing AI agents. We expect to collaborate with Merto's internal team to understand the available interfaces, data structures, and integration requirements.
 
 Our team will primarily take responsibility for developing these supporting features, while Merto will continue developing and maintaining its core AI agent platform.
 
 Based on the current project description, success will involve delivering functional implementations of the specified features and demonstrating how they improve the platform's monitoring, evaluation, and follow-up capabilities. The expected level of integration and final deployment requirements will be confirmed with our industry partner.
-
 
 ## Potential Risks
 
