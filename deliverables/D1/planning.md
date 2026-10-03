@@ -1,6 +1,4 @@
 # Merto.ai: shared Voice AI Agent Intelligence Suite - zgrnf
-> _Note:_ This document will evolve throughout your project. You commit regularly to this file while working on the project (especially edits/additions/deletions to the _Highlights_ section).
-> **This document will serve as a master plan between your team, your partner and your TA.**
 
 ## Product Details
 
@@ -25,6 +23,8 @@ Dealerships are increasingly putting AI agents in front of buyers, which makes t
 3. **Follow-up tracking.** Detects buyers who have not been followed up on in time and surfaces what they still need (a quote, a document, a callback) so the sale is not lost.
 
 **First mockup:** [Manager Analytics Dashboard (Figma Make)](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1)
+
+This mockup was created by our team based on our first partner meeting. We will share it with Merto and revise it based on their feedback.
 
 #### Q2: Who are your target users?
 
@@ -52,7 +52,7 @@ Our users are staff at franchise or independent car dealerships that use AI agen
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
 #### Problem raised by Merto
-Dealership managers currently rely on manual spot-checks, basic CRM reports, and largely unmonitored AI agents to oversee customer interactions. These approaches are time-consuming, provide limited visibility into AI performance, and may introduce errors or missed follow-ups to go undetected.
+Dealership managers currently rely on manual spot-checks, basic CRM reports, and largely unmonitored AI agents to oversee customer interactions. These approaches are time-consuming, provide limited visibility into AI performance, and allow errors and missed follow-ups to go undetected.
 
 #### Benefits of our applications
 #### 1. Manager-Facing Analytics Dashboard
@@ -66,12 +66,10 @@ Replaces time-consuming manual transcript reviews with an automated scoring syst
 Automatically re-engage unconverted or inactive leads according to structured follow-up cadences. This reduces manual workload while ensuring that leads receive consistent and timely follow-up instead of being overlooked.
 #### Alignment with Merto's goal
 These systems work together to support Merto's goal of delivering reliable, production-grade AI for automotive dealerships by combining automation, quality control, and executive visibility.
-#### Q4: What are the user stories that make up the Minumum Viable Product (MVP)?
+#### Q4: What are the user stories that make up the Minimum Viable Product (MVP)?
 We will be implementing three main features, in the following priority:
 
 1. AI CRM Dashboard
-
-
 2. Conversation Evaluation
 3. Follow-up System
 
@@ -98,6 +96,9 @@ As a dealership manager, I want to view a dashboard of buyers and their deal his
 - The manager can select a buyer to view their details.
 
 ### US2: Shared Buyer Record
+
+#### User Story
+
 As a dealership employee, I want to view a shared buyer record in order to understand what has happened with a buyer without having to ask other employees.
 
 #### Acceptance Criteria
@@ -157,7 +158,8 @@ As a dealership manager, I want AI conversations to be automatically evaluated i
 - Each evaluated conversation receives an evaluation result based on defined criteria.
 
 - Potentially problematic AI responses are flagged.
-The manager can view the reason or criteria associated with a flag.
+
+- The manager can view the reason or criteria associated with a flag.
 
 - Unflagged conversations remain accessible for review.
 
@@ -190,23 +192,24 @@ As a dealership sales representative, I want to send or schedule follow-ups for 
 - The representative can initiate or schedule a follow-up for an eligible buyer.
 
 - The follow-up timing is recorded.
-The follow-up status is updated after the action occurs.
+
+- The follow-up status is updated after the action occurs.
 
 - The buyer's history reflects the follow-up.
 #### Q5: Have you decided on how you will build it? Share what you know now or tell us the options you are considering.
 #### Technology Stack
 
-Our project will be developed as a standalone application that Merto can integrate into their existing proudct later. Currently we are considering:
+Our project will be developed as a standalone application that Merto can integrate into their existing product later. Currently we are considering:
 
 - Frontend: Next.js, React, TypeScript
 - Backend: TypeScript/Node.js with REST API
-- Database: PostgresSQL, potentially through Supabase
+- Database: PostgreSQL, potentially through Supabase
 - Conversation Evaluation: Python may be used for ML/conversation scoring
 - Development Tools: Git, GitHub for collaboration
 
 #### Deployment
 
-We are considering a cloud-based deployment using services compatible with our chosen stack, such as Vercel for Next.js frontend and Supabasefor PostgreSQL database and backend services.
+We are considering a cloud-based deployment using services compatible with our chosen stack, such as Vercel for Next.js frontend and Supabase for PostgreSQL database and backend services.
 
 The final deployment approach will be determined after we finalize the prototype and architecture with Merto.
 
@@ -220,19 +223,7 @@ Merto will provide access to its existing data through a scoped API. Therefore, 
 
 ## Intellectual Property Confidentiality Agreement
 
-> Note this section is **not marked** but must be completed briefly if you have a partner. If you have any questions, please ask on Piazza.
->
-> **By default, you own any work that you do as part of your coursework.** However, some partners may want you to keep the project confidential after the course is complete. As part of your first deliverable, you should discuss and agree upon an option with your partner. Examples include:
-
-1. You can share the software and the code freely with anyone with or without a license, regardless of domain, for any use.
-2. You can upload the code to GitHub or other similar publicly available domains.
-3. You will only share the code under an open-source license with the partner but agree to not distribute it in any way to any other entity or individual.
-4. You will share the code under an open-source license and distribute it as you wish but only the partner can access the system deployed during the course.
-5. You will only reference the work you did in your resume, interviews, etc. You agree to not share the code or software in any capacity with anyone unless your partner has agreed to it.
-
-**Your partner cannot ask you to sign any legal agreements or documents pertaining to non-disclosure, confidentiality, IP ownership, etc.**
-
-Briefly describe which option you have agreed to.
+We have agreed with Merto on **Option 3**: we will only share the code under an open-source license with the partner, and we agree not to distribute it in any way to any other entity or individual.
 
 ---
 
@@ -259,7 +250,7 @@ We met online over Zoom on September 29 to discuss our first deliverable and get
 
 Jason and Ethan are doing database work, including database design, data models, and connecting the database with the backend. They were chosen because they both took CSC343.
 
-Bobby, Vic, and Rachel are doing backend work, including APIs, application logic, and connecting the backend with the frontend and database. They were chosen because they have relevant backend experience.
+Bobby (Maiyue Xiao), Vic, and Rachel are doing backend work, including APIs, application logic, and connecting the backend with the frontend and database. They were chosen because they have relevant backend experience.
 
 Luis and Michael are doing frontend work, including building the user interface and connecting it to the backend. They are also using this opportunity to learn something new.
 
@@ -275,11 +266,13 @@ In our meetings with the project partner, we discussed the project goals, dealer
 
 For the rest of the term, we will meet with our project partner every Sunday at 7 PM on Google Meet to share progress, ask questions, get feedback, and discuss next steps.
 
+Our meeting minutes are kept in a shared Google Doc. The link is in [deliverables/team/minutes/Meeting_minutes.txt](../team/minutes/Meeting_minutes.txt).
+
 #### Q9: How will you organize your team?
 
-We will mainly use Discord to organize our team and keep track of work. We will have different channels for general discussion, questions, sharing resources, task assignments, and project updates. Our TA and project partner will be given access to the relevant channels.
+We will use GitHub Issues to assign and track tasks, and Discord for discussion and progress updates. Our Discord server has different channels for general discussion, questions, sharing resources, and project updates. Our TA and project partner will be given access to the relevant channels.
 
-Tasks will be assigned and tracked through Discord based on each person's role and current workload. We will prioritize tasks based on deadlines, importance, and whether other work depends on them. Team members will post updates as tasks move from to-do, to in progress, to completed.
+Tasks will be assigned as GitHub Issues based on each person's role and current workload. We will prioritize tasks based on deadlines, importance, and whether other work depends on them. Team members will post updates as tasks move from to-do, to in progress, to completed.
 
 #### Q10: What are the rules regarding how your team works?
 
@@ -287,7 +280,7 @@ Tasks will be assigned and tracked through Discord based on each person's role a
 
 Our team plans to hold at least one internal meeting per week to discuss project progress, assign tasks, identify technical challenges, and establish goals for the following week.
 
-We will use Discord for daily communication, GitHub for code collaboration and task tracing, and use Google Doc as shared documents for meeting notes and project documentations.
+We will use Discord for daily communication, GitHub for code collaboration and task tracking, and use Google Doc as shared documents for meeting notes and project documentations.
 
 We will establish a regular communication channel with our industry partner, Merto, to provide progress updates, clarify technical requirements, and receive feedback. One designated team member will be responsible for coordinating communication with the partner and ensuring that important information is shared with the entire team.
 
@@ -319,7 +312,7 @@ Our project will extend Merto's existing AI agent platform by developing additio
 
 Rather than building a new AI agent from scratch, our team will focus on creating supporting components that integrate with Merto's existing system.
 
-Our project consists of four main deliverables:
+Our project consists of three main deliverables, plus one stretch goal:
 
 1. Management Analytics Dashboard
    We will develop a dashboard that allows dealership sales representatives and managers to monitor key performance indicators, including AI-assisted appointments, response rates, and conversation escalations.
@@ -328,10 +321,10 @@ Our project consists of four main deliverables:
    We will implement a system that automatically identifies potentially problematic AI conversations, including factual errors, hallucinations, and inappropriate tone. Flagged conversations will be presented for human review.
 
 3. Automated Lead Follow-Up
-   We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days.
+   We will develop an automated follow-up mechanism for leads that have not converted, using scheduled follow-up intervals such as 30, 60, and 90 days. The exact intervals and stopping rules will be confirmed with Merto.
 
-4. Performance Comparison
-   We will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
+4. Performance Comparison (stretch goal)
+   If time permits, we will provide analytics that allow dealership managers to compare important metrics, such as response time and lead follow-through, before and after implementing the AI agents.
 
 These components will rely on information generated by Merto's existing AI agents. We expect to collaborate with Merto's internal team to understand the available interfaces, data structures, and integration requirements.
 

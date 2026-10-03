@@ -62,7 +62,7 @@ Our coding guidelines will follow the clean coding principles introduced in CSC3
 
 ## Licenses
 
-The project license and code-sharing permissions will be confirmed with Merto and updated here once agreed upon.
+We have agreed with Merto on Option 3 of the course IP options: the code will only be shared with Merto under an open-source license, and we will not distribute it to any other entity or individual. A specific license file will be added once confirmed with Merto.
 
 ## Deployed URL / Access Instructions
 
