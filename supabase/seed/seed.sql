@@ -1,0 +1,3 @@
+-- Seed data for local development.
+-- Runs automatically after migrations on `supabase db reset`.
+-- Keep rows realistic (see deliverables/D1/planning.md scenarios) until Merto's mock data arrives.
