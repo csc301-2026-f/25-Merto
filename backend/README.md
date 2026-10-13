@@ -1,7 +1,7 @@
-# Merto backend: conversation evaluation
+# Merto backend: evaluation and assignment
 
-A TypeScript/Express REST API for US5 (evaluate AI conversations) and the
-deterministic checks required by section 10 of the Merto brief, including its
+A TypeScript/Express REST API for US5 (evaluate AI conversations), US8 (assign or
+transfer a buyer, see below), and the deterministic checks required by section 10 of the Merto brief, including its
 example that an open item is created when the buyer asks for a price. It reads the
 database team's tables (see [`supabase/DATA_CONTRACT.md`](../supabase/DATA_CONTRACT.md))
 and stores results in `ai_evaluations` and `ai_flags`. No paid AI key is used:
@@ -63,6 +63,28 @@ curl -H "X-Staff-Id: 10000000-0000-0000-0000-000000000001" \
   http://localhost:3001/api/ai-flags/queue
 ```
 
+## Assignment and transfer (US8)
+
+Only a GM can assign or transfer. The database is not changed: who and when come
+from the timeline event's `actor_id` and `created_at`; from, to, and why are in its
+`body` (`Assigned Nina Shah to Dana Kowalski: <reason>` or
+`Transferred Hannah Clarke from Arjun Mehta to Dana Kowalski: <reason>`).
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/deals/unassigned` | GM | Open deals with no owner, oldest first. |
+| `POST /api/deals/:dealId/assign` | GM | Body `{ "toUserId", "reason" }`. Only for an unassigned deal. Moves a `new` deal to `assigned`. |
+| `POST /api/deals/:dealId/transfer` | GM | Same body. Only for an assigned deal. |
+| `GET /api/deals/:dealId/assignments` | GM, owning rep | Current owner and every assignment/transfer event. |
+
+Rules: `reason` is required (max 500 characters, line breaks collapsed). The target
+must be an existing staff member with role `rep` (400 for a GM, 404 if unknown).
+Assigning an owned deal, transferring an unassigned one, transferring to the current
+owner, and reassigning a delivered or lost deal are all 409. Open items move to the
+new owner in the same transaction; resolved ones keep theirs. Events, appointments,
+and the timeline stay on the deal. Two simultaneous changes to one deal are
+serialised by a row lock, so only one succeeds.
+
 ## Rules
 
 Defined in [`src/evaluation/rules.ts`](src/evaluation/rules.ts); the conditions
@@ -91,10 +113,16 @@ or changes a GM decision.
 | `src/evaluation/repository.ts` | All SQL. |
 | `src/evaluation/service.ts` | Permissions, transactions, and responses: the action layer. |
 | `src/evaluation/routes.ts` | HTTP routes. |
+| `src/assignment/policy.ts` | US8 reason validation and the timeline body format. |
+| `src/assignment/repository.ts` | US8 SQL: row lock, owner update, open items, history. |
+| `src/assignment/service.ts` | US8 GM-only rules, state checks, and the transaction. |
+| `src/assignment/routes.ts` | US8 HTTP routes. |
 | `src/db.ts`, `src/sandbox-db.ts` | PostgreSQL connection, or the in-memory PGlite sandbox. |
 
 ## Limits
 
-`X-Staff-Id` is not real authentication. An LLM judge, per-run scorecards, and
+Assignment history is free text in the timeline until the database has a structured
+assignment table, so it cannot be queried by from/to/reason. Nothing checks that a
+rep is on shift: `staff_users` has no availability field. `X-Staff-Id` is not real authentication. An LLM judge, per-run scorecards, and
 messaging endpoints are not implemented. The demo writes the AI's message to Rob
 directly into the database for that reason.

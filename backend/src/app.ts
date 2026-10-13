@@ -1,5 +1,6 @@
 import express, { type ErrorRequestHandler } from 'express';
 import type { Database } from './db.ts';
+import { assignmentRoutes } from './assignment/routes.ts';
 import { evaluationRoutes } from './evaluation/routes.ts';
 
 // Client errors (ours, or express.json's 400 for a malformed body) keep their
@@ -17,6 +18,7 @@ export function createApp(db: Database) {
     res.json({ ok: true });
   });
   app.use('/api', evaluationRoutes(db));
+  app.use('/api', assignmentRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });
   });
