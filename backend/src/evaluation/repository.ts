@@ -62,23 +62,23 @@ export async function findDeal(db: Queryable, dealId: string): Promise<DealSumma
 }
 
 export async function loadConversation(db: Queryable, dealId: string): Promise<Conversation> {
-  const [events, appointments, openItems, optOuts] = await Promise.all([
-    db.query<TimelineEvent>(`
+  // Evaluations call this inside a transaction with one PostgreSQL connection.
+  // Run reads in sequence rather than queue concurrent queries on that client.
+  const events = await db.query<TimelineEvent>(`
       select id, event_type as "eventType", actor_type as "actorType", direction, body,
         created_at as "createdAt"
       from public.timeline_events where deal_id = $1
-      order by created_at, id`, [dealId]),
-    db.query<{ at: Date }>(`
+      order by created_at, id`, [dealId]);
+  const appointments = await db.query<{ at: Date }>(`
       select confirmed_at as at from public.appointments
-      where deal_id = $1 and confirmed_at is not null`, [dealId]),
-    db.query<{ at: Date }>('select created_at as at from public.open_items where deal_id = $1', [dealId]),
-    // Opt-outs on any of this buyer's deals, as in demo query 06.
-    db.query<{ at: Date }>(`
+      where deal_id = $1 and confirmed_at is not null`, [dealId]);
+  const openItems = await db.query<{ at: Date }>('select created_at as at from public.open_items where deal_id = $1', [dealId]);
+  // Opt-outs on any of this buyer's deals, as in demo query 06.
+  const optOuts = await db.query<{ at: Date }>(`
       select o.created_at as at from public.timeline_events o
       join public.deals od on od.id = o.deal_id
       join public.deals d on d.buyer_id = od.buyer_id
-      where d.id = $1 and o.event_type = 'opt_out'`, [dealId]),
-  ]);
+      where d.id = $1 and o.event_type = 'opt_out'`, [dealId]);
   return {
     events,
     appointmentConfirmedAts: appointments.map((row) => row.at),

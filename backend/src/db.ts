@@ -13,7 +13,7 @@ export interface Database extends Queryable {
 
 // Server-side connection only: the database grants no access to browser roles.
 export function postgresDatabase(connectionString: string): Database {
-  const pool = new pg.Pool({ connectionString });
+  const pool = new pg.Pool({ connectionString, connectionTimeoutMillis: 10_000 });
   return {
     async query<Row>(sql: string, params: unknown[] = []) {
       return (await pool.query(sql, params)).rows as Row[];

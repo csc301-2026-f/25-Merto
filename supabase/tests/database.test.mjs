@@ -10,6 +10,9 @@ const migrationNames = (await readdir(new URL('migrations/', supabaseRoot)))
 const migrations = await Promise.all(migrationNames.map((name) => readSql(`migrations/${name}`)));
 // Only the base seed: these counts describe it. The backend tests load every seed file.
 const seed = await readSql('seed/seed.sql');
+const seedNames = (await readdir(new URL('seed/', supabaseRoot)))
+  .filter((name) => name.endsWith('.sql')).sort();
+const allSeeds = await Promise.all(seedNames.map((name) => readSql(`seed/${name}`)));
 const demos = await readSql('demo/queries.sql');
 const transfer = await readSql('demo/transfer.sql');
 const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
@@ -169,6 +172,97 @@ describe('Merto database contract', () => {
     assert.equal(violations.length, 1);
     assert.equal(violations[0].buyer, 'Rob Lindqvist');
     assert.equal(violations[0].body, 'Forbidden after opt-out');
+  });
+
+  it('loads every scenario seed twice without changing records or timestamps', async () => {
+    for (const sql of allSeeds) await db.exec(sql);
+    const before = await snapshot();
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 8, 8, 28, 3, 5, 0, 0]);
+    for (const sql of allSeeds) await db.exec(sql);
+    assert.deepEqual(await snapshot(), before);
+    assert.equal((await db.exec(demos))[0].rows.length, 8);
+  });
+
+  async function addFlag() {
+    await db.query("insert into public.ai_evaluations (deal_id, result) values ($1, 'flagged')", [ids.jordan]);
+    return (await db.query(`insert into public.ai_flags
+      (deal_id, evidence_event_id, flag_type, severity, explanation)
+      values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'Test evidence')
+      returning id`, [ids.jordan])).rows[0].id;
+  }
+
+  it('stores one evaluation per deal and one flag per evidence message and issue', async () => {
+    await addFlag();
+    await expectSqlError("insert into public.ai_evaluations (deal_id, result) values ($1, 'passed')",
+      [ids.jordan], '23505');
+    await expectSqlError(`insert into public.ai_flags
+      (deal_id, evidence_event_id, flag_type, severity, explanation)
+      values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'Duplicate')`,
+      [ids.jordan], '23505');
+    await db.query(`insert into public.ai_flags
+      (deal_id, evidence_event_id, flag_type, severity, explanation)
+      values ($1, '40000000-0000-0000-0000-000000000002', 'unsupported_price', 'high', 'Different issue')`,
+      [ids.jordan]);
+    assert.equal((await db.query('select * from public.ai_flags')).rows.length, 2);
+  });
+
+  it('requires evaluation records and evidence from the same deal', async () => {
+    await expectSqlError(`insert into public.ai_flags
+      (deal_id, evidence_event_id, flag_type, severity, explanation)
+      values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'No evaluation')`,
+      [ids.jordan], '23503');
+    await db.query("insert into public.ai_evaluations (deal_id, result) values ($1, 'flagged')", [ids.hannah]);
+    await expectSqlError(`insert into public.ai_flags
+      (deal_id, evidence_event_id, flag_type, severity, explanation)
+      values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'Wrong deal')`,
+      [ids.hannah], '23503');
+  });
+
+  it('requires reviewer and timestamp together for every reviewed flag', async () => {
+    const flagId = await addFlag();
+    for (const status of ['confirmed_issue', 'false_positive', 'resolved']) {
+      await expectSqlError('update public.ai_flags set review_status = $1 where id = $2',
+        [status, flagId], '23514');
+    }
+    await expectSqlError('update public.ai_flags set reviewed_at = now() where id = $1', [flagId], '23514');
+    await expectSqlError("update public.ai_flags set review_status = 'confirmed_issue', reviewed_by = $1 where id = $2",
+      [ids.dana, flagId], '23514');
+    await expectSqlError("update public.ai_flags set review_status = 'confirmed_issue', reviewed_by = $1, reviewed_at = now() where id = $2",
+      [ids.missing, flagId], '23503');
+    await db.query("update public.ai_flags set review_status = 'confirmed_issue', reviewed_by = $1, reviewed_at = now() where id = $2",
+      [ids.dana, flagId]);
+    await expectSqlError("update public.ai_flags set review_status = 'pending' where id = $1", [flagId], '23514');
+    // The database checks metadata; GM-only permission is enforced by the backend.
+    const [row] = (await db.query('select review_status, reviewed_by, reviewed_at from public.ai_flags where id = $1', [flagId])).rows;
+    assert.equal(row.review_status, 'confirmed_issue');
+    assert.equal(row.reviewed_by, ids.dana);
+    assert.ok(row.reviewed_at instanceof Date);
+  });
+
+  it('rejects invalid evaluation results, flag states and blank explanations', async () => {
+    const flagId = await addFlag();
+    await expectSqlError("update public.ai_evaluations set result = 'unknown' where deal_id = $1", [ids.jordan], '23514');
+    for (const column of ['flag_type', 'severity', 'review_status']) {
+      await expectSqlError(`update public.ai_flags set ${column} = 'unknown' where id = $1`, [flagId], '23514');
+    }
+    for (const explanation of ['', '   ']) {
+      await expectSqlError('update public.ai_flags set explanation = $1 where id = $2', [explanation, flagId], '23514');
+    }
+  });
+
+  it('rolls back an evaluation when storing its evidence flag fails', async () => {
+    const before = await snapshot();
+    await db.exec('begin;');
+    try {
+      await db.query("insert into public.ai_evaluations (deal_id, result) values ($1, 'flagged')", [ids.hannah]);
+      await expectSqlError(`insert into public.ai_flags
+        (deal_id, evidence_event_id, flag_type, severity, explanation)
+        values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'Wrong deal')`,
+        [ids.hannah], '23503');
+    } finally {
+      await db.exec('rollback;');
+    }
+    assert.deepEqual(await snapshot(), before);
   });
 
   it('denies both Supabase API roles access to every demo table', async () => {

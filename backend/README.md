@@ -40,6 +40,22 @@ permissions itself. Seeded IDs:
 This header is a development stand-in, not authentication: replace it with a
 verified Supabase session before deploying.
 
+## Verify shared Supabase integration
+
+See [hosted database setup and verification](../supabase/HOSTED_INTEGRATION.md).
+With `DATABASE_URL` configured in this folder's ignored `.env`, run:
+
+```sh
+npm run check:hosted
+```
+
+This requires PostgreSQL: it never falls back to the sandbox. It exercises the
+existing HTTP endpoints, recreates the backend server and connection pool, and
+checks that evaluation results, manager reviews, and timeline entries remain.
+It also checks rerun safety and hosted constraints. It retains one clearly named
+fictional fixture, reused by subsequent checks. Run it against a development/demo
+database rather than customer data.
+
 ## Endpoints
 
 All responses are JSON. Errors are `{ "error": "..." }` with 400 (bad input),

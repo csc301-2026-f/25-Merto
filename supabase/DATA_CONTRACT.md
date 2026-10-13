@@ -1,7 +1,7 @@
 # Merto database contract: initial prototype
 
-This documents the six tables currently implemented in PostgreSQL/Supabase.
-The source of truth is `migrations/20261006000100_mvp_database.sql`. This is an
+This documents the six core tables plus two evaluation tables implemented in PostgreSQL/Supabase.
+The source of truth is the SQL files in `migrations/`, applied in filename order. This is an
 initial integration proposal, not a finalized backend API. The course demo is
 one fictional dealership; store membership and multiple stores are not modeled.
 
@@ -34,6 +34,10 @@ erDiagram
   staff_users o|--o{ appointments : confirms
   deals ||--o{ open_items : tracks
   staff_users o|--o{ open_items : handles
+  deals ||--o| ai_evaluations : evaluates
+  ai_evaluations ||--o{ ai_flags : flags
+  timeline_events ||--o{ ai_flags : evidence
+  staff_users o|--o{ ai_flags : reviews
 ```
 
 One buyer can have several deals. A deal has zero or one current owner. Events,
@@ -182,7 +186,7 @@ atomically. The following are proposed action boundaries, not existing endpoints
 | Action | Records affected | Current boundary |
 | --- | --- | --- |
 | Create a buyer/deal | `buyers`, `deals`, initial `timeline_events` | Resolve existing buyer identity before inserting duplicates. |
-| Assign/transfer a deal | Deal owner, relevant open-item owners, transfer event | `demo/transfer.sql` demonstrates the transaction. GM-only enforcement and structured previous/new owners are not implemented. |
+| Assign/transfer a deal | Deal owner, relevant open-item owners, transfer event | `backend/src/assignment/` implements GM-only actions and transactional writes using the development staff header. Previous/new owners and reason are still stored as free text. |
 | Confirm an appointment | Appointment confirmation/status, timeline entry | Staff attribution and permission checks belong to the action layer. |
 | Resolve a task | Item status/resolution time, timeline entry | No automatic timeline/audit trigger yet. |
 | Record an opt-out | Buyer boolean, structured `opt_out` event | Send-time suppression still needs implementation. |
@@ -193,11 +197,12 @@ integration, agree on the Auth-to-staff mapping, user versus server database
 access, and authorization policies. We can propose those designs independently;
 both teams need to review the shared interface.
 
-## AI evaluation storage (proposed by the backend team)
+## AI evaluation storage
 
 `migrations/20261013000100_ai_evaluation.sql` adds storage only; the rules,
-review workflow, and permissions live in `backend/src/evaluation/`. It is up for
-review by the database team.
+review workflow, and permissions live in `backend/src/evaluation/`. The migration
+has been applied to hosted Supabase and its integrity constraints are covered by
+the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup and verification.
 
 - `timeline_events` gains `unique (id, deal_id)` and the two event types above.
 - `ai_evaluations`: `id`, `deal_id` (unique; references `deals`), `result`
