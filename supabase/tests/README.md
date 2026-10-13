@@ -19,9 +19,13 @@ Coverage includes repeatable seeding, the six demo queries, closed-deal filterin
 transfer history/task ownership/rollback, failed-transaction rollback, invalid
 references and statuses, human event attribution, appointment confirmation,
 task resolution, cross-deal opt-out detection, and the current API access boundary.
-The evaluation-storage checks cover unique evaluations/flags, evidence belonging
-to the same deal, review metadata, allowed values, failed-write rollback, and
-repeatable loading of every scenario seed. There are currently 19 tests.
+The evaluation-storage checks cover successful evaluation/flag insertion, unique
+evaluations/flags, different flag types on one message, evidence belonging to the
+same deal, pending flags with invalid review metadata, reviewed flags missing a
+reviewer or timestamp, allowed values, failed-write rollback, and repeatable
+loading of every scenario seed. There are currently 24 tests. Rejected writes are
+checked for PostgreSQL error codes: `23505` (unique), `23503` (foreign key), and
+`23514` (check constraint).
 
 ## Limits
 

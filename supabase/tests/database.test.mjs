@@ -191,14 +191,40 @@ describe('Merto database contract', () => {
       returning id`, [ids.jordan])).rows[0].id;
   }
 
-  it('stores one evaluation per deal and one flag per evidence message and issue', async () => {
+  it('inserts an evaluation and its evidence flag successfully', async () => {
+    const flagId = await addFlag();
+    const evaluations = (await db.query('select deal_id, result from public.ai_evaluations')).rows;
+    assert.deepEqual(evaluations, [{ deal_id: ids.jordan, result: 'flagged' }]);
+    const flags = (await db.query(`select id, deal_id, evidence_event_id, flag_type,
+      severity, explanation, review_status, reviewed_by, reviewed_at from public.ai_flags`)).rows;
+    assert.deepEqual(flags, [{
+      id: flagId, deal_id: ids.jordan,
+      evidence_event_id: '40000000-0000-0000-0000-000000000002',
+      flag_type: 'tone', severity: 'low', explanation: 'Test evidence',
+      review_status: 'pending', reviewed_by: null, reviewed_at: null,
+    }]);
+  });
+
+  it('rejects a second evaluation for the same deal with a unique violation', async () => {
     await addFlag();
+    const before = await snapshot();
     await expectSqlError("insert into public.ai_evaluations (deal_id, result) values ($1, 'passed')",
       [ids.jordan], '23505');
+    assert.deepEqual(await snapshot(), before);
+  });
+
+  it('rejects a duplicate flag type for the same evidence message with a unique violation', async () => {
+    await addFlag();
+    const before = await snapshot();
     await expectSqlError(`insert into public.ai_flags
       (deal_id, evidence_event_id, flag_type, severity, explanation)
       values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'Duplicate')`,
       [ids.jordan], '23505');
+    assert.deepEqual(await snapshot(), before);
+  });
+
+  it('allows different flag types for the same evidence message', async () => {
+    await addFlag();
     await db.query(`insert into public.ai_flags
       (deal_id, evidence_event_id, flag_type, severity, explanation)
       values ($1, '40000000-0000-0000-0000-000000000002', 'unsupported_price', 'high', 'Different issue')`,
@@ -206,23 +232,52 @@ describe('Merto database contract', () => {
     assert.equal((await db.query('select * from public.ai_flags')).rows.length, 2);
   });
 
-  it('requires evaluation records and evidence from the same deal', async () => {
+  it('rejects a flag without an evaluation record', async () => {
     await expectSqlError(`insert into public.ai_flags
       (deal_id, evidence_event_id, flag_type, severity, explanation)
       values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'No evaluation')`,
       [ids.jordan], '23503');
+    assert.equal((await db.query('select * from public.ai_flags')).rows.length, 0);
+  });
+
+  it('rejects evidence from another existing deal with a foreign key violation', async () => {
     await db.query("insert into public.ai_evaluations (deal_id, result) values ($1, 'flagged')", [ids.hannah]);
+    // Both the evaluation and message exist; only their deal IDs disagree.
+    const evidence = (await db.query('select deal_id from public.timeline_events where id = $1',
+      ['40000000-0000-0000-0000-000000000002'])).rows;
+    assert.deepEqual(evidence, [{ deal_id: ids.jordan }]);
+    const before = await snapshot();
     await expectSqlError(`insert into public.ai_flags
       (deal_id, evidence_event_id, flag_type, severity, explanation)
       values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low', 'Wrong deal')`,
       [ids.hannah], '23503');
+    assert.deepEqual(await snapshot(), before);
+  });
+
+  it('rejects inserting a pending flag with a reviewer, even with a review timestamp', async () => {
+    await db.query("insert into public.ai_evaluations (deal_id, result) values ($1, 'flagged')", [ids.jordan]);
+    const before = await snapshot();
+    for (const reviewedAt of [null, '2026-10-13T12:00:00Z']) {
+      await expectSqlError(`insert into public.ai_flags
+        (deal_id, evidence_event_id, flag_type, severity, explanation,
+         review_status, reviewed_by, reviewed_at)
+        values ($1, '40000000-0000-0000-0000-000000000002', 'tone', 'low',
+          'Test evidence', 'pending', $2, $3)`,
+        [ids.jordan, ids.dana, reviewedAt], '23514');
+    }
+    assert.deepEqual(await snapshot(), before);
   });
 
   it('requires reviewer and timestamp together for every reviewed flag', async () => {
     const flagId = await addFlag();
     for (const status of ['confirmed_issue', 'false_positive', 'resolved']) {
-      await expectSqlError('update public.ai_flags set review_status = $1 where id = $2',
-        [status, flagId], '23514');
+      for (const [reviewer, reviewedAt] of [
+        [null, null], [ids.dana, null], [null, '2026-10-13T12:00:00Z'],
+      ]) {
+        await expectSqlError(`update public.ai_flags
+          set review_status = $1, reviewed_by = $2, reviewed_at = $3 where id = $4`,
+          [status, reviewer, reviewedAt, flagId], '23514');
+      }
     }
     await expectSqlError('update public.ai_flags set reviewed_at = now() where id = $1', [flagId], '23514');
     await expectSqlError("update public.ai_flags set review_status = 'confirmed_issue', reviewed_by = $1 where id = $2",
