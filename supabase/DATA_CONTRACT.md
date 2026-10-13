@@ -95,7 +95,7 @@ order or require owners to be reps rather than GMs.
 | --- | --- | --- |
 | `id` | UUID / no | Event ID. |
 | `deal_id` | UUID / no | References `deals.id`. |
-| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, or `opt_out`. |
+| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, or `ai_review` (the last two are written by the backend evaluation service). |
 | `actor_type` | text / no | `buyer`, `ai`, `rep`, `gm`, or `system`. |
 | `actor_id` | UUID / yes | Staff ID for human staff events; see attribution rules below. |
 | `channel` | text / no | `call`, `sms`, `email`, `web`, `in_person`, or `note`. |
@@ -193,10 +193,37 @@ integration, agree on the Auth-to-staff mapping, user versus server database
 access, and authorization policies. We can propose those designs independently;
 both teams need to review the shared interface.
 
+## AI evaluation storage (proposed by the backend team)
+
+`migrations/20261013000100_ai_evaluation.sql` adds storage only; the rules,
+review workflow, and permissions live in `backend/src/evaluation/`. It is up for
+review by the database team.
+
+- `timeline_events` gains `unique (id, deal_id)` and the two event types above.
+- `ai_evaluations`: `id`, `deal_id` (unique; references `deals`), `result`
+  (`passed` or `flagged`), `evaluated_at`. At most one row per deal: the latest
+  evaluation. No row means "not evaluated".
+- `ai_flags`: `id`, `deal_id` (references `ai_evaluations.deal_id`),
+  `evidence_event_id`, `flag_type` (`appointment_certainty`,
+  `unsupported_availability`, `unsupported_price`, `missed_escalation`,
+  `missed_price_handoff`, `ignored_opt_out`, `tone`), `severity` (`low`, `medium`, `high`), `explanation`,
+  `review_status` (`pending` default, `confirmed_issue`, `false_positive`,
+  `resolved`), `reviewed_by` (references `staff_users`), `reviewed_at`,
+  `review_note`, `created_at`.
+- `(evidence_event_id, deal_id)` references `timeline_events(id, deal_id)`, so a
+  flag's evidence is always a message on the same deal.
+- `(evidence_event_id, flag_type)` is unique, so re-evaluating never duplicates a flag.
+- `reviewed_by` and `reviewed_at` are both null exactly when the flag is `pending`.
+- RLS is enabled and `anon`/`authenticated` have no grants, as for the core tables.
+
+`seed/seed_ai_evaluation.sql` adds the evaluation scenarios from the brief: Maya
+(Deal J), Chris (Deal K), Ben (missed call, then a payment quote), Marcus (Deal C:
+the AI hands a price question to a rep through an open item), and earlier AI
+contact with Rob (Deal I). With it, query 01 lists 8 deals instead of 4.
+
 ## Scope and validation
 
-No dedicated follow-up, evaluation, audit, upload, trade-in, F&I, or delivery table
-exists yet. `fni` and `delivered` are currently only stages. Staff availability,
+No dedicated follow-up, audit, upload, trade-in, F&I, or delivery table exists yet. `fni` and `delivered` are currently only stages. Staff availability,
 business hours, AI mode settings, and external integrations are not implemented.
 
 Repeatable tests are in `tests/`; see `tests/README.md`. They exercise the real

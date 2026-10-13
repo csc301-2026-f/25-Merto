@@ -8,10 +8,12 @@ const readSql = (path) => readFile(new URL(path, supabaseRoot), 'utf8');
 const migrationNames = (await readdir(new URL('migrations/', supabaseRoot)))
   .filter((name) => name.endsWith('.sql')).sort();
 const migrations = await Promise.all(migrationNames.map((name) => readSql(`migrations/${name}`)));
+// Only the base seed: these counts describe it. The backend tests load every seed file.
 const seed = await readSql('seed/seed.sql');
 const demos = await readSql('demo/queries.sql');
 const transfer = await readSql('demo/transfer.sql');
-const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items'];
+const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
+  'ai_evaluations', 'ai_flags'];
 const ids = {
   dana: '10000000-0000-0000-0000-000000000002',
   arjun: '10000000-0000-0000-0000-000000000003',
@@ -53,7 +55,7 @@ describe('Merto database contract', () => {
 
   it('loads the real migration and reseeds without duplicating or changing sample records', async () => {
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4]);
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4, 0, 0]);
     await db.exec(seed);
     assert.deepEqual(await snapshot(), before);
   });
