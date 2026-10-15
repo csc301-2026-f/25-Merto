@@ -6,7 +6,7 @@ async function RepDashboard() {
   await requireRole("manager");
   return (
     <main className="p-6">
-      <h1 className="text-2xl font-semibold">Rep Dashboard</h1>
+      <h1 className="text-2xl font-semibold">Manager Dashboard</h1>
       <form action={logout}>
         <button className="mt-4 underline">Sign out</button>
       </form>

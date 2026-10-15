@@ -6,10 +6,7 @@ import { createSession, destroySession, homeFor } from "@/lib/auth/session";
 
 export type LoginState = { error?: string; username?: string } | undefined;
 
-export async function login(
-  _prev: LoginState,
-  formData: FormData
-): Promise<LoginState> {
+export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 

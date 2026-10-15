@@ -1,9 +1,12 @@
 import type { AuthResult } from "./types";
 
-export async function authenticate(
-  username: string,
-  password: string
-): Promise<AuthResult> {
+
+
+export async function authenticate(username: string,  password: string): Promise<AuthResult> {
+//if (username === "rep" && password === "test") return { status: "ok", token: "x", role: "rep" };
+//if (username === "manager" && password === "test") return { status: "ok", token: "x", role: "manager" };
+//if (process.env.NODE_ENV === "development") return { status: "invalid" };
+
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
       method: "POST",
