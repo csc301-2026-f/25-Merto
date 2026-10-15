@@ -1,12 +1,23 @@
 import type { AuthResult } from "./types";
+import type { Role } from "./types";
 
-
+const DEV_USERS: Record<string, { id: string; role: Role }> = {
+  karen: { id: "10000000-0000-0000-0000-000000000001", role: "manager" }, // GM
+  dana:  { id: "10000000-0000-0000-0000-000000000002", role: "rep" },
+  arjun: { id: "10000000-0000-0000-0000-000000000003", role: "rep" },
+};
 
 export async function authenticate(username: string,  password: string): Promise<AuthResult> {
 //if (username === "rep" && password === "test") return { status: "ok", token: "x", role: "rep" };
 //if (username === "manager" && password === "test") return { status: "ok", token: "x", role: "manager" };
 //if (process.env.NODE_ENV === "development") return { status: "invalid" };
 
+
+  const user = DEV_USERS[username.toLowerCase()];
+  if (!user || password !== "test") return { status: "invalid" };
+  return { status: "ok", token: user.id, role: user.role }; // token = staff id for now
+
+/*
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
       method: "POST",
@@ -27,4 +38,5 @@ export async function authenticate(username: string,  password: string): Promise
   } catch {
     return { status: "error" };
   }
+    */
 }
