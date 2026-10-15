@@ -1,0 +1,199 @@
+import assert from 'node:assert/strict';
+import { readFile, readdir } from 'node:fs/promises';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import { PGlite } from '@electric-sql/pglite';
+
+const supabaseRoot = new URL('../', import.meta.url);
+const readSql = (path) => readFile(new URL(path, supabaseRoot), 'utf8');
+const migrationNames = (await readdir(new URL('migrations/', supabaseRoot)))
+  .filter((name) => name.endsWith('.sql')).sort();
+const migrations = await Promise.all(migrationNames.map((name) => readSql(`migrations/${name}`)));
+// Only the base seed: these counts describe it. The backend tests load every seed file.
+const seed = await readSql('seed/seed.sql');
+const demos = await readSql('demo/queries.sql');
+const transfer = await readSql('demo/transfer.sql');
+const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
+  'ai_evaluations', 'ai_flags'];
+const ids = {
+  dana: '10000000-0000-0000-0000-000000000002',
+  arjun: '10000000-0000-0000-0000-000000000003',
+  jordanBuyer: '20000000-0000-0000-0000-000000000001',
+  jordan: '30000000-0000-0000-0000-000000000001',
+  hannah: '30000000-0000-0000-0000-000000000002',
+  rob: '30000000-0000-0000-0000-000000000004',
+  missing: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
+};
+
+describe('Merto database contract', () => {
+  let db;
+
+  beforeEach(async () => {
+    db = new PGlite();
+    // Reproduce the two Supabase API roles; no cloud credentials are used.
+    await db.exec('create role anon; create role authenticated;');
+    for (const migration of migrations) await db.exec(migration);
+    await db.exec(seed);
+  });
+
+  afterEach(async () => { if (db) await db.close(); });
+
+  async function snapshot() {
+    const result = {};
+    for (const table of tables) {
+      // Identifiers come only from the fixed table list above.
+      result[table] = (await db.query(`select * from public.${table} order by id`)).rows;
+    }
+    return result;
+  }
+
+  async function expectSqlError(sql, params, code) {
+    await assert.rejects(db.query(sql, params), (error) => {
+      assert.equal(error.code, code, error.message);
+      return true;
+    });
+  }
+
+  it('loads the real migration and reseeds without duplicating or changing sample records', async () => {
+    const before = await snapshot();
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4, 0, 0]);
+    await db.exec(seed);
+    assert.deepEqual(await snapshot(), before);
+  });
+
+  it('runs all six real demo queries and returns the expected business records', async () => {
+    const results = await db.exec(demos);
+    assert.deepEqual(results.map((result) => result.rows.length), [4, 2, 3, 3, 2, 0]);
+    assert.deepEqual(results[1].rows.map((row) => row.buyer), ['Hannah Clarke', 'Jordan Lee']);
+    assert.equal(results[0].rows.find((row) => row.buyer === 'Nina Shah').owner, 'Unassigned');
+    assert.deepEqual(results[2].rows.map((row) => row.actor_type), ['buyer', 'rep', 'gm']);
+    assert.equal(results[2].rows[1].staff_actor, 'Arjun Mehta');
+    assert.match(results[2].rows[2].body, /Transferred Hannah from Arjun to Dana/);
+    assert.equal(results[3].rows.filter((row) => row.overdue).length, 2);
+    assert.deepEqual(results[4].rows.map((row) => row.status), ['confirmed', 'requested']);
+  });
+
+  it('removes delivered and lost deals from rep work and pending task queries', async () => {
+    await db.query('update public.deals set stage = $1 where id = $2', ['delivered', ids.jordan]);
+    await db.query('update public.deals set stage = $1, lost_reason = $2 where id = $3',
+      ['lost', 'bought elsewhere', ids.hannah]);
+    const results = await db.exec(demos);
+    assert.equal(results[1].rows.length, 0);
+    assert.deepEqual(results[3].rows.map((row) => row.buyer), ['Nina Shah']);
+    assert.equal(results[0].rows.length, 4, 'Closed deals remain in the overview');
+  });
+
+  it('transfers ownership and open tasks while preserving history, then rolls back completely', async () => {
+    const before = await snapshot();
+    // Observe the actual transfer's task update before its rollback.
+    const inspectedTransfer = transfer.replace(/rollback;\s*$/i,
+      `select owner_id from public.open_items where deal_id = '${ids.hannah}' and status = 'open';\nrollback;`);
+    assert.notEqual(inspectedTransfer, transfer, 'The demo must include its final rollback');
+    const results = await db.exec(inspectedTransfer);
+    const history = results.find((result) => result.rows[0]?.current_owner);
+    assert.equal(history.rows.length, 4);
+    assert.ok(history.rows.every((row) => row.current_owner === 'Arjun Mehta'));
+    assert.deepEqual(history.rows.slice(0, 3).map((row) => row.body),
+      before.timeline_events.filter((row) => row.deal_id === ids.hannah)
+        .sort((a, b) => a.created_at - b.created_at).map((row) => row.body));
+    const taskOwners = results.find((result) => result.rows[0]?.owner_id);
+    assert.deepEqual(taskOwners.rows, [{ owner_id: ids.arjun }]);
+    assert.deepEqual(await snapshot(), before, 'No demo changes persist after rollback');
+  });
+
+  it('rolls back an ownership change when a later write in the transaction fails', async () => {
+    const before = await snapshot();
+    await db.exec('begin;');
+    try {
+      await db.query('update public.deals set owner_id = $1 where id = $2', [ids.arjun, ids.hannah]);
+      await expectSqlError('insert into public.open_items (deal_id, type, description) values ($1, $2, $3)',
+        [ids.missing, 'callback', 'This deal does not exist'], '23503');
+    } finally {
+      await db.exec('rollback;');
+    }
+    assert.deepEqual(await snapshot(), before);
+  });
+
+  it('rejects references to missing buyers, staff, and deals', async () => {
+    await expectSqlError('insert into public.deals (buyer_id, vehicle_interest, source) values ($1, $2, $3)',
+      [ids.missing, 'RAV4', 'web'], '23503');
+    await expectSqlError('update public.deals set owner_id = $1 where id = $2', [ids.missing, ids.jordan], '23503');
+    await expectSqlError("insert into public.timeline_events (deal_id, actor_type, channel, direction, body) values ($1, 'ai', 'email', 'outbound', 'Example')",
+      [ids.missing], '23503');
+  });
+
+  it('rejects unknown stages and lost deals without a meaningful reason', async () => {
+    await expectSqlError('update public.deals set stage = $1 where id = $2', ['unknown', ids.jordan], '23514');
+    for (const reason of [null, '', '   ']) {
+      await expectSqlError("update public.deals set stage = 'lost', lost_reason = $1 where id = $2",
+        [reason, ids.jordan], '23514');
+    }
+  });
+
+  it('requires staff attribution for human events and rejects it for AI events', async () => {
+    await expectSqlError("insert into public.timeline_events (deal_id, actor_type, channel, direction, body) values ($1, 'rep', 'note', 'internal', 'Example')",
+      [ids.jordan], '23514');
+    await expectSqlError("insert into public.timeline_events (deal_id, actor_type, actor_id, channel, direction, body) values ($1, 'ai', $2, 'email', 'outbound', 'Example')",
+      [ids.jordan, ids.dana], '23514');
+  });
+
+  it('requires confirmation metadata for confirmed, completed, and no-show appointments', async () => {
+    for (const status of ['confirmed', 'completed', 'no_show']) {
+      await expectSqlError('insert into public.appointments (deal_id, scheduled_for, status) values ($1, now(), $2)',
+        [ids.jordan, status], '23514');
+    }
+    await expectSqlError("insert into public.appointments (deal_id, scheduled_for, status, confirmed_by) values ($1, now(), 'confirmed', $2)",
+      [ids.jordan, ids.dana], '23514');
+    await db.query("insert into public.appointments (deal_id, scheduled_for, status, confirmed_by, confirmed_at) values ($1, now(), 'completed', $2, now())",
+      [ids.jordan, ids.dana]);
+  });
+
+  it('requires a resolution timestamp only for resolved tasks', async () => {
+    await expectSqlError("insert into public.open_items (deal_id, type, description, status) values ($1, 'callback', 'Call buyer', 'resolved')",
+      [ids.jordan], '23514');
+    await expectSqlError("insert into public.open_items (deal_id, type, description, resolved_at) values ($1, 'callback', 'Call buyer', now())",
+      [ids.jordan], '23514');
+    await db.query("insert into public.open_items (deal_id, type, description, status, resolved_at) values ($1, 'callback', 'Call buyer', 'resolved', now())",
+      [ids.jordan]);
+  });
+
+  it('detects outbound contact after opt-out, including on another deal for the same buyer', async () => {
+    const optedOutBuyer = (await db.query('select buyer_id from public.deals where id = $1', [ids.rob])).rows[0].buyer_id;
+    const otherDeal = (await db.query("insert into public.deals (buyer_id, vehicle_interest, source) values ($1, 'Another vehicle', 'email') returning id",
+      [optedOutBuyer])).rows[0].id;
+    await db.query("insert into public.timeline_events (deal_id, actor_type, channel, direction, body, created_at) values ($1, 'ai', 'email', 'outbound', 'Before opt-out', now() - interval '3 days')",
+      [otherDeal]);
+    assert.equal((await db.exec(demos))[5].rows.length, 0);
+    await db.query("insert into public.timeline_events (deal_id, actor_type, channel, direction, body) values ($1, 'ai', 'email', 'outbound', 'Forbidden after opt-out')",
+      [otherDeal]);
+    const violations = (await db.exec(demos))[5].rows;
+    assert.equal(violations.length, 1);
+    assert.equal(violations[0].buyer, 'Rob Lindqvist');
+    assert.equal(violations[0].body, 'Forbidden after opt-out');
+  });
+
+  it('denies both Supabase API roles access to every demo table', async () => {
+    for (const role of ['anon', 'authenticated']) {
+      await db.exec(`set role ${role};`);
+      try {
+        for (const table of tables) await expectSqlError(`select * from public.${table}`, [], '42501');
+      } finally {
+        await db.exec('reset role;');
+      }
+    }
+  });
+
+  it('keeps row-level security enabled and hides rows even if SELECT is later granted', async () => {
+    const enabled = (await db.query("select relname from pg_class join pg_namespace n on n.oid = relnamespace where n.nspname = 'public' and relrowsecurity order by relname")).rows;
+    assert.deepEqual(enabled.map((row) => row.relname), [...tables].sort());
+    await db.exec(`grant usage on schema public to anon, authenticated;
+      grant select on ${tables.map((table) => `public.${table}`).join(', ')} to anon, authenticated;`);
+    for (const role of ['anon', 'authenticated']) {
+      await db.exec(`set role ${role};`);
+      try {
+        for (const table of tables) assert.equal((await db.query(`select * from public.${table}`)).rows.length, 0);
+      } finally {
+        await db.exec('reset role;');
+      }
+    }
+  });
+});
