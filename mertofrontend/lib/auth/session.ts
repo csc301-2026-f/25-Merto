@@ -4,7 +4,7 @@ import type { Role } from "./types";
 
 const COOKIE = "session";
 
-export type Session = { token: string; role: Role };
+export type Session = { token: string; role: Role; name: string};
 
 export const homeFor = (role: Role) => (role === "manager" ? "/manager" : "/rep");
 
