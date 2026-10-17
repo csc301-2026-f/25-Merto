@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { REPS, type Deal } from "@/lib/deals";
 import { assignOrTransfer } from "../actions";
 import type { Evaluation } from "@/lib/evaluation";
 import { EvaluationSummary } from "@/components/EvaluationSummary";
 
-const DEFAULT_ASSIGN_REASON = "customer was not attended";
+const DEFAULT_ASSIGN_REASON = "Customer was not attended.";
+
+type SortKey = "newest" | "oldest";
+
+function sortDeals(deals: Deal[], key: SortKey): Deal[] {
+  // Copy first: .sort() mutates, and props must not be mutated.
+  return [...deals].sort((a, b) => {
+    const diff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    return key === "oldest" ? diff : -diff;
+  });
+}
 
 export function DealList({
   deals,
@@ -17,6 +27,9 @@ export function DealList({
   evaluations: Record<string, Evaluation | null>;
   openDealId?: string;
 }) {
+
+  const [sortKey, setSortKey] = useState<SortKey>("newest");
+  const sorted = useMemo(() => sortDeals(deals, sortKey), [deals, sortKey]);
   return (
     <section className="rounded border-2">
       <header className="flex items-center justify-between border-b-2 p-4">
@@ -25,11 +38,13 @@ export function DealList({
         </h1>
         <label className="flex items-center gap-2">
           Sort by
-          {/* Not wired up yet */}
-          <select defaultValue="" className="rounded border-2 px-2 py-1">
-            <option value="" disabled>Choose…</option>
-            <option value="age">Deal age</option>
-            <option value="stage">Deal stage</option>
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
+            className="rounded border-2 px-2 py-1 text-white"
+          >
+            <option value="newest" className="text-black">Deal age (newest first)</option>
+            <option value="oldest" className="text-black">Deal age (oldest first)</option>
           </select>
         </label>
       </header>
@@ -38,7 +53,7 @@ export function DealList({
         <p className="p-4 font-semibold">No deals right now.</p>
       ) : (
         <ul className="divide-y-2">
-          {deals.map((deal) => (
+          {sorted.map((deal) => (
             <DealRow
               key={deal.dealId}
               deal={deal}

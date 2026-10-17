@@ -139,7 +139,7 @@ async function ManagerHome() {
             {queue.map((item) => (
               <li key={item.id} className="py-3">
                 <Link
-                  href={`/manager/customer-details?deal=${item.dealId}`}
+                  href={`/manager/deal-details?deal=${item.dealId}`}
                   className="block hover:underline"
                 >
                   <span className="font-semibold">{item.flagType.replace(/_/g, " ")}</span>
