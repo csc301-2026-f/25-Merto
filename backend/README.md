@@ -17,6 +17,8 @@ Requires Node.js 20 or newer. From this folder:
 npm install
 npm run demo    # walks through the whole flow over HTTP and prints each step
 npm test        # rule unit tests + API tests
+# If many test files at once run out of memory (each loads its own sandbox):
+#   npx tsx --test --test-concurrency=1 test/*.test.ts
 npm run eval:rules   # scores the rules against the labelled datasets
 npm run dev     # API on http://localhost:3001
 ```
@@ -226,6 +228,30 @@ of 45) are not due yet. Rob and Parker are suppressed by their opt-outs.
 US7 will record follow-ups. Until it has its own table, a follow-up is an outbound
 timeline event, and these rules already read it: sending one clears the nudges.
 
+## Unresolved work (US4)
+
+`GET /api/open-items` lists open items (promises, missing documents, unanswered
+questions, callbacks) across buyers. Read-only; no schema change. The GM sees every
+deal in the store, unassigned ones included; a rep sees items on their own deals, so
+an item follows its deal when it is transferred (US8). Items on delivered or lost
+deals are left out. The same items appear per deal in `GET /api/deals/:dealId`.
+
+Optional query filters, all strictly validated (400 on a bad value):
+
+| Filter | Values | Default |
+| --- | --- | --- |
+| `status` | `open`, `resolved`, `cancelled`, `all` | `open` |
+| `type` | `promise`, `missing_doc`, `unanswered_question`, `callback` | any |
+| `ownerId` | a staff ID, or `none` for items nobody owns | anyone |
+
+The response has `summary` and `items`. `summary` always counts unresolved work in
+scope, whatever `status` lists: `open`, `overdue`, `unowned`, `oldestCreatedAt`
+(`null` when there is none), and the same counts `byType`. Each item has its `type`,
+`description`, `status`, `owner`, `dueAt`, `createdAt`, `resolvedAt`, `overdue` (open
+and past its due time), `ageHours` (open items only), and a `deal` with the buyer,
+vehicle, stage, and deal owner. Open items come first, longest-waiting first;
+resolved and cancelled ones follow, most recently closed first.
+
 ## Rules
 
 Defined in [`src/evaluation/rules.ts`](src/evaluation/rules.ts); the conditions
@@ -307,6 +333,7 @@ dev instead.
 | `src/follow-up/rules.ts` | US6 reason codes, kinds, and thresholds. |
 | `src/follow-up/repository.ts` | US6 SQL: open deals and their activity, loaded in bulk. |
 | `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
+| `src/open-items/` | US4 unresolved-work overview: `policy.ts` (filters), `repository.ts` (SQL), `service.ts` (permissions, summary), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
 
 ## Limits

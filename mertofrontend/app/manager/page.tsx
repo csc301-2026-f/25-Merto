@@ -3,8 +3,14 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth/session";
 import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
+import { OpenItemList } from "@/components/OpenItemList";
 import type { Deal } from "@/lib/deals";
 import type { Metrics, QueueItem } from "@/lib/evaluation";
+import { formatDateTime } from "@/lib/format";
+import type { OpenItemsOverview } from "@/lib/open-items";
+
+// The card lists the longest-waiting items; the summary counts them all.
+const OPEN_ITEMS_SHOWN = 10;
 
 type UnassignedDeal = {
   dealId: string;
@@ -62,11 +68,12 @@ function MetricsList({ metrics }: { metrics: Metrics }) {
 async function ManagerHome() {
   await requireRole("manager");
 
-  const [deals, unassigned, metrics, queue] = await Promise.all([
+  const [deals, unassigned, metrics, queue, openItems] = await Promise.all([
     loadJson<Deal[]>("/api/deals"), // every open deal; the assigned ones have an owner
     loadJson<UnassignedDeal[]>("/api/deals/unassigned"),
     loadJson<Metrics>("/api/ai-evaluation/metrics"),
     loadJson<QueueItem[]>("/api/ai-flags/queue"),
+    loadJson<OpenItemsOverview>("/api/open-items"), // unresolved work, longest-waiting first
   ]);
   const assigned = deals && deals.filter((deal) => deal.ownerId);
 
@@ -116,6 +123,31 @@ async function ManagerHome() {
           )}
         </Card>
       </div>
+
+      <Card title="Unresolved work" count={openItems?.summary.open}>
+        {openItems === null ? (
+          <p>Couldn&apos;t load unresolved work.</p>
+        ) : openItems.summary.open === 0 ? (
+          <p className="font-semibold">None right now</p>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm">
+              <span className="font-semibold">{openItems.summary.overdue}</span> overdue ·{" "}
+              <span className="font-semibold">{openItems.summary.unowned}</span> with no owner · oldest
+              opened {formatDateTime(openItems.summary.oldestCreatedAt)}
+            </p>
+            <OpenItemList
+              items={openItems.items.slice(0, OPEN_ITEMS_SHOWN)}
+              basePath="/manager/deal-details?deal="
+            />
+            {openItems.items.length > OPEN_ITEMS_SHOWN && (
+              <p className="text-sm opacity-70">
+                Showing the {OPEN_ITEMS_SHOWN} longest-waiting of {openItems.items.length}.
+              </p>
+            )}
+          </div>
+        )}
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card title="AI evaluation metrics" hideCount>
