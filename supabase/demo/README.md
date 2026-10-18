@@ -34,8 +34,10 @@ In your team's Supabase development project:
 
 1. Open **SQL Editor** and run the contents of
    `supabase/migrations/20261006000100_mvp_database.sql` once.
-2. Run `supabase/migrations/20261013000100_ai_evaluation.sql` once.
-3. Run `supabase/seed/seed.sql`, then `supabase/seed/seed_ai_evaluation.sql`.
+2. Run `supabase/migrations/20261013000100_ai_evaluation.sql` once, then
+   `supabase/migrations/20261017000100_deal_assignments.sql` once.
+3. Run `supabase/seed/seed.sql`, then `supabase/seed/seed_ai_evaluation.sql`, then
+   `supabase/seed/seed_deal_assignments.sql`.
 4. Run each query in `supabase/demo/queries.sql` separately and show its results.
 5. Optionally run the entire `supabase/demo/transfer.sql` file to show an atomic
    ownership transfer with preserved history. It rolls back after displaying the

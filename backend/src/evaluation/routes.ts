@@ -1,12 +1,11 @@
 import express from 'express';
-import { currentStaff, requireStaff, requireUuid } from '../auth.ts';
+import { currentStaff, requireUuid } from '../auth.ts';
 import type { Database } from '../db.ts';
 import * as evaluation from './service.ts';
 
-// REST endpoints for conversation evaluation. Every route needs X-Staff-Id.
+// REST endpoints for conversation evaluation. app.ts has already identified the caller.
 export function evaluationRoutes(db: Database) {
   const router = express.Router();
-  router.use(requireStaff(db));
 
   router.post('/evaluations/run', async (_req, res) => {
     res.json(await evaluation.evaluateAllDeals(db, currentStaff(res)));

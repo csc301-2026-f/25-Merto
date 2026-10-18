@@ -1,6 +1,6 @@
 # Merto database contract: initial prototype
 
-This documents the six core tables plus two evaluation tables implemented in PostgreSQL/Supabase.
+This documents the six core tables, two evaluation tables, and the assignment history table implemented in PostgreSQL/Supabase.
 The source of truth is the SQL files in `migrations/`, applied in filename order. This is an
 initial integration proposal, not a finalized backend API. The course demo is
 one fictional dealership; store membership and multiple stores are not modeled.
@@ -38,6 +38,9 @@ erDiagram
   ai_evaluations ||--o{ ai_flags : flags
   timeline_events ||--o{ ai_flags : evidence
   staff_users o|--o{ ai_flags : reviews
+  deals ||--o{ deal_assignments : "changes owner"
+  timeline_events ||--o| deal_assignments : records
+  staff_users ||--o{ deal_assignments : "from / to / by"
 ```
 
 One buyer can have several deals. A deal has zero or one current owner. Events,
@@ -185,8 +188,8 @@ atomically. The following are proposed action boundaries, not existing endpoints
 
 | Action | Records affected | Current boundary |
 | --- | --- | --- |
-| Create a buyer/deal | `buyers`, `deals`, initial `timeline_events` | Resolve existing buyer identity before inserting duplicates. |
-| Assign/transfer a deal | Deal owner, relevant open-item owners, transfer event | `backend/src/assignment/` implements GM-only actions and transactional writes using the development staff header. Previous/new owners and reason are still stored as free text. |
+| Create a buyer/deal | `buyers`, `deals`, initial `timeline_events` (and `deal_assignments` when a rep adds their own buyer) | `POST /api/deals` in `backend/src/deals/` matches an existing buyer by lowercase email or phone digits before inserting, and limits new `source` values to a fixed list. See the backend README. |
+| Assign/transfer a deal | Deal owner, open-item owners, assignment/transfer event, `deal_assignments` row | `backend/src/assignment/` implements GM-only actions and transactional writes using the development staff header. See below. |
 | Confirm an appointment | Appointment confirmation/status, timeline entry | Staff attribution and permission checks belong to the action layer. |
 | Resolve a task | Item status/resolution time, timeline entry | No automatic timeline/audit trigger yet. |
 | Record an opt-out | Buyer boolean, structured `opt_out` event | Send-time suppression still needs implementation. |
@@ -224,7 +227,48 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
 `seed/seed_ai_evaluation.sql` adds the evaluation scenarios from the brief: Maya
 (Deal J), Chris (Deal K), Ben (missed call, then a payment quote), Marcus (Deal C:
 the AI hands a price question to a rep through an open item), and earlier AI
-contact with Rob (Deal I). With it, query 01 lists 8 deals instead of 4.
+contact with Rob (Deal I).
+
+`seed/seed_scenarios.sql` adds 2 to 3 variants of every brief scenario (A to M),
+two deals that are dormant now, and two reps: Sofia Reyes and Tom Brennan. Its
+messages are labelled in `backend/test/fixtures/scenario-labels.json`. It was drafted
+with OpenAI Codex (`prompts/codex-seed-prompt.md`) and checked by the team. With every
+seed loaded, query 01 lists 37 deals instead of 4.
+
+The data exposed some gaps in the schema:
+- BDC, F&I, and delivery staff cannot be `staff_users` (role is `gm` or `rep`), so
+  their actions are `system` notes that name the person.
+- There is no "not a buyer" marker, so vendor spam (Deal M) is a buyer whose deal is
+  `lost` with reason `not a buyer`.
+- There is no follow-up table, so follow-ups are ordinary outbound events.
+- `deals.source` values vary (`website`, `web chat`, `missed_call`, ...); an agreed
+  list would make filtering reliable.
+
+## Assignment history (proposed by the backend team, US8)
+
+`migrations/20261017000100_deal_assignments.sql` stores each assignment or transfer
+as columns, so "who moved this buyer, when, from whom, to whom, and why" is a query
+rather than text parsing. The timeline event stays the readable entry. It needs review
+by the database team and has not been applied to hosted Supabase yet.
+
+| Field | Type / nullable | Meaning and rules |
+| --- | --- | --- |
+| `id` | UUID / no | Record ID. |
+| `deal_id` | UUID / no | References `deals.id`. |
+| `kind` | text / no | `assignment` (deal had no owner) or `transfer`. |
+| `from_owner_id` | UUID / yes | Previous owner; null exactly when `kind` is `assignment`. |
+| `to_owner_id` | UUID / no | New owner; must differ from `from_owner_id`. |
+| `assigned_by` | UUID / no | The GM who made the change. |
+| `reason` | text / no | Nonblank reason the GM gave. |
+| `open_items_moved` | integer / no | Open items whose owner moved with the deal; default 0, never negative. |
+| `timeline_event_id` | UUID / no | Unique. With `deal_id`, references `timeline_events(id, deal_id)`, so the entry is on the same deal. |
+| `created_at` | timestamptz / no | When the change happened; the backend sets it to the timeline entry's time. |
+
+All referenced staff must exist; the database does not check that `to_owner_id` is a
+rep or `assigned_by` a GM (the backend does). RLS is enabled and `anon`/`authenticated`
+have no grants. `seed/seed_deal_assignments.sql` adds the record for the base seed's
+transfer of Hannah from Arjun to Dana. Older seeded assignment events (Jordan's, and
+those in `seed_scenarios.sql`) have no record; the backend returns them as text only.
 
 ## Scope and validation
 

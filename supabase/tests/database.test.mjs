@@ -16,14 +16,17 @@ const allSeeds = await Promise.all(seedNames.map((name) => readSql(`seed/${name}
 const demos = await readSql('demo/queries.sql');
 const transfer = await readSql('demo/transfer.sql');
 const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
-  'ai_evaluations', 'ai_flags'];
+  'ai_evaluations', 'ai_flags', 'deal_assignments'];
 const ids = {
+  karen: '10000000-0000-0000-0000-000000000001',
   dana: '10000000-0000-0000-0000-000000000002',
   arjun: '10000000-0000-0000-0000-000000000003',
   jordanBuyer: '20000000-0000-0000-0000-000000000001',
   jordan: '30000000-0000-0000-0000-000000000001',
   hannah: '30000000-0000-0000-0000-000000000002',
   rob: '30000000-0000-0000-0000-000000000004',
+  jordanAssigned: '40000000-0000-0000-0000-000000000003',
+  hannahTransferred: '40000000-0000-0000-0000-000000000007',
   missing: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
 };
 
@@ -58,7 +61,7 @@ describe('Merto database contract', () => {
 
   it('loads the real migration and reseeds without duplicating or changing sample records', async () => {
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4, 0, 0, 0]);
     await db.exec(seed);
     assert.deepEqual(await snapshot(), before);
   });
@@ -177,10 +180,56 @@ describe('Merto database contract', () => {
   it('loads every scenario seed twice without changing records or timestamps', async () => {
     for (const sql of allSeeds) await db.exec(sql);
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 219, 20, 16, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 219, 20, 16, 0, 0, 1]);
     for (const sql of allSeeds) await db.exec(sql);
     assert.deepEqual(await snapshot(), before);
     assert.equal((await db.exec(demos))[0].rows.length, 37);
+  });
+
+  // An insert for Hannah's seeded transfer event; overrides change one column at a time.
+  function assignmentRecord(overrides = {}) {
+    const row = {
+      deal_id: ids.hannah, kind: 'transfer', from_owner_id: ids.arjun, to_owner_id: ids.dana,
+      assigned_by: ids.karen, reason: 'Arjun is away', timeline_event_id: ids.hannahTransferred,
+      ...overrides,
+    };
+    // Column names come only from the fixed keys above.
+    const columns = Object.keys(row);
+    return [`insert into public.deal_assignments (${columns.join(', ')})
+      values (${columns.map((_, index) => `$${index + 1}`).join(', ')})`, Object.values(row)];
+  }
+
+  it('stores who transferred a deal, from whom, to whom, and why', async () => {
+    await db.query(...assignmentRecord());
+    const rows = (await db.query(`select deal_id, kind, from_owner_id, to_owner_id, assigned_by,
+      reason, open_items_moved from public.deal_assignments`)).rows;
+    assert.deepEqual(rows, [{
+      deal_id: ids.hannah, kind: 'transfer', from_owner_id: ids.arjun, to_owner_id: ids.dana,
+      assigned_by: ids.karen, reason: 'Arjun is away', open_items_moved: 0,
+    }]);
+  });
+
+  it('requires a previous owner exactly for transfers, a different new owner, and a reason', async () => {
+    await expectSqlError(...assignmentRecord({ from_owner_id: null }), '23514');
+    await expectSqlError(...assignmentRecord({ kind: 'assignment' }), '23514');
+    await expectSqlError(...assignmentRecord({ to_owner_id: ids.arjun }), '23514');
+    await expectSqlError(...assignmentRecord({ kind: 'unknown' }), '23514');
+    await expectSqlError(...assignmentRecord({ open_items_moved: -1 }), '23514');
+    for (const reason of ['', '   ']) await expectSqlError(...assignmentRecord({ reason }), '23514');
+    await expectSqlError(...assignmentRecord({ reason: null }), '23502');
+    assert.equal((await db.query('select * from public.deal_assignments')).rows.length, 0);
+    await db.query(...assignmentRecord({
+      deal_id: ids.jordan, kind: 'assignment', from_owner_id: null, timeline_event_id: ids.jordanAssigned,
+    }));
+  });
+
+  it('links each record to exactly one timeline event on the same deal', async () => {
+    // Hannah's transfer event exists, but it is not on Jordan's deal.
+    await expectSqlError(...assignmentRecord({ deal_id: ids.jordan }), '23503');
+    await expectSqlError(...assignmentRecord({ timeline_event_id: ids.missing }), '23503');
+    await expectSqlError(...assignmentRecord({ assigned_by: ids.missing }), '23503');
+    await db.query(...assignmentRecord());
+    await expectSqlError(...assignmentRecord(), '23505');
   });
 
   async function addFlag() {

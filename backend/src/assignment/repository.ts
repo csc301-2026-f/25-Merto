@@ -1,5 +1,6 @@
-// All SQL for assignment and transfer. Uses only the core tables from the
-// database team's contract; no schema changes. Every value is a bound parameter.
+// All SQL for assignment and transfer. Reads the core tables from the database
+// team's contract and writes deals, open_items, timeline_events, and
+// deal_assignments (the structured who/when/from/to/why). Every value is a bound parameter.
 import type { Queryable } from '../db.ts';
 
 export interface LockedDeal {
@@ -16,6 +17,13 @@ export interface StaffMember {
   role: 'gm' | 'rep';
 }
 
+export interface Rep {
+  id: string;
+  name: string;
+  email: string;
+  activeDeals: number;
+}
+
 export interface UnassignedDeal {
   dealId: string;
   buyer: string;
@@ -25,34 +33,42 @@ export interface UnassignedDeal {
   createdAt: Date;
 }
 
-export interface AssignmentEvent {
+export type AssignmentKind = 'assignment' | 'transfer';
+
+export interface Person {
   id: string;
-  eventType: 'assignment' | 'transfer';
-  actorId: string;
-  actor?: string;
-  body: string;
-  createdAt: Date;
+  name: string;
 }
 
-// Row lock: two GMs acting on the same deal at once are serialised.
-export async function lockDeal(db: Queryable, dealId: string): Promise<LockedDeal | undefined> {
-  const [deal] = await db.query<LockedDeal>(`
-    select d.id, b.name as buyer, d.owner_id as "ownerId", o.name as owner, d.stage
+// One change of owner. `structured` is false for timeline entries written before
+// deal_assignments existed: their from/to/reason are only in `body`.
+export interface AssignmentRecord {
+  eventId: string;
+  kind: AssignmentKind;
+  at: Date;
+  by: Person | null;
+  from: Person | null;
+  to: Person | null;
+  reason: string | null;
+  openItemsMoved: number | null;
+  body: string;
+  structured: boolean;
+}
+
+const dealColumns = `d.id, b.name as buyer, d.owner_id as "ownerId", o.name as owner, d.stage
     from public.deals d
     join public.buyers b on b.id = d.buyer_id
     left join public.staff_users o on o.id = d.owner_id
-    where d.id = $1
-    for update of d`, [dealId]);
+    where d.id = $1`;
+
+// Row lock: two GMs acting on the same deal at once are serialised.
+export async function lockDeal(db: Queryable, dealId: string): Promise<LockedDeal | undefined> {
+  const [deal] = await db.query<LockedDeal>(`select ${dealColumns} for update of d`, [dealId]);
   return deal;
 }
 
 export async function findDeal(db: Queryable, dealId: string): Promise<LockedDeal | undefined> {
-  const [deal] = await db.query<LockedDeal>(`
-    select d.id, b.name as buyer, d.owner_id as "ownerId", o.name as owner, d.stage
-    from public.deals d
-    join public.buyers b on b.id = d.buyer_id
-    left join public.staff_users o on o.id = d.owner_id
-    where d.id = $1`, [dealId]);
+  const [deal] = await db.query<LockedDeal>(`select ${dealColumns}`, [dealId]);
   return deal;
 }
 
@@ -60,6 +76,18 @@ export async function findStaff(db: Queryable, staffId: string): Promise<StaffMe
   const [staff] = await db.query<StaffMember>(
     'select id, name, role from public.staff_users where id = $1', [staffId]);
   return staff;
+}
+
+// Reps a deal can go to, with their current open workload so the GM can balance it.
+export function reps(db: Queryable): Promise<Rep[]> {
+  return db.query<Rep>(`
+    select s.id, s.name, s.email,
+      count(d.id) filter (where d.stage not in ('delivered', 'lost'))::int as "activeDeals"
+    from public.staff_users s
+    left join public.deals d on d.owner_id = s.id
+    where s.role = 'rep'
+    group by s.id
+    order by s.name, s.id`);
 }
 
 export async function setOwner(db: Queryable, dealId: string, ownerId: string, promoteNew: boolean) {
@@ -78,24 +106,87 @@ export async function moveOpenItems(db: Queryable, dealId: string, ownerId: stri
   return moved.length;
 }
 
-export async function addAssignmentEvent(db: Queryable, dealId: string, gmId: string,
-  eventType: 'assignment' | 'transfer', body: string): Promise<AssignmentEvent> {
-  const [event] = await db.query<AssignmentEvent>(`
+// Written by the GM, or by a rep who added a buyer and took it on themselves.
+export async function addAssignmentEvent(db: Queryable, dealId: string, actor: StaffMember,
+  kind: AssignmentKind, body: string): Promise<{ id: string; createdAt: Date }> {
+  const [event] = await db.query<{ id: string; createdAt: Date }>(`
     insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
-    values ($1, $3, 'gm', $2, 'note', 'internal', $4)
-    returning id, event_type as "eventType", actor_id as "actorId", body, created_at as "createdAt"`,
-  [dealId, gmId, eventType, body]);
+    values ($1, $4, $3, $2, 'note', 'internal', $5)
+    returning id, created_at as "createdAt"`,
+  [dealId, actor.id, actor.role, kind, body]);
   return event;
 }
 
-export function assignmentHistory(db: Queryable, dealId: string): Promise<AssignmentEvent[]> {
-  return db.query<AssignmentEvent>(`
-    select e.id, e.event_type as "eventType", e.actor_id as "actorId", s.name as actor,
-      e.body, e.created_at as "createdAt"
+export interface NewAssignment {
+  dealId: string;
+  kind: AssignmentKind;
+  fromOwnerId: string | null;
+  toOwnerId: string;
+  assignedBy: string;
+  reason: string;
+  openItemsMoved: number;
+  eventId: string;
+  at: Date;
+}
+
+// Uses the timeline event's time, so the record and the entry always agree.
+export async function addAssignmentRecord(db: Queryable, record: NewAssignment) {
+  await db.query(`
+    insert into public.deal_assignments (deal_id, kind, from_owner_id, to_owner_id,
+      assigned_by, reason, open_items_moved, timeline_event_id, created_at)
+    values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+  [record.dealId, record.kind, record.fromOwnerId, record.toOwnerId, record.assignedBy,
+    record.reason, record.openItemsMoved, record.eventId, record.at]);
+}
+
+interface HistoryRow {
+  eventId: string;
+  kind: AssignmentKind;
+  at: Date;
+  byId: string | null;
+  byName: string | null;
+  fromId: string | null;
+  fromName: string | null;
+  toId: string | null;
+  toName: string | null;
+  reason: string | null;
+  openItemsMoved: number | null;
+  body: string;
+  structured: boolean;
+}
+
+const person = (id: string | null, name: string | null): Person | null =>
+  id === null ? null : { id, name: name ?? '' };
+
+// Every assignment/transfer entry on the deal's timeline, oldest first, with its
+// structured record when there is one.
+export async function assignmentHistory(db: Queryable, dealId: string): Promise<AssignmentRecord[]> {
+  const rows = await db.query<HistoryRow>(`
+    select e.id as "eventId", e.event_type as kind, e.created_at as at,
+      e.actor_id as "byId", actor.name as "byName",
+      a.from_owner_id as "fromId", f.name as "fromName",
+      a.to_owner_id as "toId", t.name as "toName",
+      a.reason, a.open_items_moved as "openItemsMoved", e.body,
+      a.id is not null as structured
     from public.timeline_events e
-    left join public.staff_users s on s.id = e.actor_id
+    left join public.deal_assignments a on a.timeline_event_id = e.id
+    left join public.staff_users actor on actor.id = e.actor_id
+    left join public.staff_users f on f.id = a.from_owner_id
+    left join public.staff_users t on t.id = a.to_owner_id
     where e.deal_id = $1 and e.event_type in ('assignment', 'transfer')
     order by e.created_at, e.id`, [dealId]);
+  return rows.map((row) => ({
+    eventId: row.eventId,
+    kind: row.kind,
+    at: row.at,
+    by: person(row.byId, row.byName),
+    from: person(row.fromId, row.fromName),
+    to: person(row.toId, row.toName),
+    reason: row.reason,
+    openItemsMoved: row.openItemsMoved,
+    body: row.body,
+    structured: row.structured,
+  }));
 }
 
 // Oldest first: the GM exceptions panel leads with the longest-waiting buyer.

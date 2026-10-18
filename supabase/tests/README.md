@@ -23,7 +23,10 @@ The evaluation-storage checks cover successful evaluation/flag insertion, unique
 evaluations/flags, different flag types on one message, evidence belonging to the
 same deal, pending flags with invalid review metadata, reviewed flags missing a
 reviewer or timestamp, allowed values, failed-write rollback, and repeatable
-loading of every scenario seed. There are currently 24 tests. Rejected writes are
+loading of every scenario seed. The assignment-history checks cover storing a
+structured transfer, a previous owner exactly for transfers, a different new owner,
+a nonblank reason, a non-negative moved-item count, a timeline entry on the same
+deal, and one record per timeline entry. There are currently 27 tests. Rejected writes are
 checked for PostgreSQL error codes: `23505` (unique), `23503` (foreign key), and
 `23514` (check constraint).
 

@@ -24,6 +24,16 @@ applied manually and do not populate the Supabase CLI migration ledger. Before
 using CLI deployment, reconcile migration history against the actual schema or
 use a fresh development project. Do not use `db reset` against the shared project.
 
+### Not yet applied: assignment history (October 17)
+
+`20261017000100_deal_assignments.sql` (structured from/to/by/why for US8) is in Git
+but has **not** been applied to the hosted project. Until it is, the backend's
+assign, transfer, assignment-history, and buyer-record endpoints fail against
+hosted Supabase. After the database team reviews it, run that migration once in SQL
+Editor, then `seed/seed_deal_assignments.sql` (it only adds a record for Hannah's
+seeded transfer and is safe to rerun). Do not run `seed_scenarios.sql` against the
+shared project unless the team wants those demo buyers there.
+
 For a fresh database, apply all migrations in filename order, followed by all
 seed files in filename order. Local `supabase db reset` does this automatically.
 

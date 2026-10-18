@@ -18,6 +18,8 @@ export const DEALS = {
 
 export const EVENTS = {
   jordanAiReply: '40000000-0000-0000-0000-000000000002',
+  jordanAssigned: '40000000-0000-0000-0000-000000000003', // text only, no deal_assignments row
+  hannahTransferred: '40000000-0000-0000-0000-000000000007', // Arjun to Dana, structured
   mayaAllSet: '40000000-0000-0000-0000-000000000012',
   chrisDefinitelyHere: '40000000-0000-0000-0000-000000000015',
   benDoubleExclamation: '40000000-0000-0000-0000-000000000019',
