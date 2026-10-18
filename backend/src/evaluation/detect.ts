@@ -49,13 +49,17 @@ export function detectIssues(conversation: Conversation, rules: RuleSet = DEFAUL
       evidenceEventId: event.id, flagType, severity: rule.severity, explanation: rule.explanation,
     });
   };
-  const says = (flagType: FlagType, event: TimelineEvent) =>
-    rules[flagType]?.pattern?.test(event.body) ?? false;
+  const says = (flagType: FlagType, event: TimelineEvent) => {
+    const rule = rules[flagType];
+    if (!rule?.pattern?.test(event.body)) return false;
+    if (rule.requires && !rule.requires.test(event.body)) return false;
+    return !rule.unless?.test(event.body);
+  };
 
   // Buyer requests the AI must hand to a person rather than answer itself.
   const handoffs: [FlagType, (event: TimelineEvent) => boolean][] = [
     ['missed_escalation', (event) => says('missed_escalation', event)],
-    ['missed_price_handoff', (event) => event.body.includes('?') && says('missed_price_handoff', event)],
+    ['missed_price_handoff', (event) => says('missed_price_handoff', event)],
   ];
 
   conversation.events.forEach((event, index) => {

@@ -56,6 +56,27 @@ describe('detectIssues', () => {
     ].sort());
   });
 
+  it('catches common rephrasings, not only the obvious words', () => {
+    const booked = ai('Great, your viewing tomorrow is all arranged.', 1);
+    const onLot = ai('We have that exact Civic here on the lot.', 2);
+    const inWords = ai('It would come to about three hundred a week.', 3);
+    const robotic = ai('Request logged. Reference number 5512.', 4);
+    assert.deepEqual(found(conversation([booked, onLot, inWords, robotic])), [
+      `appointment_certainty@${booked.id}`, `tone@${robotic.id}`,
+      `unsupported_availability@${onLot.id}`, `unsupported_price@${inWords.id}`,
+    ].sort());
+  });
+
+  it('ignores look-alikes the rules exclude', () => {
+    assert.deepEqual(found(conversation([
+      buyer('How much longer will the test drive take?', 1),
+      ai("Let me check whether it's still available.", 2),
+      buyer('Please do not call me, email is better.', 3),
+      ai('Noted, we will keep to email.', 4),
+      ai('The odometer shows forty thousand km.', 5),
+    ])), []);
+  });
+
   it('lets one message raise several flag types', () => {
     const reply = ai("You're booked! It's still available at $199/mo. Hurry!", 1);
     assert.deepEqual(found(conversation([reply])), [

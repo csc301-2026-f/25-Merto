@@ -8,7 +8,11 @@ import { sandboxDatabase } from '../src/sandbox-db.ts';
 import { DEALS, EVENTS, STAFF } from '../src/seed-ids.ts';
 
 // Each test gets a fresh in-memory database built from supabase/migrations and
-// supabase/seed, and talks to the API over real HTTP.
+// supabase/seed, and talks to the API over real HTTP. Other seed files add more
+// deals, so assertions name these known deals instead of relying on totals.
+const KNOWN_DEALS = new Set<string>(Object.values(DEALS));
+const isKnown = (row: { dealId: string }) => KNOWN_DEALS.has(row.dealId);
+
 describe('evaluation API', () => {
   let db: Database;
   let server: Server;
@@ -58,20 +62,25 @@ describe('evaluation API', () => {
     // Hannah and Nina have no AI activity, so the nightly job skips them. Ben's payment
     // reply raises 3 flags: it quotes a number, ignores his request for a person, and
     // hands the price question to nobody; his first text raises a tone flag.
-    assert.deepEqual(body.map((row: { buyer: string; result: string; newFlags: number }) =>
+    assert.deepEqual(body.filter(isKnown).map((row: { buyer: string; result: string; newFlags: number }) =>
       [row.buyer, row.result, row.newFlags]).sort(), [
       ['Ben Okafor', 'flagged', 5], ['Chris Patel', 'flagged', 1], ['Jordan Lee', 'passed', 0],
       ['Marcus Johnson', 'passed', 0], ['Maya Desai', 'flagged', 1], ['Rob Lindqvist', 'passed', 0],
     ]);
     const queue = (await call(STAFF.karen, 'GET', '/api/ai-flags/queue')).body;
-    assert.deepEqual(queue.map((flag: { severity: string }) => flag.severity), ['high', 'high', 'high', 'medium', 'medium', 'low', 'low']);
+    const rank = { high: 1, medium: 2, low: 3 } as Record<string, number>;
+    const ranks = queue.map((flag: { severity: string }) => rank[flag.severity]);
+    assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b), 'Worst flags come first');
+    assert.deepEqual(queue.filter(isKnown).map((flag: { severity: string }) => flag.severity),
+      ['high', 'high', 'high', 'medium', 'medium', 'low', 'low']);
     const maya = queue.find((flag: { buyer: string }) => flag.buyer === 'Maya Desai');
     assert.equal(maya.evidenceEventId, EVENTS.mayaAllSet);
     assert.match(maya.evidenceBody, /You're all set/);
 
     const logged = await db.query<{ deal_id: string }>(
       "select deal_id from public.timeline_events where event_type = 'ai_evaluation' and actor_type = 'system' order by deal_id");
-    assert.deepEqual(logged.map((row) => row.deal_id), [DEALS.maya, DEALS.chris, DEALS.ben]);
+    assert.deepEqual(logged.map((row) => row.deal_id).filter((id) => KNOWN_DEALS.has(id)),
+      [DEALS.maya, DEALS.chris, DEALS.ben]);
   });
 
   it('can be rerun without duplicating flags or timeline entries', async () => {
@@ -93,7 +102,10 @@ describe('evaluation API', () => {
   it("shows a rep only their own deals' flags and records", async () => {
     await runEvaluation();
     const danaQueue = (await call(STAFF.dana, 'GET', '/api/ai-flags/queue')).body;
-    assert.deepEqual(danaQueue.map((flag: { buyer: string }) => flag.buyer), ['Maya Desai']);
+    const fullQueue = (await call(STAFF.karen, 'GET', '/api/ai-flags/queue')).body;
+    assert.deepEqual(danaQueue.map((flag: { id: string }) => flag.id),
+      fullQueue.filter((flag: { ownerId: string }) => flag.ownerId === STAFF.dana).map((flag: { id: string }) => flag.id));
+    assert.deepEqual(danaQueue.filter(isKnown).map((flag: { buyer: string }) => flag.buyer), ['Maya Desai']);
     assert.equal((await call(STAFF.arjun, 'GET', `/api/deals/${DEALS.maya}/evaluation`)).status, 403);
     assert.equal((await call(STAFF.arjun, 'GET', `/api/deals/${DEALS.maya}/evaluation/preview`)).status, 403);
     const record = await call(STAFF.dana, 'GET', `/api/deals/${DEALS.maya}/evaluation`);
@@ -176,12 +188,20 @@ describe('evaluation API', () => {
       flags: { pending: 0, confirmedIssue: 0, falsePositive: 0, resolved: 0 }, reviewedPrecision: null,
     });
     await runEvaluation();
+    const [{ withAi }] = await db.query<{ withAi: number }>(
+      `select count(distinct deal_id)::int as "withAi" from public.timeline_events where actor_type = 'ai'`);
+    const before = await metrics();
+    assert.equal(before.evaluatedConversations, withAi);
+    assert.equal(before.flagRate, Math.round((before.flaggedConversations / withAi) * 100) / 100);
+    assert.equal(before.reviewedPrecision, null, 'Nothing has been reviewed yet');
+
     await review(STAFF.karen, await flagId(EVENTS.mayaAllSet, 'appointment_certainty'), 'confirmed_issue');
     await review(STAFF.karen, await flagId(EVENTS.benDoubleExclamation, 'tone'), 'false_positive');
-    assert.deepEqual(await metrics(), {
-      evaluatedConversations: 6, flaggedConversations: 3, flagRate: 0.5,
-      flags: { pending: 5, confirmedIssue: 1, falsePositive: 1, resolved: 0 }, reviewedPrecision: 0.5,
+    const after = await metrics();
+    assert.deepEqual(after.flags, {
+      pending: before.flags.pending - 2, confirmedIssue: 1, falsePositive: 1, resolved: 0,
     });
+    assert.equal(after.reviewedPrecision, 0.5);
   });
 
   it('flags a message sent after the buyer opted out, on any of their deals', async () => {

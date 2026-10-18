@@ -70,7 +70,11 @@ describe('assignment API (US8)', () => {
   it('lists unassigned buyers for the GM only, oldest first', async () => {
     const list = await call(STAFF.karen, 'GET', '/api/deals/unassigned');
     assert.equal(list.status, 200);
-    assert.deepEqual(list.body.map((deal: { buyer: string }) => deal.buyer), ['Nina Shah', 'Ben Okafor']);
+    // Other seed files add unassigned buyers too, so compare with the database.
+    const open = await db.query<{ id: string }>(`select id from public.deals
+      where owner_id is null and stage not in ('delivered', 'lost') order by created_at, id`);
+    assert.deepEqual(list.body.map((deal: { dealId: string }) => deal.dealId), open.map((row) => row.id));
+    assert.ok([DEALS.nina, DEALS.ben].every((id) => list.body.some((deal: { dealId: string }) => deal.dealId === id)));
     assert.equal((await call(STAFF.dana, 'GET', '/api/deals/unassigned')).status, 403);
     assert.equal((await call(null, 'GET', '/api/deals/unassigned')).status, 401);
   });
@@ -96,8 +100,10 @@ describe('assignment API (US8)', () => {
     assert.equal(event.body, 'Assigned Nina Shah to Dana Kowalski: Buyer asked for Dana');
 
     // Now owned, so the buyer leaves the unassigned list and Dana can read the history.
-    const unassigned = (await call(STAFF.karen, 'GET', '/api/deals/unassigned')).body;
-    assert.deepEqual(unassigned.map((deal: { buyer: string }) => deal.buyer), ['Ben Okafor']);
+    const unassigned = (await call(STAFF.karen, 'GET', '/api/deals/unassigned')).body
+      .map((deal: { dealId: string }) => deal.dealId);
+    assert.ok(!unassigned.includes(DEALS.nina));
+    assert.ok(unassigned.includes(DEALS.ben));
     assert.equal((await call(STAFF.dana, 'GET', `/api/deals/${DEALS.nina}/assignments`)).status, 200);
   });
 

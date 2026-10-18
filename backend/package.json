@@ -8,7 +8,8 @@
     "demo": "tsx scripts/demo.ts",
     "check:hosted": "tsx scripts/check-hosted.ts",
     "test": "tsx --test test/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "eval:rules": "tsx scripts/eval-rules.ts"
   },
   "engines": {
     "node": ">=20"

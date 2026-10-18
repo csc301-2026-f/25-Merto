@@ -177,10 +177,10 @@ describe('Merto database contract', () => {
   it('loads every scenario seed twice without changing records or timestamps', async () => {
     for (const sql of allSeeds) await db.exec(sql);
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [3, 8, 8, 28, 3, 5, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 219, 20, 16, 0, 0]);
     for (const sql of allSeeds) await db.exec(sql);
     assert.deepEqual(await snapshot(), before);
-    assert.equal((await db.exec(demos))[0].rows.length, 8);
+    assert.equal((await db.exec(demos))[0].rows.length, 37);
   });
 
   async function addFlag() {
