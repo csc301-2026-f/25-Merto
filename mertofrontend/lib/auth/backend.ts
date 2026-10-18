@@ -1,10 +1,10 @@
 import type { AuthResult } from "./types";
 import type { Role } from "./types";
 
-const DEV_USERS: Record<string, { id: string; role: Role }> = {
-  karen: { id: "10000000-0000-0000-0000-000000000001", role: "manager" }, // GM
-  dana:  { id: "10000000-0000-0000-0000-000000000002", role: "rep" },
-  arjun: { id: "10000000-0000-0000-0000-000000000003", role: "rep" },
+const DEV_USERS: Record<string, { id: string; role: Role; name: string }> = {
+  karen: { id: "10000000-0000-0000-0000-000000000001", role: "manager", name: "Karen" }, // GM
+  dana:  { id: "10000000-0000-0000-0000-000000000002", role: "rep", name: "Dana" },
+  arjun: { id: "10000000-0000-0000-0000-000000000003", role: "rep", name: "Arjun" },
 };
 
 export async function authenticate(username: string,  password: string): Promise<AuthResult> {
@@ -15,7 +15,7 @@ export async function authenticate(username: string,  password: string): Promise
 
   const user = DEV_USERS[username.toLowerCase()];
   if (!user || password !== "test") return { status: "invalid" };
-  return { status: "ok", token: user.id, role: user.role }; // token = staff id for now
+  return { status: "ok", token: user.id, role: user.role, name: user.name }; // token = staff id for now
 
 /*
   try {

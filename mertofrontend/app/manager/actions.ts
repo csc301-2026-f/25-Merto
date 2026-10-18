@@ -35,7 +35,7 @@ export async function assignOrTransfer(
     return { ok: false, error: "Could not reach the server." };
   }
   const result = await toResult(res, "Could not save the change.");
-  if (result.ok) revalidatePath("/manager");
+  if (result.ok) revalidatePath("/manager", "layout");
   return result;
 }
 
@@ -55,6 +55,6 @@ export async function reviewFlag(
     return { ok: false, error: "Could not reach the server." };
   }
   const result = await toResult(res, "Could not save the review.");
-  if (result.ok) revalidatePath("/manager");
+  if (result.ok) revalidatePath("/manager", "layout");
   return result;
 }

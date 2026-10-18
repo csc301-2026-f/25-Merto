@@ -16,3 +16,14 @@ export async function backendFetch(path: string, init: RequestInit = {}) {
 export async function errorMessage(res: Response): Promise<string | undefined> {
   try { return (await res.json()).error; } catch { return undefined; }
 }
+
+// Returns the parsed JSON, or null if anything went wrong.
+export async function loadJson<T>(path: string): Promise<T | null> {
+  try {
+    const res = await backendFetch(path);
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}

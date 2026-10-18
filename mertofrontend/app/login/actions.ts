@@ -23,7 +23,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "Something went wrong. Please try again.", username };
   }
 
-  await createSession({ token: result.token, role: result.role });
+  await createSession({ token: result.token, role: result.role, name: result.name });
   redirect(homeFor(result.role)); // keep outside any try/catch
 }
 
