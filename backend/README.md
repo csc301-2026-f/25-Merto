@@ -1,7 +1,7 @@
-# Merto backend: evaluation and assignment
+# Merto backend: evaluation, assignment, and follow-ups
 
 A TypeScript/Express REST API for US5 (evaluate AI conversations), US8 (assign or
-transfer a buyer, see below), and the deterministic checks required by section 10 of the Merto brief, including its
+transfer a buyer, see below), US6 (which buyers need a follow-up, and why), and the deterministic checks required by section 10 of the Merto brief, including its
 example that an open item is created when the buyer asks for a price. It reads the
 database team's tables (see [`supabase/DATA_CONTRACT.md`](../supabase/DATA_CONTRACT.md))
 and stores results in `ai_evaluations`, `ai_flags`, and `deal_assignments`. No paid AI key is used:
@@ -171,6 +171,61 @@ to be contacted: the deal is still created (they may have walked in), but nobody
 should email, text, or schedule follow-ups until they agree again. There is no
 re-consent action yet.
 
+## Follow-ups (US6)
+
+Which buyers need a follow-up now, and why. Read-only: nothing is sent or stored.
+Every reason says what happened and since when ("Quote sent 4 days ago; no reply
+from the buyer and no follow-up since"), so a rep can see why a buyer is listed.
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/follow-ups/due` | GM: all, unassigned included; rep: own | Buyers due now, most overdue first: `dealId`, `buyer` (`id`, `name`), `vehicleInterest`, `stage`, `owner` (`{ id, name }` or null), `dueAt`, `reasons`. |
+| `GET /api/deals/:dealId/follow-up` | GM, owning rep | One buyer: the same fields plus `status` (`due`, `not_due`, `suppressed`) and `suppressions`. |
+
+Each reason is `{ code, kind, text, since, dueAt }` plus, where there is one, the
+`evidenceEventId`, `openItemId`, or `appointmentId` it came from. `since` is when the
+clock started; `dueAt` is when the follow-up became due. A deal's `dueAt` is its
+earliest reason's. Each suppression is `{ code, text }`.
+
+### Follow-up rules
+
+Thresholds are in [`src/follow-up/rules.ts`](src/follow-up/rules.ts); the logic is a
+pure function in [`src/follow-up/detect.ts`](src/follow-up/detect.ts) that takes one
+deal's timeline, appointments, open items, stage, and opt-out state, plus `now`. The
+thresholds follow the scenario seed: reps follow up 3 days after a quote and the day
+after a visit or a no-show, and a dormant buyer gets a check-in on day 45 (F.1, F.2).
+
+| Code | Kind | Due when | Cleared by |
+| --- | --- | --- | --- |
+| `unanswered_message` | owed | A buyer message has had no reply from a person for 4 hours. AI replies do not count (the text says "only the AI answered"): the AI cannot commit to a price, a visit, or a vehicle. | A rep/GM message, call, or note on the deal (visits and calls are often logged as notes), or the buyer coming in person. Assignment and transfer entries do not count. |
+| `overdue_commitment` | owed | An open `promise`, `callback`, or `unanswered_question` is past its `due_at`. | Resolving or cancelling the item. A message alone does not prove the promise was kept. |
+| `quote_no_reply` | nudge | Staff sent a quote (a dollar figure, or "here is your quote") 3 days ago, and nothing since from either side. | Any outbound message (AI or staff) or a buyer reply. |
+| `missed_appointment` | nudge | The latest visit that has passed was a no-show or cancelled, 24 hours ago, with no contact since its time. | Any contact since the visit time. |
+| `visit_no_follow_up` | nudge | The latest visit that has passed was attended, or its outcome was never recorded, 24 hours ago, with no contact since. | Any contact since the visit time. |
+| `document_overdue` | nudge | An open `missing_doc` (the buyer owes a document) is past its `due_at` and no contact since. | A reminder or any contact since the due time, or resolving the item. |
+| `gone_quiet` | nudge | 45 days since the buyer's last message (or since the deal was added, if they never wrote) and no outbound since day 45. | One outbound check-in on or after day 45. |
+
+**Owed** reasons mean the buyer is waiting on us. **Nudges** mean the buyer went quiet.
+
+| Suppression | Hides | When |
+| --- | --- | --- |
+| `opted_out` | everything | `buyers.opted_out`, or an `opt_out` event on any of the buyer's deals. |
+| `deal_closed` | everything | Stage `delivered` or `lost`. The due list only reads open deals anyway. |
+| `appointment_upcoming` | nudges | A future visit that is `requested`, `confirmed`, or `rescheduled`. A booked visit is already the next contact, but it does not answer a question or keep a promise, so owed reasons stay. |
+| `callback_scheduled` | nudges | An open `callback` with a future `due_at`: the follow-up is already planned (Zane's day-45 callback). |
+
+`status` is `due` when a reason remains, else `suppressed` when any suppression
+applies, else `not_due`. With every seed loaded, the due list includes Hannah
+(overdue quote promise), Nina and Keira (unanswered message and overdue callback),
+Maya (visit outcome never recorded, no contact since), Callum (visited, no follow-up),
+Theo (unanswered), Olivia (only the AI answered, overdue question), and Ben, Wes, Uri,
+and Maren (only the AI answered). Jordan, Imani, and Samir are suppressed by a booked
+visit and Zane by his scheduled callback; Marcus (quote 2 days ago) and Yvonne (day 26
+of 45) are not due yet. Rob and Parker are suppressed by their opt-outs.
+
+US7 will record follow-ups. Until it has its own table, a follow-up is an outbound
+timeline event, and these rules already read it: sending one clears the nudges.
+
 ## Rules
 
 Defined in [`src/evaluation/rules.ts`](src/evaluation/rules.ts); the conditions
@@ -248,9 +303,20 @@ dev instead.
 | `src/deals/` | Deal lists, the buyer record, and adding a buyer (`policy.ts` validates it). |
 | `src/auth-routes.ts` | Development sign-in (`/auth/login`) and `/api/me`. |
 | `src/db.ts`, `src/sandbox-db.ts` | PostgreSQL connection, or the in-memory PGlite sandbox. |
+| `src/follow-up/detect.ts` | US6 pure rules: one deal's activity and `now` in, reasons and suppressions out. No database. |
+| `src/follow-up/rules.ts` | US6 reason codes, kinds, and thresholds. |
+| `src/follow-up/repository.ts` | US6 SQL: open deals and their activity, loaded in bulk. |
+| `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
 
 ## Limits
+
+Follow-ups (US6): times are wall-clock hours; there are no business hours, so a
+message at 11 pm is due at 3 am. Quotes are recognised by wording, so a quote sent
+as a note or an attachment-only email can be missed. A cancellation has no recorded
+time, so a cancelled visit is measured from the time it was set for. `gone_quiet`
+asks for one check-in per silence; a cadence (day 45, then day 90) needs US7's
+schedule. Nothing is sent, scheduled, skipped, or paused yet: that is US7.
 
 Assignments made before `deal_assignments` existed (the scenario seed's history and
 Jordan's) are text only. Assignment is per deal: a buyer with two deals is moved one

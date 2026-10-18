@@ -5,6 +5,7 @@ import type { Database } from './db.ts';
 import { assignmentRoutes } from './assignment/routes.ts';
 import { dealRoutes } from './deals/routes.ts';
 import { evaluationRoutes } from './evaluation/routes.ts';
+import { followUpRoutes } from './follow-up/routes.ts';
 
 export interface AppOptions {
   // Shared password for POST /auth/login. Leave unset to turn sign-in off.
@@ -28,7 +29,8 @@ export function createApp(db: Database, options: AppOptions = {}) {
   app.use('/auth', devLoginRoutes(db, options.devLoginPassword));
   // Every /api route needs X-Staff-Id; look the caller up once per request.
   // Assignment routes come before deal routes so /deals/unassigned is not a deal ID.
-  app.use('/api', requireStaff(db), meRoutes(), evaluationRoutes(db), assignmentRoutes(db), dealRoutes(db));
+  app.use('/api', requireStaff(db), meRoutes(), evaluationRoutes(db), assignmentRoutes(db),
+    followUpRoutes(db), dealRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });
   });
