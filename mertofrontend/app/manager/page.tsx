@@ -3,10 +3,8 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth/session";
 import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
+import type { Deal } from "@/lib/deals";
 import type { Metrics, QueueItem } from "@/lib/evaluation";
-
-// Assigned shape is a GUESS until the backend has this endpoint.
-type AssignedDeal = { dealId: string; buyer: string; repName: string };
 
 type UnassignedDeal = {
   dealId: string;
@@ -64,12 +62,13 @@ function MetricsList({ metrics }: { metrics: Metrics }) {
 async function ManagerHome() {
   await requireRole("manager");
 
-  const [assigned, unassigned, metrics, queue] = await Promise.all([
-    loadJson<AssignedDeal[]>("/TEMP/PLEASEREPLACE"), // TODO: real endpoint
+  const [deals, unassigned, metrics, queue] = await Promise.all([
+    loadJson<Deal[]>("/api/deals"), // every open deal; the assigned ones have an owner
     loadJson<UnassignedDeal[]>("/api/deals/unassigned"),
     loadJson<Metrics>("/api/ai-evaluation/metrics"),
     loadJson<QueueItem[]>("/api/ai-flags/queue"),
   ]);
+  const assigned = deals && deals.filter((deal) => deal.ownerId);
 
   return (
     <div className="space-y-6">
@@ -87,7 +86,7 @@ async function ManagerHome() {
                     href={`/manager/deal-details?deal=${deal.dealId}`}
                     className="block hover:underline"
                   >
-                    {deal.buyer} <span className="opacity-70">({deal.repName})</span>
+                    {deal.buyer} <span className="opacity-70">({deal.owner})</span>
                   </Link>
                 </li>
               ))}

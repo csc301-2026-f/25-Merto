@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { REPS, type Deal } from "@/lib/deals";
+import type { Deal, Rep } from "@/lib/deals";
 import { assignOrTransfer } from "../actions";
 import type { Evaluation } from "@/lib/evaluation";
 import { EvaluationSummary } from "@/components/EvaluationSummary";
@@ -21,10 +22,12 @@ function sortDeals(deals: Deal[], key: SortKey): Deal[] {
 export function DealList({
   deals,
   evaluations,
+  reps,
   openDealId,
 }: {
   deals: Deal[];
   evaluations: Record<string, Evaluation | null>;
+  reps: Rep[];
   openDealId?: string;
 }) {
 
@@ -58,6 +61,7 @@ export function DealList({
               key={deal.dealId}
               deal={deal}
               evaluation={evaluations[deal.dealId]}
+              reps={reps}
               startOpen={deal.dealId === openDealId}
             />
           ))}
@@ -67,9 +71,9 @@ export function DealList({
   );
 }
 
-function DealRow({ deal, evaluation, startOpen }: { deal: Deal; evaluation: Evaluation | null | undefined; startOpen: boolean }) {
+function DealRow({ deal, evaluation, reps, startOpen }: { deal: Deal; evaluation: Evaluation | null | undefined; reps: Rep[]; startOpen: boolean }) {
   const [owner, setOwner] = useState<{ id: string; name: string } | null>(
-    deal.ownerId ? { id: deal.ownerId, name: deal.ownerName ?? "Unknown" } : null
+    deal.ownerId ? { id: deal.ownerId, name: deal.owner ?? "Unknown" } : null
   );
   const [repId, setRepId] = useState("");
   const [reason, setReason] = useState(owner ? "" : DEFAULT_ASSIGN_REASON);
@@ -86,13 +90,14 @@ function DealRow({ deal, evaluation, startOpen }: { deal: Deal; evaluation: Eval
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const rep = REPS.find((r) => r.id === repId);
+    const rep = reps.find((r) => r.id === repId);
     if (!rep) return;
     setError(undefined);
 
     startTransition(async () => {
       const mode = isAssigned ? "transfer" : "assign";
-      const result = await assignOrTransfer(mode, deal.dealId, rep.id, reason);
+      // owner?.id is who this page shows; the backend refuses if that changed since.
+      const result = await assignOrTransfer(mode, deal.dealId, rep.id, reason, owner?.id ?? null);
       if (result.ok) {
         setOwner(rep);
         setRepId("");
@@ -129,6 +134,9 @@ function DealRow({ deal, evaluation, startOpen }: { deal: Deal; evaluation: Eval
             {deal.createdAt.slice(0, 10)}
           </p>
           <p className="text-sm opacity-70">Deal ID: {deal.dealId}</p>
+          <Link href={`/manager/deal-details/${deal.dealId}`} className="inline-block underline">
+            View full record (timeline, open items, appointments, ownership history)
+          </Link>
           <EvaluationSummary evaluation={evaluation} />
           <form onSubmit={handleSubmit} className="flex flex-wrap items-start gap-4">
             <div className="flex items-center gap-2">
@@ -144,7 +152,7 @@ function DealRow({ deal, evaluation, startOpen }: { deal: Deal; evaluation: Eval
                 className="rounded border-2 px-2 py-1"
               >
                 <option value="" disabled>Select rep…</option>
-                {REPS.map((rep) => (
+                {reps.map((rep) => (
                   <option key={rep.id} value={rep.id} disabled={rep.id === owner?.id}>
                     {rep.name}
                   </option>

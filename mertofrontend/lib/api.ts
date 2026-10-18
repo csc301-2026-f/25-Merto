@@ -1,8 +1,11 @@
 import { getSession } from "@/lib/auth/session";
 
+// Defaults to the backend's `npm run dev` port when .env.local does not set it.
+export const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
+
 export async function backendFetch(path: string, init: RequestInit = {}) {
   const session = await getSession();
-  return fetch(`${process.env.BACKEND_URL}${path}`, {
+  return fetch(`${BACKEND_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",

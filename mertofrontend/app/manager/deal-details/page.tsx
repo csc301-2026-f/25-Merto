@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import { requireRole } from "@/lib/auth/session";
 import { backendFetch, loadJson } from "@/lib/api";
-import type { Deal } from "@/lib/deals";
+import type { Deal, Rep } from "@/lib/deals";
 import type { Evaluation } from "@/lib/evaluation";
 import { DealList } from "./deal-list";
 
-// TODO: change to the all-deals endpoint when it exists.
-const DEALS_PATH = "/api/deals/unassigned";
+// Every open deal, assigned or not.
+const DEALS_PATH = "/api/deals";
 
 type SearchParams = Promise<{ deal?: string | string[] }>;
 
@@ -34,8 +34,9 @@ async function CustomerDetails({ searchParams }: { searchParams: SearchParams })
     )
   );
   const evaluations = Object.fromEntries(entries);
+  const reps = (await loadJson<Rep[]>("/api/staff/reps")) ?? [];
 
-  return <DealList deals={deals} evaluations={evaluations} openDealId={openDealId} />;
+  return <DealList deals={deals} evaluations={evaluations} reps={reps} openDealId={openDealId} />;
 }
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {

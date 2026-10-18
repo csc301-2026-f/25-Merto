@@ -19,7 +19,10 @@ export async function assignOrTransfer(
   mode: "assign" | "transfer",
   dealId: string,
   toUserId: string,
-  reason: string
+  reason: string,
+  // The owner the page showed (null if unassigned). The backend answers 409 if
+  // someone reassigned the deal since, so a stale page cannot move it.
+  expectedOwnerId?: string | null
 ): Promise<ActionResult> {
   await requireRole("manager");
   if (!reason.trim()) return { ok: false, error: "A reason is required." };
@@ -29,7 +32,7 @@ export async function assignOrTransfer(
     // might need to change api/deals
     res = await backendFetch(`/api/deals/${dealId}/${mode}`, {
       method: "POST",
-      body: JSON.stringify({ toUserId, reason: reason.trim() }),
+      body: JSON.stringify({ toUserId, reason: reason.trim(), expectedOwnerId }),
     });
   } catch {
     return { ok: false, error: "Could not reach the server." };

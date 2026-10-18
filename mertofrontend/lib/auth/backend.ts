@@ -1,25 +1,19 @@
 import type { AuthResult } from "./types";
 import type { Role } from "./types";
+import { BACKEND_URL } from "@/lib/api";
 
-const DEV_USERS: Record<string, { id: string; role: Role; name: string }> = {
-  karen: { id: "10000000-0000-0000-0000-000000000001", role: "manager", name: "Karen" }, // GM
-  dana:  { id: "10000000-0000-0000-0000-000000000002", role: "rep", name: "Dana" },
-  arjun: { id: "10000000-0000-0000-0000-000000000003", role: "rep", name: "Arjun" },
-};
+// The backend calls the GM "gm"; this app's routes call that role "manager".
+const ROLES: Record<string, Role> = { gm: "manager", rep: "rep" };
 
 export async function authenticate(username: string,  password: string): Promise<AuthResult> {
 //if (username === "rep" && password === "test") return { status: "ok", token: "x", role: "rep" };
 //if (username === "manager" && password === "test") return { status: "ok", token: "x", role: "manager" };
 //if (process.env.NODE_ENV === "development") return { status: "invalid" };
 
-
-  const user = DEV_USERS[username.toLowerCase()];
-  if (!user || password !== "test") return { status: "invalid" };
-  return { status: "ok", token: user.id, role: user.role, name: user.name }; // token = staff id for now
-
-/*
+  // Backend POST /auth/login: username is a staff email or the part before the @
+  // (karen, dana, arjun, sofia, tom); it returns { token, id, name, role }.
   try {
-    const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
+    const res = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -29,14 +23,13 @@ export async function authenticate(username: string,  password: string): Promise
     if (res.status === 401 || res.status === 403) return { status: "invalid" };
     if (!res.ok) return { status: "error" };
 
-    // ADAPT THIS to whatever your backend returns
     const data = await res.json();
-    if (data.role === "rep" || data.role === "manager") {
-      return { status: "ok", token: data.token, role: data.role };
+    const role = ROLES[data.role];
+    if (role && typeof data.token === "string") {
+      return { status: "ok", token: data.token, role, name: data.name };
     }
     return { status: "invalid" };
   } catch {
     return { status: "error" };
   }
-    */
 }

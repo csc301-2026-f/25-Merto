@@ -32,7 +32,7 @@ Never commit `.env`.
 
 To try it with the frontend, run `npm run dev` here and `npm run dev` in
 `../mertofrontend`, then open http://localhost:3000 and sign in as `karen` (GM),
-`dana`, or `arjun` (reps) with password `test`.
+`dana`, `arjun`, `sofia`, or `tom` (reps) with password `test`.
 
 ## Who is calling
 
