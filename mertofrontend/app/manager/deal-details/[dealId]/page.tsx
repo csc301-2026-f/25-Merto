@@ -21,7 +21,7 @@ async function FullRecord({ params }: { params: Params }) {
 
   return (
     <div className="space-y-6">
-      <DealRecord deal={deal} />
+      <DealRecord deal={deal} flags={evaluation?.flags} />
       <EvaluationSummary evaluation={evaluation} />
     </div>
   );
