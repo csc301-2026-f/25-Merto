@@ -193,6 +193,7 @@ atomically. The following are proposed action boundaries, not existing endpoints
 | Confirm an appointment | Appointment confirmation/status, timeline entry | Staff attribution and permission checks belong to the action layer. |
 | Resolve a task | Item status/resolution time, timeline entry | No automatic timeline/audit trigger yet. |
 | Record an opt-out | Buyer boolean, structured `opt_out` event | Send-time suppression still needs implementation. |
+| Record an immediate simulated follow-up | One outbound `interaction` in `timeline_events` | `POST /api/deals/:dealId/follow-ups` checks eligibility, role/ownership, opt-out history, stage, and contact information, then returns the refreshed follow-up assessment. No real delivery or future scheduling. |
 
 Do not use the privileged SQL Editor's access as proof that browser/API access
 works. Never put a database password or privileged key in frontend code. Before
@@ -271,6 +272,14 @@ transfer of Hannah from Arjun to Dana. Older seeded assignment events (Jordan's,
 those in `seed_scenarios.sql`) have no record; the backend returns them as text only.
 
 ## Scope and validation
+
+US7 reuses `timeline_events` rather than introducing a scheduling table. The
+request UUID becomes the event's primary key, so identical retries return the
+same event. Its body starts with `[Simulated follow-up]`, `actor_id` identifies
+the caller, and `created_at` records server time. The current status is computed
+from the saved history and open work; `simulated_sent` is an API outcome, not a
+claim that a provider delivered a message. Read-only historical opt-out detection
+remains available, and this action blocks contact when any opt-out is recorded.
 
 No dedicated follow-up, audit, upload, trade-in, F&I, or delivery table exists yet. `fni` and `delivered` are currently only stages. Staff availability,
 business hours, AI mode settings, and external integrations are not implemented.

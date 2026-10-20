@@ -225,8 +225,49 @@ and Maren (only the AI answered). Jordan, Imani, and Samir are suppressed by a b
 visit and Zane by his scheduled callback; Marcus (quote 2 days ago) and Yvonne (day 26
 of 45) are not due yet. Rob and Parker are suppressed by their opt-outs.
 
-US7 will record follow-ups. Until it has its own table, a follow-up is an outbound
-timeline event, and these rules already read it: sending one clears the nudges.
+### Record an immediate follow-up (US7)
+
+`POST /api/deals/:dealId/follow-ups` takes
+`{ "requestId": "<UUID>", "channel": "email" | "sms" | "call", "message": "..." }`.
+The owning rep or a GM can record a **simulated** follow-up for a currently due
+deal. This never sends real email, SMS, or calls. Scheduling for later is not
+implemented yet.
+
+The server rechecks current ownership, stage, opt-outs across all of the buyer's
+deals, follow-up eligibility, and the selected channel's contact information.
+Messages must be nonblank and at most 2,000 characters. Actor and time come from
+the server, not the request. The response includes `status: "simulated_sent"`,
+`eventId`, `recordedAt`, `alreadyRecorded`, and the recalculated `followUp` assessment.
+
+The existing timeline stores the outbound interaction with the prefix
+`[Simulated follow-up]`. No schema migration is needed. A transaction covers
+checking eligibility, recording the event, and refreshing status. A deal/buyer
+row lock serializes ownership changes; a request lock prevents duplicate retries.
+Use the same UUID and contents to retry an uncertain request: the existing event
+is returned without writing another one, even when the reminder has cleared.
+Reusing a UUID for different contents returns 409.
+
+The rep's buyer page has a **Follow up now** form. After success, the timeline and
+dashboard refresh. Visit/quote reminders can clear; an overdue promise remains
+until its open item is explicitly resolved. Recording a message does not claim
+that every outstanding task has been completed.
+
+To try this path with fresh fictional data, use two terminals from the repo root:
+
+```sh
+# Terminal 1: sandbox backend
+DATABASE_URL= PORT=3021 DEV_LOGIN_PASSWORD=test npm --prefix backend start
+
+# Terminal 2: frontend
+BACKEND_URL=http://127.0.0.1:3021 npm --prefix mertofrontend run dev -- --hostname 127.0.0.1 --port 3020
+```
+
+Open `http://127.0.0.1:3020`, sign in as `dana` / `test`, and open Maya Desai from
+**Needs follow-up**. Record a simulated SMS, check the new attributed timeline
+entry, reload the page, then return Home: Maya's visit reminder should be cleared.
+Hannah's overdue quote promise is a useful comparison: recording an email leaves
+that unresolved task visible. Restarting the sandbox backend restores these
+fictional scenarios for another run.
 
 ## Unresolved work (US4)
 
@@ -343,7 +384,8 @@ message at 11 pm is due at 3 am. Quotes are recognised by wording, so a quote se
 as a note or an attachment-only email can be missed. A cancellation has no recorded
 time, so a cancelled visit is measured from the time it was set for. `gone_quiet`
 asks for one check-in per silence; a cadence (day 45, then day 90) needs US7's
-schedule. Nothing is sent, scheduled, skipped, or paused yet: that is US7.
+schedule. US7 currently records immediate simulated follow-ups; real sending,
+future scheduling, skipping, and pausing are not implemented.
 
 Assignments made before `deal_assignments` existed (the scenario seed's history and
 Jordan's) are text only. Assignment is per deal: a buyer with two deals is moved one

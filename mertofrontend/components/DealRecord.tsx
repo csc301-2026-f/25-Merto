@@ -66,7 +66,7 @@ function TimelineItem({ entry, buyer }: { entry: TimelineEntry; buyer: string })
 }
 
 // The whole buyer record (GET /api/deals/:dealId) for the manager or the owning rep.
-export function DealRecord({ deal }: { deal: DealRecordData }) {
+export function DealRecord({ deal, followUp }: { deal: DealRecordData; followUp?: ReactNode }) {
   return (
     <div className="space-y-6">
       <div>
@@ -87,6 +87,8 @@ export function DealRecord({ deal }: { deal: DealRecordData }) {
           </p>
         )}
       </div>
+
+      {followUp}
 
       <Section title="Ownership history">
         {deal.assignments.length === 0 ? (
