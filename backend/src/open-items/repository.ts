@@ -1,4 +1,4 @@
-// All SQL for the open-items overview (US4). Read-only, core tables only.
+// All SQL for unresolved work (US4): the overview, and closing an item.
 // Every value is a bound parameter.
 import type { Queryable } from '../db.ts';
 import type { OpenItemFilters } from './policy.ts';
@@ -77,4 +77,51 @@ export function openSummary(db: Queryable, repId: string | null, filters: OpenIt
       and i.status = 'open'
     group by i.type order by i.type`,
   [repId, filters.type, filters.owner]);
+}
+
+export interface LockedItem {
+  id: string;
+  dealId: string;
+  buyer: string;
+  dealOwnerId: string | null;
+  dealStage: string;
+  type: string;
+  description: string;
+  status: 'open' | 'resolved' | 'cancelled';
+}
+
+// Row lock on the item and its deal: closing an item and transferring its deal
+// (which moves open items) are serialised, so the permission check stays true.
+export async function lockItem(db: Queryable, itemId: string): Promise<LockedItem | undefined> {
+  const [item] = await db.query<LockedItem>(`
+    select i.id, i.deal_id as "dealId", b.name as buyer, d.owner_id as "dealOwnerId",
+      d.stage as "dealStage", i.type, i.description, i.status
+    from public.open_items i
+    join public.deals d on d.id = i.deal_id
+    join public.buyers b on b.id = d.buyer_id
+    where i.id = $1
+    for update of i, d`, [itemId]);
+  return item;
+}
+
+// resolved_at is set exactly when resolved (a database check); a cancelled item
+// has none, so its time lives on the timeline event.
+export async function closeItem(db: Queryable, itemId: string, status: 'resolved' | 'cancelled',
+  at: Date): Promise<{ status: string; resolvedAt: Date | null }> {
+  const [item] = await db.query<{ status: string; resolvedAt: Date | null }>(`
+    update public.open_items
+    set status = $2, resolved_at = case when $2 = 'resolved' then $3::timestamptz end
+    where id = $1
+    returning status, resolved_at as "resolvedAt"`, [itemId, status, at]);
+  return item;
+}
+
+export async function addItemEvent(db: Queryable, dealId: string, actor: { id: string; role: string },
+  body: string): Promise<{ id: string; createdAt: Date }> {
+  const [event] = await db.query<{ id: string; createdAt: Date }>(`
+    insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
+    values ($1, 'open_item', $3, $2, 'note', 'internal', $4)
+    returning id, created_at as "createdAt"`,
+  [dealId, actor.id, actor.role, body]);
+  return event;
 }

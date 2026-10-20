@@ -1,15 +1,9 @@
 import type { ReactNode } from "react";
 import { formatDateTime, label } from "@/lib/format";
-import type { ActorType, AssignmentRecord, DealRecord as DealRecordData, TimelineEntry } from "@/lib/deals";
-
-// Every timeline entry shows who acted, so AI activity is never mistaken for a person's.
-const ACTORS: { [type in ActorType]: { name: string; className: string } } = {
-  ai: { name: "AI", className: "bg-violet-100 text-violet-800" },
-  rep: { name: "Rep", className: "bg-blue-100 text-blue-800" },
-  gm: { name: "GM", className: "bg-amber-100 text-amber-800" },
-  system: { name: "System", className: "bg-gray-200 text-gray-800" },
-  buyer: { name: "Buyer", className: "bg-green-100 text-green-800" },
-};
+import type { AssignmentRecord, DealRecord as DealRecordData } from "@/lib/deals";
+import type { Flag } from "@/lib/evaluation";
+import { OpenItems } from "./OpenItems";
+import { Timeline } from "./Timeline";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -47,26 +41,9 @@ function OwnershipEntry({ entry }: { entry: AssignmentRecord }) {
   );
 }
 
-function TimelineItem({ entry, buyer }: { entry: TimelineEntry; buyer: string }) {
-  const actor = ACTORS[entry.actorType];
-  const who = entry.actorType === "buyer" ? buyer : entry.actorName;
-  return (
-    <li className="py-3">
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${actor.className}`}>{actor.name}</span>
-        {who && <span className="font-semibold">{who}</span>}
-        <span className="opacity-70">
-          {label(entry.channel)} · {entry.direction}
-          {entry.eventType !== "interaction" && ` · ${label(entry.eventType)}`} · {formatDateTime(entry.createdAt)}
-        </span>
-      </div>
-      <p className="mt-1 whitespace-pre-wrap">{entry.body}</p>
-    </li>
-  );
-}
-
 // The whole buyer record (GET /api/deals/:dealId) for the manager or the owning rep.
-export function DealRecord({ deal, followUp }: { deal: DealRecordData; followUp?: ReactNode }) {
+// flags: the deal's AI evaluation flags, shown on the messages they point at.
+export function DealRecord({ deal, followUp, flags }: { deal: DealRecordData; followUp?: ReactNode; flags?: Flag[] }) {
   return (
     <div className="space-y-6">
       <div>
@@ -104,20 +81,7 @@ export function DealRecord({ deal, followUp }: { deal: DealRecordData; followUp?
 
       <div className="grid gap-6 md:grid-cols-2">
         <Section title="Open items">
-          {deal.openItems.length === 0 ? (
-            <p className="font-semibold">None right now</p>
-          ) : (
-            <ul className="divide-y-2 text-sm">
-              {deal.openItems.map((item) => (
-                <li key={item.id} className="py-2">
-                  <span className="font-semibold">{label(item.type)}</span>: {item.description}{" "}
-                  <span className="opacity-70">
-                    ({item.status}, {item.owner ?? "no owner"}, due {formatDateTime(item.dueAt)})
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <OpenItems items={deal.openItems} />
         </Section>
 
         <Section title="Appointments">
@@ -137,11 +101,7 @@ export function DealRecord({ deal, followUp }: { deal: DealRecordData; followUp?
       </div>
 
       <Section title="Timeline">
-        <ol className="divide-y-2">
-          {deal.timeline.map((entry) => (
-            <TimelineItem key={entry.id} entry={entry} buyer={deal.buyer.name} />
-          ))}
-        </ol>
+        <Timeline entries={deal.timeline} buyer={deal.buyer.name} flags={flags} />
       </Section>
     </div>
   );

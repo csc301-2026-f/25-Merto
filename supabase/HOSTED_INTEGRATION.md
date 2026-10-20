@@ -13,6 +13,7 @@ seed were applied through Supabase SQL Editor, on top of the October 6 core sche
 | `20261006000100_mvp_database.sql` | Six core staff/buyer/deal/history/appointment/task tables |
 | `20261013000100_ai_evaluation.sql` | Evaluation results, evidence-backed flags, review metadata, and evaluation/review timeline event types |
 | `20261017000100_deal_assignments.sql` | Structured assignment/transfer history; applied October 20, 2026 |
+| `20261020000100_open_item_events.sql` | `open_item` timeline event type for resolving/cancelling open items (US4); **not yet applied** to the hosted project. Until it is, `POST /api/open-items/:id/resolve` and `/cancel` fail there with a check-constraint error |
 
 Both `seed/seed.sql` and `seed/seed_ai_evaluation.sql` are loaded. Together they
 provide 3 staff, 8 buyers/deals, 28 timeline events, 3 appointments, and 5 tasks

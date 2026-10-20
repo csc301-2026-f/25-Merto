@@ -5,6 +5,7 @@ export type Flag = {
   explanation: string;
   reviewStatus: string; // pending | confirmed_issue | false_positive | resolved
   reviewNote?: string | null;
+  evidenceEventId?: string; // the timeline entry the flag is about
   evidenceBody?: string;
   evidenceChannel?: string;
   evidenceAt?: string;

@@ -102,7 +102,7 @@ order or require owners to be reps rather than GMs.
 | --- | --- | --- |
 | `id` | UUID / no | Event ID. |
 | `deal_id` | UUID / no | References `deals.id`. |
-| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, or `ai_review` (the last two are written by the backend evaluation service). |
+| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, `ai_review` (both written by the backend evaluation service), or `open_item` (written when staff resolve or cancel an open item; it is bookkeeping, not contact with the buyer). |
 | `actor_type` | text / no | `buyer`, `ai`, `rep`, `gm`, or `system`. |
 | `actor_id` | UUID / yes | Staff ID for human staff events; see attribution rules below. |
 | `channel` | text / no | `call`, `sms`, `email`, `web`, `in_person`, or `note`. |

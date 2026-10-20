@@ -154,3 +154,92 @@ describe('open items overview (US4)', () => {
     }
   });
 });
+
+describe('closing an open item (US4)', () => {
+  const api = useApi();
+  const { call } = api;
+  const close = (as: string | null, id: string, action: 'resolve' | 'cancel', body?: object) =>
+    call(as, 'POST', `/api/open-items/${id}/${action}`, body);
+  const itemOn = async (dealId: string) => {
+    const [row] = await api.db.query<{ id: string }>(
+      "select id from public.open_items where deal_id = $1 and status = 'open' order by created_at limit 1", [dealId]);
+    return row.id;
+  };
+  const reasonCodes = async (dealId: string) =>
+    (await call(STAFF.karen, 'GET', `/api/deals/${dealId}/follow-up`)).body.reasons.map((r: { code: string }) => r.code);
+
+  it('lets the owning rep resolve an item and records who, when, and how on the timeline', async () => {
+    const id = await itemOn(DEALS.hannah);
+    const { status, body } = await close(STAFF.dana, id, 'resolve', { note: '  Emailed the\nlease quote. ' });
+    assert.equal(status, 200);
+    assert.equal(body.status, 'resolved');
+    assert.equal(body.note, 'Emailed the lease quote.');
+    assert.equal(body.by.id, STAFF.dana);
+    assert.equal(body.resolvedAt, body.at);
+
+    const record = (await call(STAFF.dana, 'GET', `/api/deals/${DEALS.hannah}`)).body;
+    assert.equal(record.openItems.find((item: { id: string }) => item.id === id).status, 'resolved');
+    const event = record.timeline.find((entry: { id: string }) => entry.id === body.eventId);
+    assert.equal(event.eventType, 'open_item');
+    assert.equal(event.actorType, 'rep');
+    assert.equal(event.actorName, 'Dana Kowalski');
+    assert.match(event.body, /^Resolved promise for Hannah Clarke: .*CR-V lease quote.* Note: Emailed the lease quote\.$/);
+
+    assert.ok(!(await call(STAFF.karen, 'GET', '/api/open-items')).body.items.some((item: Item) => item.id === id));
+  });
+
+  it('clears an overdue promise from the follow-up list once it is resolved', async () => {
+    assert.ok((await reasonCodes(DEALS.hannah)).includes('overdue_commitment'));
+    await close(STAFF.dana, await itemOn(DEALS.hannah), 'resolve');
+    assert.ok(!(await reasonCodes(DEALS.hannah)).includes('overdue_commitment'));
+  });
+
+  it('does not count closing an item as replying to the buyer', async () => {
+    const before = await reasonCodes(DEALS.nina);
+    assert.ok(before.includes('unanswered_message') && before.includes('overdue_commitment'));
+    assert.equal((await close(STAFF.karen, await itemOn(DEALS.nina), 'cancel', { note: 'Buyer prefers email' })).status, 200);
+    assert.deepEqual(await reasonCodes(DEALS.nina), ['unanswered_message']);
+  });
+
+  it('requires a reason to cancel and keeps cancelled items without a resolved time', async () => {
+    const id = await itemOn(DEALS.nina);
+    assert.equal((await close(STAFF.karen, id, 'cancel')).status, 400);
+    assert.equal((await close(STAFF.karen, id, 'cancel', { note: '   ' })).status, 400);
+    const { body } = await close(STAFF.karen, id, 'cancel', { note: 'Duplicate of the email request' });
+    assert.equal(body.status, 'cancelled');
+    assert.equal(body.resolvedAt, null);
+    const cancelled = (await call(STAFF.karen, 'GET', '/api/open-items?status=cancelled')).body.items;
+    assert.ok(cancelled.some((item: Item) => item.id === id));
+  });
+
+  it('enforces deal ownership on the server', async () => {
+    const id = await itemOn(DEALS.hannah);
+    assert.equal((await close(null, id, 'resolve')).status, 401);
+    assert.equal((await close(STAFF.arjun, id, 'resolve')).status, 403);
+    // Nina is unassigned: only the GM can close her work.
+    assert.equal((await close(STAFF.dana, await itemOn(DEALS.nina), 'resolve')).status, 403);
+    assert.equal((await close(STAFF.karen, id, 'resolve')).status, 200);
+  });
+
+  it('refuses to close an item twice or on a closed deal', async () => {
+    const id = await itemOn(DEALS.hannah);
+    assert.equal((await close(STAFF.dana, id, 'resolve')).status, 200);
+    const again = await close(STAFF.dana, id, 'cancel', { note: 'oops' });
+    assert.equal(again.status, 409);
+    assert.match(again.body.error, /already resolved/);
+
+    const [{ id: stale }] = await api.db.query<{ id: string }>(`insert into public.open_items (deal_id, owner_id, type, description)
+      values ($1, $2, 'callback', 'Stale task on a lost deal') returning id`, [DEALS.rob, STAFF.arjun]);
+    assert.equal((await close(STAFF.karen, stale, 'resolve')).status, 409);
+  });
+
+  it('rejects bad IDs, unknown items, and bad notes without writing anything', async () => {
+    const before = await api.db.query('select id from public.timeline_events');
+    assert.equal((await close(STAFF.karen, 'not-a-uuid', 'resolve')).status, 400);
+    assert.equal((await close(STAFF.karen, 'ffffffff-ffff-ffff-ffff-ffffffffffff', 'resolve')).status, 404);
+    const id = await itemOn(DEALS.hannah);
+    assert.equal((await close(STAFF.karen, id, 'resolve', { note: 42 })).status, 400);
+    assert.equal((await close(STAFF.karen, id, 'resolve', { note: 'x'.repeat(501) })).status, 400);
+    assert.equal((await api.db.query('select id from public.timeline_events')).length, before.length);
+  });
+});
