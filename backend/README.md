@@ -144,6 +144,9 @@ row lock, so only one succeeds.
 | `GET /api/deals` | GM: all; rep: own | Open deals (not delivered or lost), most recent activity first: `dealId`, `buyer`, `vehicleInterest`, `stage`, `source`, `ownerId`, `owner`, `optedOut`, `openItems`, `lastActivityAt`, `createdAt`. |
 | `GET /api/deals/:dealId` | GM, owning rep | The buyer record: deal fields, `buyer` (contact, `optedOut`), `owner`, `timeline`, `openItems`, `appointments`, `assignments` (as above). |
 | `POST /api/deals` | GM, rep | Adds a buyer and their first deal (201). See below. |
+| `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
+| `POST /api/appointments` | GM, owning rep | Creates an appointment (requested by default). Body: `{ "dealId", "scheduledFor", "status"?, "outcomeNote"? }`. |
+| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates `scheduledFor`, `status`, and `outcomeNote`. Status is `requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, or `no_show`. |
 
 Every timeline entry has `actorType` (`buyer`, `ai`, `rep`, `gm`, or `system`) and,
 for staff, `actorName`, so AI activity is always distinguishable from a person's.
