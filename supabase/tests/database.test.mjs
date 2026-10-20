@@ -16,7 +16,7 @@ const allSeeds = await Promise.all(seedNames.map((name) => readSql(`seed/${name}
 const demos = await readSql('demo/queries.sql');
 const transfer = await readSql('demo/transfer.sql');
 const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
-  'ai_evaluations', 'ai_flags', 'deal_assignments'];
+  'ai_evaluations', 'ai_flags', 'deal_assignments', 'reply_drafts'];
 const ids = {
   karen: '10000000-0000-0000-0000-000000000001',
   dana: '10000000-0000-0000-0000-000000000002',
@@ -61,7 +61,7 @@ describe('Merto database contract', () => {
 
   it('loads the real migration and reseeds without duplicating or changing sample records', async () => {
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4, 0, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 10, 2, 4, 0, 0, 0, 0]);
     await db.exec(seed);
     assert.deepEqual(await snapshot(), before);
   });
@@ -180,7 +180,7 @@ describe('Merto database contract', () => {
   it('loads every scenario seed twice without changing records or timestamps', async () => {
     for (const sql of allSeeds) await db.exec(sql);
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 219, 20, 16, 0, 0, 1]);
+    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 219, 20, 16, 0, 0, 1, 0]);
     for (const sql of allSeeds) await db.exec(sql);
     assert.deepEqual(await snapshot(), before);
     assert.equal((await db.exec(demos))[0].rows.length, 37);

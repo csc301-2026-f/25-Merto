@@ -35,7 +35,7 @@ const visitConfirmedBy = (conversation: Conversation, time: Date) =>
 // or a new open item such as a callback.
 const staffTookOverSince = (conversation: Conversation, time: Date) =>
   conversation.events.some((event) => (event.actorType === 'rep' || event.actorType === 'gm')
-    && event.eventType !== 'ai_review' && event.createdAt >= time)
+    && event.eventType !== 'ai_review' && event.eventType !== 'draft_review' && event.createdAt >= time)
   || conversation.openItemCreatedAts.some((createdAt) => createdAt >= time);
 
 // Pure and synchronous: no database, clock, or network. Each issue names the

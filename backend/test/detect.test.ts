@@ -98,11 +98,13 @@ describe('detectIssues', () => {
       assert.deepEqual(found(conversation(events, { openItemCreatedAts: [at(2)] })), []);
     });
 
-    it('does not count a GM reviewing a flag as a handoff', () => {
+    it('does not count a flag or draft review as a handoff', () => {
       const reply = ai('Which trim are you looking at?', 2);
-      const review = event('gm', 'internal', 'GM review of AI flag.', 3, 'ai_review');
-      assert.deepEqual(found(conversation([buyer('Talk to a human please', 1), reply, review])),
-        [`missed_escalation@${reply.id}`]);
+      for (const eventType of ['ai_review', 'draft_review']) {
+        const review = event('gm', 'internal', 'Reviewed a message.', 3, eventType);
+        assert.deepEqual(found(conversation([buyer('Talk to a human please', 1), reply, review])),
+          [`missed_escalation@${reply.id}`]);
+      }
     });
 
     it('does nothing when the AI never replied', () => {
