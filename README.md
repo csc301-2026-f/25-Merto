@@ -25,11 +25,13 @@ The scope below is planned work, as described in the [D1 project plan](deliverab
 
 [Dashboard prototype (Figma Make)](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1)
 
-The planned data source is a scoped API provided by Merto. The D1 plan records that mock conversation transcripts and a data schema had been requested but had not yet been received.
+The planned data source is a scoped API provided by Merto. The application does not connect to a Merto API yet: it uses the team's own database schema (`supabase/migrations`) and fictional buyer, deal, and conversation scenarios (`supabase/seed`).
 
 ## Instructions
 
-Instructions for setting up and running the application will be added once the application is ready and Merto has provided the required API access.
+Requires Node.js 20 or newer. In `backend/`, run `npm install` and then `npm run dev` (API on http://localhost:3001). In a second terminal, do the same in `mertofrontend/` and open http://localhost:3000. Sign in as `karen` (manager) or `dana`, `arjun`, `sofia`, or `tom` (sales representatives); the development password is `test`.
+
+Without a `DATABASE_URL`, the backend uses an in-memory database loaded from `supabase/migrations` and `supabase/seed`, so all data resets when the backend restarts. AI conversation flags appear only after an evaluation run, which is not yet scheduled or available in the interface; trigger it with `POST /api/evaluations/run` as a manager. See the [backend README](backend/README.md) for this request, the full API, tests (`npm test`), and connecting to the team's Supabase database.
 
 ## Development requirements
 
@@ -40,7 +42,7 @@ Merto recommended the following technologies based on its existing stack.
 | Frontend | Next.js, React, TypeScript |
 | Backend and database | Supabase, PostgreSQL |
 
-The [D1 project plan](deliverables/D1/planning.md) lists additional options under consideration: a TypeScript/Node.js REST API and Python for conversation scoring. The stack has not been finalized in that plan.
+The team uses Next.js and React with TypeScript for the frontend, a TypeScript/Express REST API for the backend, and PostgreSQL on Supabase for the database, with an in-memory PostgreSQL (PGlite) sandbox for local development and tests. Conversation evaluation uses deterministic TypeScript rules rather than Python or a paid AI model.
 
 ## Deployment and Github Workflow
 
