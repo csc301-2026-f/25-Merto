@@ -30,10 +30,10 @@ export async function reviewDraftAction(id: string, _previous: DraftActionState,
     decision, ...(decision === "edit" ? { message: String(form.get("message") ?? "") } : {}),
   });
   return result.error ? result : { success: decision === "reject"
-    ? "Draft rejected. Nothing was sent." : "Review saved. Nothing is sent until you choose Record simulated send." };
+    ? "Draft rejected. Nothing was sent." : "Review saved. Choose Record follow-up when you are ready." };
 }
 
 export async function sendDraftAction(id: string): Promise<DraftActionState> {
   const result = await post(`/api/reply-drafts/${encodeURIComponent(id)}/send`, {});
-  return result.error ? result : { success: "Simulated follow-up recorded in the timeline. No real message was sent." };
+  return result.error ? result : { success: "Follow-up recorded in the timeline." };
 }

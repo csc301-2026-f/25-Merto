@@ -17,7 +17,7 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
   const [reviewState, reviewAction, reviewing] = useActionState(reviewDraftAction.bind(null, draft.id), undefined);
   const [sendState, sendAction, sending] = useActionState(sendDraftAction.bind(null, draft.id), undefined);
   const changed = text.trim() !== draft.originalText;
-  const status = draft.sentEventId ? "Simulated send recorded"
+  const status = draft.sentEventId ? "Follow-up recorded"
     : draft.decision === "approve" ? "Approved" : draft.decision === "edit" ? "Edited and approved"
       : draft.decision === "reject" ? "Rejected" : "Awaiting review";
   return (
@@ -69,7 +69,7 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
       {(draft.decision === "approve" || draft.decision === "edit") && !draft.sentEventId && (
         <form action={sendAction}>
           <button disabled={sending || !eligible} className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">
-            {sending ? "Recording…" : "Record simulated send"}
+            {sending ? "Recording…" : "Record follow-up"}
           </button>
           {!eligible && <p className="mt-2 text-sm">Sending is unavailable while this customer is not eligible for follow-up.</p>}
         </form>
@@ -91,9 +91,9 @@ export function ReplyDrafts({ dealId, initialRequestId, drafts, eligible, email,
     return result;
   }, undefined);
   return (
-    <section className="space-y-4 rounded border-2 p-4" aria-labelledby="drafts-heading">
-      <h2 id="drafts-heading" className="font-semibold">Review a reply draft</h2>
-      <p className="text-sm opacity-70">These are simulated AI drafts made from a template. Review the context and wording before approving. Nothing is sent automatically.</p>
+    <section className="space-y-4" aria-labelledby="drafts-heading">
+      <h3 id="drafts-heading" className="font-semibold">Review a reply draft</h3>
+      <p className="text-sm opacity-70">Review the context and wording, then approve, edit, or reject the suggested reply.</p>
       {drafts === null ? <p role="alert">Couldn&apos;t load saved drafts. Refresh to try again.</p> : <>
         {eligible && (email?.trim() || phone?.trim()) ? (
           <form action={action} className="flex flex-wrap items-end gap-3">
@@ -108,13 +108,30 @@ export function ReplyDrafts({ dealId, initialRequestId, drafts, eligible, email,
               </select>
             </div>
             <button disabled={pending} className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">
-              {pending ? "Preparing…" : "Prepare simulated draft"}
+              {pending ? "Preparing…" : drafts.length ? "Prepare another draft" : "Prepare draft"}
             </button>
           </form>
         ) : <p className="text-sm">New drafts are available when this customer is eligible for follow-up and has contact details.</p>}
         <Feedback state={state} />
         {drafts.length === 0 && <p className="text-sm">No saved drafts yet.</p>}
-        {drafts.map(draft => <DraftCard key={draft.id} draft={draft} eligible={eligible} />)}
+        {drafts.slice(0, 1).map(draft => <DraftCard key={draft.id} draft={draft} eligible={eligible} />)}
+        {drafts.length > 1 && (
+          <details className="rounded border p-3">
+            <summary className="cursor-pointer text-sm font-semibold">Earlier drafts ({drafts.length - 1})</summary>
+            <div className="mt-3 space-y-3">
+              {drafts.slice(1).map(draft => (
+                <details key={draft.id} className="rounded border p-3">
+                  <summary className="cursor-pointer text-sm">
+                    {draft.channel.toUpperCase()} · {draft.sentEventId ? "Follow-up recorded"
+                      : draft.decision === "reject" ? "Rejected" : draft.decision ? "Approved" : "Awaiting review"}
+                    {" · "}{formatDateTime(draft.createdAt)}
+                  </summary>
+                  <div className="mt-3"><DraftCard draft={draft} eligible={eligible} /></div>
+                </details>
+              ))}
+            </div>
+          </details>
+        )}
       </>}
     </section>
   );

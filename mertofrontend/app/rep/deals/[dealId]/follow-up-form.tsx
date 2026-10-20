@@ -27,10 +27,10 @@ export function FollowUpForm({ dealId, initialRequestId, assessment, email, phon
   const recorded = state?.eventId === requestId;
 
   return (
-    <section className="rounded border-2 p-4" aria-labelledby="follow-up-heading">
-      <h2 id="follow-up-heading" className="font-semibold">Follow up now</h2>
+    <section aria-labelledby="manual-message-heading">
+      <h3 id="manual-message-heading" className="font-semibold">Write a message</h3>
       <p className="mt-1 text-sm opacity-70">
-        Record a simulated follow-up in this customer&apos;s history. No real email, text, or call will be sent.
+        Write a message or add notes from a call to this customer&apos;s history.
       </p>
       {state?.error && <p role="alert" className="mt-3 text-sm text-red-600">{state.error}</p>}
       {state?.success && (
@@ -75,7 +75,7 @@ export function FollowUpForm({ dealId, initialRequestId, assessment, email, phon
             </div>
             <button type="submit" disabled={pending || !message.trim() || recorded}
               className="rounded border-2 px-4 py-2 font-semibold disabled:opacity-50">
-              {pending ? "Recording…" : recorded ? "Follow-up recorded" : "Record simulated follow-up"}
+              {pending ? "Recording…" : recorded ? "Follow-up recorded" : "Record follow-up"}
             </button>
           </form>
         )}
