@@ -107,6 +107,13 @@ describe('detectIssues', () => {
       }
     });
 
+    it('does not count closing an open item as a handoff', () => {
+      const reply = ai('Which trim are you looking at?', 2);
+      const closed = event('rep', 'internal', 'Cancelled callback for Nina: Call back.', 3, 'open_item');
+      assert.deepEqual(found(conversation([buyer('Talk to a human please', 1), reply, closed])),
+        [`missed_escalation@${reply.id}`]);
+    });
+
     it('does nothing when the AI never replied', () => {
       assert.deepEqual(found(conversation([buyer('Can I talk to someone?', 1)])), []);
     });

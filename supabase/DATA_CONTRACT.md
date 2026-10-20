@@ -105,7 +105,7 @@ order or require owners to be reps rather than GMs.
 | --- | --- | --- |
 | `id` | UUID / no | Event ID. |
 | `deal_id` | UUID / no | References `deals.id`. |
-| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, `ai_review`, or `draft_review`. |
+| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, `ai_review`, `draft_review`, or `open_item`. Reviews and open-item completion are internal bookkeeping, not contact with the buyer. |
 | `actor_type` | text / no | `buyer`, `ai`, `rep`, `gm`, or `system`. |
 | `actor_id` | UUID / yes | Staff ID for human staff events; see attribution rules below. |
 | `channel` | text / no | `call`, `sms`, `email`, `web`, `in_person`, or `note`. |
@@ -278,7 +278,7 @@ those in `seed_scenarios.sql`) have no record; the backend returns them as text 
 
 ### Reply drafts (US11)
 
-`20261020000100_reply_drafts.sql` adds `reply_drafts` and the internal
+`20261020000200_reply_drafts.sql` adds `reply_drafts` and the internal
 `draft_review` timeline type. Fields:
 
 - `id`: UUID, also used for creation retries and the eventual outbound event ID.

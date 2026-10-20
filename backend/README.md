@@ -290,7 +290,7 @@ if needed. Pending/rejected drafts cannot be sent. Send retries reuse the draft 
 and do not duplicate contact. Opt-out, stage, contact details, and eligibility are
 checked again when sending. The manual US7 form remains an independent compose flow.
 
-Apply `supabase/migrations/20261020000100_reply_drafts.sql` before running this
+Apply `supabase/migrations/20261020000200_reply_drafts.sql` before running this
 against an existing database. Sandbox startup loads it automatically. For a manual
 check, sign in as Dana, open Maya, reject one draft, prepare another, edit and
 approve it, then record the simulated send. The timeline should contain both
@@ -300,7 +300,7 @@ after that send.
 ## Unresolved work (US4)
 
 `GET /api/open-items` lists open items (promises, missing documents, unanswered
-questions, callbacks) across buyers. Read-only; no schema change. The GM sees every
+questions, callbacks) across buyers. The GM sees every
 deal in the store, unassigned ones included; a rep sees items on their own deals, so
 an item follows its deal when it is transferred (US8). Items on delivered or lost
 deals are left out. The same items appear per deal in `GET /api/deals/:dealId`.
@@ -320,6 +320,26 @@ scope, whatever `status` lists: `open`, `overdue`, `unowned`, `oldestCreatedAt`
 and past its due time), `ageHours` (open items only), and a `deal` with the buyer,
 vehicle, stage, and deal owner. Open items come first, longest-waiting first;
 resolved and cancelled ones follow, most recently closed first.
+
+### Resolving or cancelling an item
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `POST /api/open-items/:itemId/resolve` | GM, owning rep | The work was done. Body `{ "note"?: string }`. Sets `status: resolved` and `resolvedAt`. |
+| `POST /api/open-items/:itemId/cancel` | GM, owning rep | It is no longer needed. Body `{ "note": string }` (required: say why). Sets `status: cancelled`; `resolvedAt` stays null. |
+
+"Owning rep" means the rep who owns the item's deal, as for the overview; only the GM
+can close work on an unassigned deal. Notes are at most 500 characters, line breaks
+collapsed. Closing an item that is not open, or one on a delivered or lost deal, is 409.
+Each close writes, in one transaction, the new status and a timeline entry (event type
+`open_item`, actor the caller) such as
+`Resolved promise for Hannah Clarke: Send the CR-V lease quote promised by Arjun. Note: Emailed it`.
+It returns `{ id, dealId, type, description, status, resolvedAt, note, by, at, eventId }`.
+
+The `open_item` event type (migration `20261020000100_open_item_events.sql`) keeps this
+bookkeeping apart from contact with the buyer: it does not clear `unanswered_message`
+(US6) or count as a human taking over for `missed_escalation` (US5). Resolving an overdue
+promise or callback does clear its `overdue_commitment` follow-up reason.
 
 ## Rules
 
@@ -402,7 +422,7 @@ dev instead.
 | `src/follow-up/rules.ts` | US6 reason codes, kinds, and thresholds. |
 | `src/follow-up/repository.ts` | US6 SQL: open deals and their activity, loaded in bulk. |
 | `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
-| `src/open-items/` | US4 unresolved-work overview: `policy.ts` (filters), `repository.ts` (SQL), `service.ts` (permissions, summary), `routes.ts`. |
+| `src/open-items/` | US4 unresolved work: `policy.ts` (filters, close notes), `repository.ts` (SQL), `service.ts` (permissions, summary, resolve/cancel), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
 
 ## Limits

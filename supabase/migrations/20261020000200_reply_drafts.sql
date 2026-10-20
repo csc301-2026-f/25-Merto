@@ -3,7 +3,7 @@ begin;
 alter table public.timeline_events drop constraint timeline_events_event_type_check;
 alter table public.timeline_events add constraint timeline_events_event_type_check
   check (event_type in ('interaction', 'assignment', 'transfer', 'opt_out',
-    'ai_evaluation', 'ai_review', 'draft_review'));
+    'ai_evaluation', 'ai_review', 'open_item', 'draft_review'));
 
 create table public.reply_drafts (
   id uuid primary key default gen_random_uuid(),

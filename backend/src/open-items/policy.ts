@@ -38,3 +38,28 @@ export function parseFilters(query: Record<string, unknown>): OpenItemFilters {
     owner: owner ?? null,
   };
 }
+
+export const CLOSE_ACTIONS = ['resolve', 'cancel'] as const;
+export type CloseAction = (typeof CLOSE_ACTIONS)[number];
+export const MAX_NOTE_LENGTH = 500;
+
+// The note says how the work was done or why it is no longer needed. It is
+// optional when resolving and required when cancelling, so a dropped promise
+// always says why. Stored in the timeline body, so line breaks are collapsed.
+export function parseCloseNote(action: CloseAction, value: unknown): string | null {
+  if (value !== undefined && value !== null && typeof value !== 'string') throw badRequest('note must be text.');
+  const note = (value ?? '').replace(/\s+/g, ' ').trim();
+  if (!note) {
+    if (action === 'cancel') throw badRequest('A note is required to cancel an item: say why it is no longer needed.');
+    return null;
+  }
+  if (note.length > MAX_NOTE_LENGTH) throw badRequest(`note must be at most ${MAX_NOTE_LENGTH} characters.`);
+  return note;
+}
+
+// "Resolved promise for Hannah Clarke: Send the CR-V lease quote. Note: emailed it."
+export function closeBody(action: CloseAction, type: string, buyer: string, description: string,
+  note: string | null): string {
+  const verb = action === 'resolve' ? 'Resolved' : 'Cancelled';
+  return `${verb} ${type.replaceAll('_', ' ')} for ${buyer}: ${description}${note ? ` Note: ${note}` : ''}`;
+}
