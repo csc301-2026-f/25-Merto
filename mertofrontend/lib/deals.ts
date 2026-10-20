@@ -61,7 +61,7 @@ export type DealRecord = {
   vehicleInterest: string;
   stage: string;
   source: string;
-  buyer: { id: string; name: string; email: string | null; phone: string | null; optedOut: boolean };
+  buyer: { id: string; name: string; email: string | null; phone: string | null; preferredChannel: string; optedOut: boolean };
   owner: { id: string; name: string } | null;
   timeline: TimelineEntry[];
   openItems: { id: string; type: string; description: string; status: string; owner: string | null; dueAt: string | null }[];

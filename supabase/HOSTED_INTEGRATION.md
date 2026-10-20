@@ -12,6 +12,7 @@ seed were applied through Supabase SQL Editor, on top of the October 6 core sche
 | --- | --- |
 | `20261006000100_mvp_database.sql` | Six core staff/buyer/deal/history/appointment/task tables |
 | `20261013000100_ai_evaluation.sql` | Evaluation results, evidence-backed flags, review metadata, and evaluation/review timeline event types |
+| `20261017000100_deal_assignments.sql` | Structured assignment/transfer history; applied October 20, 2026 |
 
 Both `seed/seed.sql` and `seed/seed_ai_evaluation.sql` are loaded. Together they
 provide 3 staff, 8 buyers/deals, 28 timeline events, 3 appointments, and 5 tasks
@@ -19,20 +20,48 @@ before any application activity. The integration check additionally retains one
 fictional buyer/deal, one evidence event, one evaluation, one flag, and two history
 entries. It does not reset or overwrite the other sample scenarios.
 
-Do not rerun either table-creation migration against this project. These were
+Do not rerun these table-creation migrations against this project. These were
 applied manually and do not populate the Supabase CLI migration ledger. Before
 using CLI deployment, reconcile migration history against the actual schema or
 use a fresh development project. Do not use `db reset` against the shared project.
 
-### Not yet applied: assignment history (October 17)
+### October 20 update: assignments and user-story scenarios
 
-`20261017000100_deal_assignments.sql` (structured from/to/by/why for US8) is in Git
-but has **not** been applied to the hosted project. Until it is, the backend's
-assign, transfer, assignment-history, and buyer-record endpoints fail against
-hosted Supabase. After the database team reviews it, run that migration once in SQL
-Editor, then `seed/seed_deal_assignments.sql` (it only adds a record for Hannah's
-seeded transfer and is safe to rerun). Do not run `seed_scenarios.sql` against the
-shared project unless the team wants those demo buyers there.
+The missing `20261017000100_deal_assignments.sql` migration was applied using the
+existing server-side PostgreSQL connection. `seed/seed_deal_assignments.sql` and
+`seed/seed_scenarios.sql` were then loaded in the same transaction. The first adds
+structured history for Hannah's existing transfer; the second adds Sofia and Tom
+plus fictional scenario variants for the backend's buyer records, follow-ups,
+unresolved work, and evaluation features.
+
+The migration and both new seeds passed the local database suite before deployment.
+A before/after comparison verified every pre-existing record was unchanged. Both
+new seeds were rerun and verified to leave all records and timestamps unchanged.
+The update did not reset the database or rerun the older migrations.
+
+Current hosted counts immediately after the update (including the retained
+integration-check fixture):
+
+| Table | Rows |
+| --- | ---: |
+| `staff_users` | 5 |
+| `buyers` | 37 |
+| `deals` | 38 |
+| `timeline_events` | 222 |
+| `appointments` | 20 |
+| `open_items` | 16 |
+| `ai_evaluations` | 1 |
+| `ai_flags` | 1 |
+| `deal_assignments` | 1 |
+
+Counts grow as the application is used. A fresh load of all repository seeds has
+36 buyers, 37 deals, and 219 timeline events; the extra buyer/deal and three events
+above belong to the earlier hosted integration check. Evaluation scenarios contain
+conversation inputs; they do not precompute evaluation results or manager reviews.
+
+All nine application tables were checked to have RLS enabled with no SELECT
+grants for `anon` or `authenticated`. The backend still connects using the
+privileged server-side PostgreSQL connection.
 
 For a fresh database, apply all migrations in filename order, followed by all
 seed files in filename order. Local `supabase db reset` does this automatically.
@@ -94,14 +123,25 @@ or run the read-only SQL in `demo/evaluation.sql`.
 
 ## Validation and remaining boundary
 
-The hosted workflow was verified on October 13, 2026. The local database suite
-contains 19 tests, and the backend suite contains 41 tests; both pass, as does
-TypeScript checking. Local suites remain isolated from the hosted database.
+The original evaluation/review persistence workflow was verified on October 13,
+2026. On October 20, all 27 current database tests and the backend TypeScript check
+passed. Hosted checks covered the rep list, structured assignment history, buyer
+record, unresolved-work overview, follow-up list, and cross-deal opt-out
+suppression. A transfer with structured history and moved tasks was exercised
+inside a transaction and rolled back, leaving the seeded deal unchanged.
+Local database tests remain isolated from the hosted database.
+
+US7's immediate simulated follow-up action was also checked against hosted
+Supabase on October 20: it recorded an attributed timeline event, recalculated
+the due status, and returned the same event for a repeated request. This check
+ran inside a transaction that was rolled back, so no follow-up was left on the
+shared sample buyer. The action uses the existing timeline table and needs no
+additional hosted migration.
 
 This verifies database-backed backend functionality, not frontend integration or
 real login security. The backend still accepts a development `X-Staff-Id` header;
 Supabase Auth mapping and verified session identity remain separate work. RLS is
-enabled on all eight tables and browser API roles have no table grants. The
+enabled on all nine tables and browser API roles have no table grants. The
 privileged server-side PostgreSQL connection relies on backend permission checks.
 
 The evaluation API, migration, and additional scenarios were supplied by the

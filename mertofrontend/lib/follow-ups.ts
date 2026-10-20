@@ -20,3 +20,9 @@ export type DueFollowUp = {
   dueAt: string;
   reasons: FollowUpReason[];
 };
+
+export type FollowUpAssessment = {
+  status: "due" | "not_due" | "suppressed";
+  reasons: FollowUpReason[];
+  suppressions: { code: string; text: string }[];
+};
