@@ -269,6 +269,34 @@ Hannah's overdue quote promise is a useful comparison: recording an email leaves
 that unresolved task visible. Restarting the sandbox backend restores these
 fictional scenarios for another run.
 
+## Reply draft review (US11)
+
+The rep's customer page can prepare a **simulated, template-generated draft**,
+show its saved customer context and recent messages, and approve, edit, or reject
+it. This does not call an AI model. Approval and rejection are internal reviews,
+not customer contact; only a separate simulated send records an outbound reply.
+
+| Endpoint | Action |
+| --- | --- |
+| `GET /api/deals/:dealId/reply-drafts` | List saved drafts and decisions |
+| `POST /api/deals/:dealId/reply-drafts` | Prepare a draft with `{ requestId, channel }` (`email` or `sms`) |
+| `POST /api/reply-drafts/:draftId/review` | `{ decision: "approve" \| "edit" \| "reject", message? }`; text is required only for edits |
+| `POST /api/reply-drafts/:draftId/send` | Record a simulated send of the saved approved text |
+
+The owning rep or GM can use these endpoints. The server derives context, checks
+current ownership and eligibility, and saves the decision and final text in a
+`draft_review` timeline event. A reviewed draft cannot be changed; prepare another
+if needed. Pending/rejected drafts cannot be sent. Send retries reuse the draft ID
+and do not duplicate contact. Opt-out, stage, contact details, and eligibility are
+checked again when sending. The manual US7 form remains an independent compose flow.
+
+Apply `supabase/migrations/20261020000200_reply_drafts.sql` before running this
+against an existing database. Sandbox startup loads it automatically. For a manual
+check, sign in as Dana, open Maya, reject one draft, prepare another, edit and
+approve it, then record the simulated send. The timeline should contain both
+decisions and only one outbound follow-up; the visit reminder should clear only
+after that send.
+
 ## Unresolved work (US4)
 
 `GET /api/open-items` lists open items (promises, missing documents, unanswered

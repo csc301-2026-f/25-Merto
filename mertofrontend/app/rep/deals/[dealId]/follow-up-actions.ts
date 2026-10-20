@@ -37,7 +37,7 @@ export async function recordFollowUp(dealId: string, _previous: FollowUpState, f
   revalidatePath("/rep", "layout");
   revalidatePath("/manager", "layout");
   return {
-    success: "Simulated follow-up recorded. No real message or call was sent.",
+    success: "Follow-up recorded.",
     eventId: saved.eventId, recordedAt: saved.recordedAt,
     remaining: saved.followUp.reasons.map(reason => reason.text),
   };

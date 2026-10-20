@@ -13,7 +13,14 @@ seed were applied through Supabase SQL Editor, on top of the October 6 core sche
 | `20261006000100_mvp_database.sql` | Six core staff/buyer/deal/history/appointment/task tables |
 | `20261013000100_ai_evaluation.sql` | Evaluation results, evidence-backed flags, review metadata, and evaluation/review timeline event types |
 | `20261017000100_deal_assignments.sql` | Structured assignment/transfer history; applied October 20, 2026 |
+| `20261020000200_reply_drafts.sql` | Stored reply drafts, context, decisions, and timeline links; applied October 20, 2026 |
 | `20261020000100_open_item_events.sql` | `open_item` timeline event type for resolving/cancelling open items (US4); **not yet applied** to the hosted project. Until it is, `POST /api/open-items/:id/resolve` and `/cancel` fail there with a check-constraint error |
+
+The reply-draft migration was originally applied as `20261020000100_reply_drafts.sql`.
+It was renumbered to `20261020000200_reply_drafts.sql` when integrating US4 to
+avoid a duplicate migration version. Both October 20 migrations now preserve
+`open_item` and `draft_review` in the timeline constraint. Do not rerun the
+reply-draft table creation on the hosted project.
 
 Both `seed/seed.sql` and `seed/seed_ai_evaluation.sql` are loaded. Together they
 provide 3 staff, 8 buyers/deals, 28 timeline events, 3 appointments, and 5 tasks
@@ -54,13 +61,14 @@ integration-check fixture):
 | `ai_evaluations` | 1 |
 | `ai_flags` | 1 |
 | `deal_assignments` | 1 |
+| `reply_drafts` | 0 |
 
 Counts grow as the application is used. A fresh load of all repository seeds has
 36 buyers, 37 deals, and 219 timeline events; the extra buyer/deal and three events
 above belong to the earlier hosted integration check. Evaluation scenarios contain
 conversation inputs; they do not precompute evaluation results or manager reviews.
 
-All nine application tables were checked to have RLS enabled with no SELECT
+All ten application tables were checked to have RLS enabled with no SELECT
 grants for `anon` or `authenticated`. The backend still connects using the
 privileged server-side PostgreSQL connection.
 
@@ -139,10 +147,17 @@ ran inside a transaction that was rolled back, so no follow-up was left on the
 shared sample buyer. The action uses the existing timeline table and needs no
 additional hosted migration.
 
+US11's reply-draft migration was applied on October 20. The new table has RLS
+enabled with browser-role access revoked. Hosted verification prepared drafts,
+saved an edited approval, rejected another draft, blocked sending that rejection,
+and recorded the approved reply through US7 with retry deduplication. All test
+drafts, review events, and follow-up messages were rolled back; pre-existing
+records were unchanged. No seed script or manual setup is needed for this feature.
+
 This verifies database-backed backend functionality, not frontend integration or
 real login security. The backend still accepts a development `X-Staff-Id` header;
 Supabase Auth mapping and verified session identity remain separate work. RLS is
-enabled on all nine tables and browser API roles have no table grants. The
+enabled on all ten tables and browser API roles have no table grants. The
 privileged server-side PostgreSQL connection relies on backend permission checks.
 
 The evaluation API, migration, and additional scenarios were supplied by the

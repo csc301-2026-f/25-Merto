@@ -1,6 +1,6 @@
 # Merto database contract: initial prototype
 
-This documents the six core tables, two evaluation tables, and the assignment history table implemented in PostgreSQL/Supabase.
+This documents the application tables implemented in PostgreSQL/Supabase.
 The source of truth is the SQL files in `migrations/`, applied in filename order. This is an
 initial integration proposal, not a finalized backend API. The course demo is
 one fictional dealership; store membership and multiple stores are not modeled.
@@ -38,6 +38,9 @@ erDiagram
   ai_evaluations ||--o{ ai_flags : flags
   timeline_events ||--o{ ai_flags : evidence
   staff_users o|--o{ ai_flags : reviews
+  deals ||--o{ reply_drafts : drafts
+  staff_users ||--o{ reply_drafts : prepares
+  timeline_events o|--o| reply_drafts : records_review
   deals ||--o{ deal_assignments : "changes owner"
   timeline_events ||--o| deal_assignments : records
   staff_users ||--o{ deal_assignments : "from / to / by"
@@ -102,7 +105,7 @@ order or require owners to be reps rather than GMs.
 | --- | --- | --- |
 | `id` | UUID / no | Event ID. |
 | `deal_id` | UUID / no | References `deals.id`. |
-| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, `ai_review` (both written by the backend evaluation service), or `open_item` (written when staff resolve or cancel an open item; it is bookkeeping, not contact with the buyer). |
+| `event_type` | text / no | `interaction` (default), `assignment`, `transfer`, `opt_out`, `ai_evaluation`, `ai_review`, `draft_review`, or `open_item`. Reviews and open-item completion are internal bookkeeping, not contact with the buyer. |
 | `actor_type` | text / no | `buyer`, `ai`, `rep`, `gm`, or `system`. |
 | `actor_id` | UUID / yes | Staff ID for human staff events; see attribution rules below. |
 | `channel` | text / no | `call`, `sms`, `email`, `web`, `in_person`, or `note`. |
@@ -272,6 +275,31 @@ transfer of Hannah from Arjun to Dana. Older seeded assignment events (Jordan's,
 those in `seed_scenarios.sql`) have no record; the backend returns them as text only.
 
 ## Scope and validation
+
+### Reply drafts (US11)
+
+`20261020000200_reply_drafts.sql` adds `reply_drafts` and the internal
+`draft_review` timeline type. Fields:
+
+- `id`: UUID, also used for creation retries and the eventual outbound event ID.
+- `deal_id`: required deal FK; `channel`: `email` or `sms`.
+- `source`: `simulated_template`; `original_text`: required, nonblank, up to 2,000 characters.
+- `context`: JSON snapshot containing `buyer`, `vehicleInterest`, follow-up
+  `reasons`, and up to five recent `messages` with event ID, actor, text, and time.
+- `created_by`, `created_at`: required staff FK and server timestamp.
+- `decision`: null while pending, otherwise `approve`, `edit`, or `reject`.
+- `final_text`: equals the original on approval, differs on edit, and is null on rejection.
+- `reviewed_by`, `reviewed_at`, `review_event_id`: all absent while pending and
+  required after review. The timeline event records the actor, decision, original,
+  and final wording (or that nothing was approved).
+- `sent_event_id`: null until simulated sending; allowed only after approval/edit.
+
+Both event pointers are unique and reference `(timeline_events.id, deal_id)`,
+so neither can point to another deal. RLS is enabled and browser API roles have
+no grants. Permissions and allowed decisions are enforced by `backend/src/reply-drafts/`.
+Reviewing does not clear follow-up reminders or count as a human handoff in AI
+evaluation. Sending reuses US7 and rechecks current eligibility and ownership.
+There is no model call or real message delivery in this prototype.
 
 US7 reuses `timeline_events` rather than introducing a scheduling table. The
 request UUID becomes the event's primary key, so identical retries return the

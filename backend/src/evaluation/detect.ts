@@ -31,11 +31,10 @@ const isAiOutbound = (event: TimelineEvent) =>
 const visitConfirmedBy = (conversation: Conversation, time: Date) =>
   conversation.appointmentConfirmedAts.some((confirmedAt) => confirmedAt <= time);
 
-// Staff took over after `time`: a rep/GM event (reviewing a flag or closing an
-// open item does not count) or a new open item such as a callback.
+// Reviews and open-item bookkeeping do not count as staff taking over.
 const staffTookOverSince = (conversation: Conversation, time: Date) =>
   conversation.events.some((event) => (event.actorType === 'rep' || event.actorType === 'gm')
-    && event.eventType !== 'ai_review' && event.eventType !== 'open_item' && event.createdAt >= time)
+    && !['ai_review', 'draft_review', 'open_item'].includes(event.eventType) && event.createdAt >= time)
   || conversation.openItemCreatedAts.some((createdAt) => createdAt >= time);
 
 // Pure and synchronous: no database, clock, or network. Each issue names the
