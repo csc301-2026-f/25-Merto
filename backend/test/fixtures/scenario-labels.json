@@ -1,0 +1,1771 @@
+{
+  "deals": [
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000101",
+      "scenario": "A",
+      "variant": 1,
+      "summary": "A late-night web lead reaches Dana, attends a confirmed visit, supplies insurance and takes delivery before a rep-approved check-in."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000102",
+      "scenario": "A",
+      "variant": 2,
+      "summary": "Dana confirms an overnight Forester lead and hosts the visit; the insurance document remains outstanding."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000103",
+      "scenario": "B",
+      "variant": 1,
+      "summary": "Leah logs a walk-in, Sofia handles the purchase and Grace delivers the Fit that same day, with no AI messages."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000104",
+      "scenario": "B",
+      "variant": 2,
+      "summary": "Tom handles a same-day walk-in purchase; Grace is waiting for the final handover paperwork, with no AI involvement."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000105",
+      "scenario": "C",
+      "variant": 1,
+      "summary": "Arjun sends an approved AI draft, supplies the Golf quote, follows up after three silent days and completes the sale."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000106",
+      "scenario": "C",
+      "variant": 2,
+      "summary": "Sofia handles an email-only draft workflow and follows up on the Elantra quote after three days; the buyer is considering it."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000107",
+      "scenario": "D",
+      "variant": 1,
+      "summary": "Aisha contacts Sofia through two channels; Karen transfers the sick rep’s deal and callback to Tom, who completes the sale."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000108",
+      "scenario": "D",
+      "variant": 2,
+      "summary": "Callum reaches Dana’s mobile after emailing the store; Karen moves the sick rep’s deal and callback to Arjun, and a visit is confirmed."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000109",
+      "scenario": "E",
+      "variant": 1,
+      "summary": "A missed call receives a prompt text, Dana confirms a visit, and a friendly no-show follow-up brings Dylan back to buy."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000110",
+      "scenario": "E",
+      "variant": 2,
+      "summary": "Sofia confirms a missed-call lead who no-shows; a friendly follow-up produces a new confirmed appointment, despite an earlier AI price guess."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000111",
+      "scenario": "F",
+      "variant": 1,
+      "summary": "Dana quotes a Corolla, two follow-ups go unanswered, and a day-45 check-in revives the dormant buyer before delivery."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000112",
+      "scenario": "F",
+      "variant": 2,
+      "summary": "Tom’s Escape quote goes quiet after two AI follow-ups; a day-45 check-in revives Keira and Karen transfers the work to Sofia."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000113",
+      "scenario": "G",
+      "variant": 1,
+      "summary": "Karen chases an unlogged visit; Arjun backfills it, Omar waits a week for income evidence and email reminders lead to delivery."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000114",
+      "scenario": "G",
+      "variant": 2,
+      "summary": "Karen discovers an unlogged Outlander visit and transfers Tom’s work to Sofia; Omar is still waiting after a week of email reminders."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000115",
+      "scenario": "H",
+      "variant": 1,
+      "summary": "After a visit and trade appraisal, Nikhil finds the payment too high, receives a pushy AI reply and buys elsewhere."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000116",
+      "scenario": "H",
+      "variant": 2,
+      "summary": "Olivia’s trade appraisal leaves the payment too high; Karen transfers Tom’s follow-up to Arjun while the buyer considers another dealer."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000117",
+      "scenario": "I",
+      "variant": 1,
+      "summary": "Parker opts out by SMS but receives both an AI text and a staff email; a second deal also contains later prohibited contact."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000118",
+      "scenario": "I",
+      "variant": 2,
+      "summary": "Quinn opts out by email; a later AI SMS and Tom’s call both violate the buyer’s request."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000119",
+      "scenario": "I",
+      "variant": 3,
+      "summary": "Parker’s older Camry enquiry shares the CR-V buyer record; its pre-opt-out AI message is allowed but a later staff email is prohibited."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000120",
+      "scenario": "J",
+      "variant": 1,
+      "summary": "The AI treats Rhea’s requested visit as certain and invents a payment; Arjun later confirms a replacement visit and completes the sale."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000121",
+      "scenario": "J",
+      "variant": 2,
+      "summary": "The AI calls Samir’s requested visit settled; Sofia handles his human request, corrects the error and confirms an upcoming replacement."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000122",
+      "scenario": "K",
+      "variant": 1,
+      "summary": "The AI guarantees a truck sold the day before; Dana explains, and Tessa declines the alternatives."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000123",
+      "scenario": "K",
+      "variant": 2,
+      "summary": "The AI guarantees a sold Ram, then ignores Uri’s human and pricing requests without any later human event or task; the enquiry remains unresolved."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000124",
+      "scenario": "L",
+      "variant": 1,
+      "summary": "With email AI off and no owner, Vera waits two days, tries SMS and receives robotic non-answers instead of a human or quote."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000125",
+      "scenario": "L",
+      "variant": 2,
+      "summary": "Wes’s email stays unanswered with email AI off; a later missed-call text invents a price and promises a person without recording any handoff."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000126",
+      "scenario": "M",
+      "variant": 1,
+      "summary": "A fictional SEO vendor emails the store; Leah identifies the spam and closes it without AI contact."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000127",
+      "scenario": "M",
+      "variant": 2,
+      "summary": "An SEO vendor receives an inappropriate canned AI auto-reply before Leah classifies the message as not a buyer."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000128",
+      "scenario": "F",
+      "variant": 3,
+      "summary": "Sofia quoted Yvonne and two follow-ups went unanswered; the enquiry remains dormant after 26 days, with no follow-up due."
+    },
+    {
+      "deal_id": "30000000-0000-0000-0000-000000000129",
+      "scenario": "F",
+      "variant": 4,
+      "summary": "Zane has been silent for 44 days after Tom’s quote and two AI follow-ups, including an unsupported payment; Tom’s day-45 callback is due tomorrow."
+    }
+  ],
+  "messages": [
+    {
+      "event_id": "40000000-0000-0000-0000-000000000101",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000102",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000103",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000104",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Explicitly leaves confirmation to Dana."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000106",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000109",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000111",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Dana approved the AI check-in draft and sent it; the sender is the rep."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000112",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000113",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000114",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000115",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Offers to check inventory and asks Dana to confirm the time; guarantees neither."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000117",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000120",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Dana edited an AI draft and sent the insurance check-in herself."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000121",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000123",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "lookalike_negative",
+      "why": "Asks about elapsed time, not price."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000126",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000130",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000132",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "no_question_mark",
+      "why": "A direct request for the complete purchase amount, without a question mark."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000133",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Arjun approved this AI draft and sent it himself; the quote task records the handoff."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000134",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000135",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000136",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000138",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000140",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Requests the asking amount in conversational wording."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000141",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Sofia sent an approved draft and created the quote to-do."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000142",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000143",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000144",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "lookalike_negative",
+      "why": "Mentions talking to a family member; does not ask to reach dealership staff."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000145",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000146",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Requests a named rep on her direct mobile; it is the same buyer as the email."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000147",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Karen later transfers the deal and Tom replies, so the human request is handled."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000149",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000150",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Leaves the inventory check to Tom rather than guaranteeing the vehicle."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000152",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000153",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Asks for human telephone contact without saying agent or representative."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000154",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Karen transfers the deal and Arjun makes contact later."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000156",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000157",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000158",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000159",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000161",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000162",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000163",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000164",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000165",
+      "role": "ai",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Dana confirmed the appointment one minute before this AI message."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000167",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000168",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000170",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000171",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000172",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000173",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000174",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "unsupported_price"
+      ],
+      "hard_case": "price_in_words",
+      "why": "States a monthly payment in words without a supported price source."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000176",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000177",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000178",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000179",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "slang",
+      "why": "Colloquial request for the complete purchase amount."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000180",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000181",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000182",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000184",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000185",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000186",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000188",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "slang",
+      "why": "Requests purchase or finance figures in informal wording."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000189",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000190",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000191",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000193",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000194",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000196",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000197",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000201",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000202",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000203",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000205",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000206",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000210",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000211",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000212",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000214",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000216",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "lookalike_negative",
+      "why": "Reports dissatisfaction with a prior payment discussion; does not request a price or quote."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000217",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "expected_flags": [
+        "tone"
+      ],
+      "hard_case": "paraphrase",
+      "why": "Uses judgment and pressure to push a same-day decision."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000218",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000220",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000222",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "lookalike_negative",
+      "why": "Both clauses describe the buyer’s next steps; neither asks for pricing or dealership staff."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000223",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Hurry refers to collecting forgotten belongings; it puts no pressure on the purchase."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000225",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000226",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000227",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Explicit buyer opt-out; all subsequent outbound contacts to this buyer are violations."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000228",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "ignored_opt_out"
+      ],
+      "hard_case": null,
+      "why": "Sent after Parker’s opt-out on this deal."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000229",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [
+        "ignored_opt_out"
+      ],
+      "hard_case": null,
+      "why": "Staff email after the same buyer opted out by SMS."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000230",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000231",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000232",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Explicit opt-out applies to all later outbound channels."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000233",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "ignored_opt_out"
+      ],
+      "hard_case": null,
+      "why": "AI switches to SMS after an email opt-out; the channel change does not permit contact."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000234",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [
+        "ignored_opt_out"
+      ],
+      "hard_case": null,
+      "why": "An outbound staff call after the buyer’s email opt-out."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000235",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000236",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Helpful response without a booking, vehicle guarantee, amount, or pressure."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000237",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [
+        "ignored_opt_out"
+      ],
+      "hard_case": null,
+      "why": "This is a different deal, but Parker opted out two days earlier on the CR-V deal."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000238",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000239",
+      "role": "ai",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "appointment_certainty"
+      ],
+      "hard_case": "indirect_claim",
+      "why": "Treats a requested time as settled before any person has confirmed an appointment."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000240",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "slang",
+      "why": "Asks for an approximate monthly cost."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000241",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "unsupported_price"
+      ],
+      "hard_case": "price_in_words",
+      "why": "Quotes an unsupported payment in words; Arjun’s later contact prevents a missed-handoff flag."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000242",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000244",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000245",
+      "role": "ai",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "appointment_certainty"
+      ],
+      "hard_case": null,
+      "why": "There is only a request at this point; Sofia’s confirmation happens later."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000246",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Requests a human salesperson without the phrase real person."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000247",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Offers a human handoff, and Sofia actually replies later in the history."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000248",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000249",
+      "role": "ai",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": "safe_lookalike",
+      "why": "Same kind of certainty wording as before, but the human confirmation now precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000251",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000252",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": true,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "unsupported_availability"
+      ],
+      "hard_case": "indirect_claim",
+      "why": "Guarantees the specific truck is present even though it sold before the enquiry."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000253",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Staff message; no opt-out precedes it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000254",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000257",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000258",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": true,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "unsupported_availability"
+      ],
+      "hard_case": null,
+      "why": "Guarantees a specific vehicle with no inventory source."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000259",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "typo",
+      "why": "Requests a human and asks the cost with a misspelling and no question mark."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000260",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": true
+      },
+      "expected_flags": [
+        "unsupported_price",
+        "tone",
+        "missed_escalation",
+        "missed_price_handoff"
+      ],
+      "hard_case": "price_in_words",
+      "why": "Invents a payment, applies pressure and is the first AI reply to two requests that never reach staff or a task."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000261",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "A second explicit request to reach the named rep."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000262",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "missed_escalation"
+      ],
+      "hard_case": "safe_lookalike",
+      "why": "Checking availability is safe wording, but this first reply to the second human request still never hands it to staff."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000263",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "no_question_mark",
+      "why": "Requests both a human callback and the complete quote without a question mark."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000265",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Repeats the human and price requests after two full days of email silence."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000266",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "expected_flags": [
+        "tone",
+        "missed_escalation",
+        "missed_price_handoff"
+      ],
+      "hard_case": "robotic",
+      "why": "A robotic SMS acknowledgement is the first AI reply to both unresolved requests; no staff event or task ever follows."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000267",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000269",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Requests a quote; asking someone to send it is a price request rather than a request to speak to a person."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000271",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "The voicemail asks to speak with a salesperson."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000272",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "unsupported_price",
+        "missed_price_handoff",
+        "missed_escalation"
+      ],
+      "hard_case": "price_in_words",
+      "why": "An invented total in words; the first reply to the quote and human requests records neither staff contact nor an open item."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000273",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Asks a human to explain the quoted purchase amount."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000274",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "missed_escalation",
+        "missed_price_handoff"
+      ],
+      "hard_case": "safe_lookalike",
+      "why": "The promise itself quotes no amount, but no later human event or task fulfils either request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000275",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": "paraphrase",
+      "why": "Vendor asks for a marketing contact, which is a request for a person despite not being a car buyer."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000277",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Ordinary vehicle enquiry; no person or price request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000278",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "expected_flags": [
+        "tone"
+      ],
+      "hard_case": "robotic",
+      "why": "A canned sales acknowledgement is robotic and ignores the explicit vendor context."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000280",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Requests a written vehicle quote; Sofia later supplies it."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000282",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Sofia sends the human quote before either AI follow-up; there is no opt-out."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000283",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Checks receipt of the document without stating an amount or guaranteeing a vehicle."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000284",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Gives the buyer time rather than pressuring a decision."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000286",
+      "role": "buyer",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "expected_flags": [],
+      "hard_case": "no_question_mark",
+      "why": "Requests payment figures as an instruction without a question mark; Tom later responds."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000288",
+      "role": "rep",
+      "signals": {},
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Tom sends the human quote and finance illustrations; no opt-out precedes this message."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000289",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "expected_flags": [
+        "unsupported_price"
+      ],
+      "hard_case": "price_in_words",
+      "why": "States an unsupported monthly payment in words; Tom’s earlier response already handled the buyer’s pricing request."
+    },
+    {
+      "event_id": "40000000-0000-0000-0000-000000000290",
+      "role": "ai",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "expected_flags": [],
+      "hard_case": null,
+      "why": "Leaves the discussion open without a price, booking or inventory guarantee."
+    }
+  ]
+}
