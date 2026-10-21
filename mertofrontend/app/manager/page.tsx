@@ -8,6 +8,7 @@ import type { Deal } from "@/lib/deals";
 import type { Metrics, QueueItem } from "@/lib/evaluation";
 import { formatDateTime } from "@/lib/format";
 import type { OpenItemsOverview } from "@/lib/open-items";
+import { RunEvaluation } from "./run-evaluation";
 
 // The card lists the longest-waiting items; the summary counts them all.
 const OPEN_ITEMS_SHOWN = 10;
@@ -151,18 +152,23 @@ async function ManagerHome() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card title="AI evaluation metrics" hideCount>
-          {metrics === null ? (
-            <p>Couldn&apos;t load metrics.</p>
-          ) : Object.keys(metrics).length === 0 ? (
-            <p className="font-semibold">No metrics yet</p>
-          ) : (
-            <MetricsList metrics={metrics} />
-          )}
+          <div className="space-y-4">
+            <RunEvaluation />
+            {metrics === null ? (
+              <p>Couldn&apos;t load metrics.</p>
+            ) : Object.keys(metrics).length === 0 ? (
+              <p className="font-semibold">No metrics yet</p>
+            ) : (
+              <MetricsList metrics={metrics} />
+            )}
+          </div>
         </Card>
 
         <Card title="Flags awaiting review" count={queue?.length}>
           {queue === null ? (
             <p>Couldn&apos;t load the flag queue.</p>
+          ) : queue.length === 0 && metrics?.evaluatedConversations === 0 ? (
+            <p>No conversations evaluated yet. Run an AI evaluation to check them.</p>
           ) : queue.length === 0 ? (
             <p className="font-semibold">None right now</p>
           ) : (
