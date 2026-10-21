@@ -83,7 +83,7 @@ from the flag's current status).
 
 | Method and path | Who | What it does |
 | --- | --- | --- |
-| `POST /api/evaluations/run` | GM | Nightly job: evaluates every deal with AI activity. Returns `buyer`, `dealId`, `result`, `evaluatedAt`, `newFlags` per deal. Safe to rerun. |
+| `POST /api/evaluations/run` | GM | Nightly job: evaluates every deal with AI activity. Returns `buyer`, `dealId`, `result`, `evaluatedAt`, `newFlags` per deal. Safe to rerun. The manager dashboard's **Run AI evaluation** button calls it. |
 | `POST /api/deals/:dealId/evaluation` | GM | Evaluates one deal. |
 | `GET /api/deals/:dealId/evaluation` | GM, owning rep | The buyer record's AI review: `status` (`not_evaluated`, `passed`, `flagged`, `confirmed_issue`, `resolved`, `false_positive`), `evaluatedAt`, and every flag with its evidence message. |
 | `GET /api/deals/:dealId/evaluation/preview` | GM, owning rep | Dry run: what the rules would flag now. Writes nothing. |

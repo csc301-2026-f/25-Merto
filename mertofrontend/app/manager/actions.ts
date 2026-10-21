@@ -42,6 +42,34 @@ export async function assignOrTransfer(
   return result;
 }
 
+export type EvaluationRunState =
+  | { ok: true; evaluated: number; flagged: number; newFlags: number }
+  | { ok: false; error: string }
+  | undefined;
+
+// Evaluates every deal with AI activity. Safe to rerun: the backend never raises
+// the same flag on the same message twice.
+export async function runEvaluation(): Promise<EvaluationRunState> {
+  await requireRole("manager");
+  let res: Response;
+  try {
+    res = await backendFetch("/api/evaluations/run", { method: "POST" });
+  } catch {
+    return { ok: false, error: "Could not reach the server." };
+  }
+  if (!res.ok) {
+    return { ok: false, error: res.status === 403 ? "You don't have permission." : "Could not run the evaluation." };
+  }
+  const deals: { result: string; newFlags: number }[] = await res.json();
+  revalidatePath("/manager", "layout");
+  return {
+    ok: true,
+    evaluated: deals.length,
+    flagged: deals.filter((deal) => deal.result === "flagged").length,
+    newFlags: deals.reduce((sum, deal) => sum + deal.newFlags, 0),
+  };
+}
+
 export async function reviewFlag(
   flagId: string,
   decision: "confirmed_issue" | "false_positive" | "resolved",
