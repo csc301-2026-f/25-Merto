@@ -1,4 +1,4 @@
-# Your Team Number and Name
+# CSC301 Team 25 - zgrnf
 
  > _Note:_ This document is meant to be written during (or shortly after) your review meeting, which should happen fairly close to the due date.      
  >      
@@ -46,8 +46,12 @@ Briefly explain how you integrated the previously developed individuals componen
 ## Product - Review
 
 #### Q4. How was your product demo?
- * How did you prepare your demo?
- * What did you manage to demo to your partner?
- * Did your partner accept the features? And were there change requests?
- * What were your learnings through this process? This can be either from a process and/or product perspective.
+ * Demo Prep:
+   We ran through the features of the app and tested to see if they'd work before the meeting with the partner. We also planned out the order of the demo and decided how we'd show the features to the partner.
+ * What was shown to the partner:
+   We were able to demo the login screen as well as the representatives and manager view home pages. We demoed the manager's ability to assign/transfer deals to different representatives, create new deals and view deals in detail. The representative's ability to create their own deals and be alerted to deals that require immediate attention was also shown.   
+ * Partner's reaction:
+   The partner accepted the features and general direction of the product. Gave suggestions on next steps for the team and noted that the UI should be updated to be more user-friendly and match Merto's brand.
+ * What the team learned from the demo:
+   When demoing the product, we should create some complimentary slides that introduce each feature and give a higher level idea to the partner before we jump in. This will improve the structure and understandability of our demos in the future. In the future, when adding new features, we want to ensure the visuals are up to Merto's standard and follows their vision.
  * *This section will be marked very leniently so keep it brief and just make sure the points are addressed*
