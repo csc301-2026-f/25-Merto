@@ -5,7 +5,7 @@ import type { Deal } from "@/lib/deals";
 import { Card } from "@/components/Card";
 import { SearchBar, cleanQuery } from "@/components/SearchBar";
 
-export function DealList({deals}: {deals: Deal[];}) {
+export function CustomerList({deals}: {deals: Deal[];}) {
 
   // For use with SearchBar
   const [searchQuery, setSearchQuery] = useState("");

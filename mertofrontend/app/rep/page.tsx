@@ -4,7 +4,7 @@ import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
 import { FollowUpList } from "@/components/FollowUpList";
 import type { Deal } from "@/lib/deals";
-import { DealList } from "./customer-list";
+import { CustomerList } from "./customer-list";
 import type { DueFollowUp } from "@/lib/follow-ups";
 
 async function RepDashboard() {
@@ -32,7 +32,7 @@ async function RepDashboard() {
       {deals === null ? (
         <p>Couldn&apos;t load your customers.</p>
       ) : (
-        <DealList deals={deals} />
+        <CustomerList deals={deals} />
       )}
     </div>
   );
