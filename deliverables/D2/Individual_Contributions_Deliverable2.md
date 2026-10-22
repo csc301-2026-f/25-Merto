@@ -24,3 +24,12 @@
    - Built the follow-up action feature (US7), including the backend and rep interface for recording simulated follow-ups in the deal history.
    - Built reply draft review (US11), allowing reps to generate, approve, edit, or reject drafts and record simulated sends. Added tests for both features.
    - Deployed the frontend and backend and added access instructions and feature walkthroughs to the README.
+
+## Rachel
+
+1. **Description:** Worked on backend, specifically US6: Appointment tracking, which allows managers and sales reps to schedule, view, and update appointments with their customers.
+2. **Details:** 
+   - Implemented appointment creation and tracking feature that allows sale reps and managers to create an appointment with their customers and track its status [requested, confirmed, completed, rescheduled, cancelled, no show]
+   - Enforced role-based access control, allowing managers to manage all appointments and sales reps to access only appointments associated with their own deals.
+   - Added a calendar inteface with a monthly view, daily agenda, and appointment creation and editing forms.
+   - Documented the appointment tracking and calendar feature walkthroughs in `backend/README.md`
