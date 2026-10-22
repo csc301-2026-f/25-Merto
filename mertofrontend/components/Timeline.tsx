@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Flag } from "@/lib/evaluation";
 import type { ActorType, TimelineEntry } from "@/lib/deals";
 import { formatDateTime, label } from "@/lib/format";
+import { SearchBar, cleanQuery } from "./SearchBar";
 
 // Every timeline entry shows who acted, so AI activity is never mistaken for a person's.
 const ACTORS: { [type in ActorType]: { name: string; className: string } } = {
@@ -32,6 +33,11 @@ const isMessage = (entry: TimelineEntry) => entry.eventType === "interaction" &&
 // each flagged message shows why it was flagged, and "Needs attention" lists them.
 export function Timeline({ entries, buyer, flags }: { entries: TimelineEntry[]; buyer: string; flags?: Flag[] }) {
   const [filter, setFilter] = useState<Filter>("all");
+
+  // For use with SearchBar
+  const [searchQuery, setSearchQuery] = useState("");
+  const cleanSearchQuery = cleanQuery(searchQuery);
+
   const flagsByEvent = new Map<string, Flag[]>();
   for (const flag of flags ?? []) {
     if (!flag.evidenceEventId) continue;
@@ -46,10 +52,16 @@ export function Timeline({ entries, buyer, flags }: { entries: TimelineEntry[]; 
     ...(flags ? [{ value: "attention" as const, text: "Needs attention", matches: flagged }] : []),
   ];
   const active = options.find((option) => option.value === filter) ?? options[0];
-  const shown = entries.filter(active.matches);
+  const shown = entries.filter(
+    (item) =>
+    (cleanQuery(item.actorName ?? "").includes(cleanSearchQuery) ||
+    cleanQuery(item.body).includes(cleanSearchQuery)) &&
+    active.matches(item)
+  );
 
   return (
     <div className="space-y-3">
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <div role="group" aria-label="Filter the timeline" className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button key={option.value} type="button" aria-pressed={option.value === active.value}
