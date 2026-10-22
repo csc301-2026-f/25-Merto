@@ -344,6 +344,65 @@ bookkeeping apart from contact with the buyer: it does not clear `unanswered_mes
 (US6) or count as a human taking over for `missed_escalation` (US5). Resolving an overdue
 promise or callback does clear its `overdue_commitment` follow-up reason.
 
+## Appointment tracking and calendar (US11)
+
+The manager and sales-rep navigation includes a **Calendar** tab at
+`/manager/calendar` and `/rep/calendar`. Both pages show a month grid and an
+agenda for the selected day. Choose a day and use the form to create an
+appointment, or select an existing appointment to edit its date, time, status,
+or notes. The manager calendar includes appointments for all deals, including
+unassigned deals; a rep sees appointments only for deals they own. Customer
+choices for new appointments come from that user's open-deal list, so managers
+can schedule for unassigned customers and reps can schedule for their own
+customers.
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
+| `POST /api/appointments` | GM, owning rep | Creates an appointment (requested by default). Body: `{ "dealId", "scheduledFor", "status"?, "outcomeNote"? }`. |
+| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates `scheduledFor`, `status`, and `outcomeNote`. Status is `requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, or `no_show`. |
+
+Calendar times are entered and displayed in the dealership's
+`America/Toronto` time zone. The API stores `scheduledFor` as a timestamp with
+time zone; send an ISO 8601 date-time with an explicit offset (for example,
+`2026-11-10T10:30:00-05:00`) to avoid ambiguity. Daylight-saving transitions
+can make a local time invalid or ambiguous; the calendar reports a nonexistent
+local time instead of silently saving a different time. When the clock moves
+back and a local time occurs twice, the calendar selects the earlier occurrence.
+
+All appointment endpoints require the normal `X-Staff-Id` authentication.
+Managers can read and edit appointments for any deal. Reps can read and edit
+appointments only when their staff ID owns the associated deal; attempts to
+access another rep's or an unassigned deal return 403. Creating an appointment
+for an unknown deal returns 404.
+
+`GET /api/appointments` includes every appointment regardless of status, sorted
+by scheduled time, and returns `id`, `dealId`, `scheduledFor`, `status`,
+`outcomeNote`, `buyer`, `vehicleInterest`, `ownerId`, and `owner`. On an
+unassigned deal, `ownerId` and `owner` are null. Create and update requests
+accept:
+
+```json
+{
+  "dealId": "deal UUID (create only)",
+  "scheduledFor": "ISO 8601 date-time with timezone",
+  "status": "requested",
+  "outcomeNote": "Optional note, up to 500 characters"
+}
+```
+
+`POST /api/appointments` requires `dealId` and `scheduledFor`; `status`
+defaults to `requested`, and `outcomeNote` is optional.
+`PATCH /api/appointments/:appointmentId` requires `scheduledFor` and accepts
+the same status and note fields. Send the current status when changing only the
+date or note, since an omitted status defaults to `requested`. Status values are
+`requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, and
+`no_show`. Setting a status to `confirmed`, `completed`, or `no_show` records
+the acting staff member in `confirmed_by` and the current time in
+`confirmed_at`; changing to another status clears those confirmation fields.
+Appointment changes are kept on the deal in the `appointments` table and
+appear in the deal record returned by `GET /api/deals/:dealId`.
+
 ## Rules
 
 Defined in [`src/evaluation/rules.ts`](src/evaluation/rules.ts); the conditions
