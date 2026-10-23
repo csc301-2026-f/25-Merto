@@ -43,12 +43,46 @@ The application uses fictional customer and deal data. Changes to the hosted dat
 2. Open a deal to inspect the buyer record, conversation timeline, and unresolved items. Use the manager's deal controls to assign or transfer ownership.
 3. Return to the manager home page and click **Run AI evaluation**. Review **Flags awaiting review** and the reasons given for flagged replies.
 
+### Review unresolved work (US4)
+1. Sign in as `karen`. On the manager home page, find **Unresolved work**. It shows how many items are open, how many are overdue, how many have no owner, and when the oldest was opened.
+2. Items are listed longest-waiting first, with **overdue** and **no owner** labels. Click an item to open its buyer record.
+3. In **Open items** on the buyer record, click **Resolve** and optionally describe how it was done, then click **Mark resolved**. Or click **Cancel item**, explain why it is no longer needed (required), then click **Cancel this item**.
+4. Closed items move under **Closed** and stay visible, so finished and unfinished work are never confused. The decision is added to the deal timeline.
+5. Return to the manager home page. The item is gone from Unresolved work and the count has dropped.
+6. Sign in as `dana` and open one of her customers to see the unresolved items on her own deals. Sales representatives only see and close items on their own deals.
+
+### Evaluate AI conversations (US5)
+
+1. Sign in as `karen` and click **Run AI evaluation** on the manager home page. The message under the button reports how many conversations were evaluated, how many were flagged, and how many flags are new.
+2. Review **Flags awaiting review**. The most severe flags come first. Each one shows the flag type and severity, the customer and owner, the reason, and the AI message that was flagged.
+3. Click a flag to open the customer's record at that message. Flagged messages that still need attention have a red bar in the timeline; choose **Needs attention** to show only those. The **AI review** box shows the customer's evaluation status and when the conversation was last evaluated.
+4. Check **AI evaluation metrics** for the number of evaluated and flagged conversations, the flag rate, and review results.
+
+The evaluation checks every AI reply against seven rules from Merto's brief: telling a customer a visit is booked before anyone confirmed it, promising a vehicle is available, quoting a price, ignoring a request to speak to a person, answering a price question instead of handing it to staff, messaging a customer who opted out, and pushy or robotic wording. The rules are deterministic: the same conversation always gets the same result, and no AI model is called. Running the evaluation again keeps existing flags and review decisions. See the [rules](backend/README.md#rules) and [how they were measured](backend/README.md#measuring-the-rules) in the backend README.
+
+### See who needs follow-up (US6)
+
+1. Sign in as `dana`. **Needs follow-up** on the home page lists the representative's customers who are due a follow-up now, most overdue first.
+2. Read the reasons under each customer. Each one says what happened and when. **customer waiting** means the customer is waiting on the team, such as a message nobody has answered or an overdue promise. **check in** means the customer has gone quiet, such as no reply 3 days after a quote or no contact 24 hours after a visit.
+3. Open a customer. The **Follow up** section lists why a follow-up is due, or says that none is due.
+
+A customer's message counts as answered only when a staff member responds with a message, call, or note; AI replies do not count. Customers who opted out and closed deals are never listed. A booked visit or a scheduled callback pauses the **check in** reasons but not the **customer waiting** ones, because a visit does not answer an open question. See the [follow-up rules](backend/README.md#follow-up-rules) in the backend README.
+
 ### Record a follow-up (US7)
 
 1. Sign in as `dana` and open a customer under **Needs follow-up**. The list explains why each customer needs attention.
 2. In **Follow up**, choose **Write a message**. Select a channel and enter a message or call notes.
 3. Click **Record follow-up**. Check the confirmation and the new entry in the deal timeline.
 4. Return Home to see the updated follow-up status. A contact reminder may clear, but an unresolved promise still needs to be resolved separately.
+
+### Assign or transfer a buyer (US8)
+
+1. Sign in as `karen`. On the manager home page, open a deal from the Unassigned list. If the list is empty, another tester may have assigned them all; use **Create customer** and choose "No rep (unassigned)" to add one.
+2. In the deal controls, choose **Assign to:** and select a sales representative. A reason is required; the default is "Customer was not attended." You can change it. Click **Assign**.
+3. Check the owner shown on the deal and the ownership history on the buyer record: it shows who assigned the deal, when, and why.
+4. To move the deal, choose **Transfer to:**, select a different representative, type a new reason, and click **Transfer**. A transfer cannot be recorded without a reason.
+5. Open the buyer record again. The history now shows who it was transferred from and to, with the reason, and any open items moved to the new owner. The conversation and earlier history stay on the deal.
+6. Sign in as the new owner (for example `arjun`) to see the deal in their list. The previous owner no longer sees it. Delivered or lost deals cannot be reassigned.
 
 ### Review a suggested reply (US11)
 
