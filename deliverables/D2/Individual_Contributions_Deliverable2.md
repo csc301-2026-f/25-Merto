@@ -47,3 +47,11 @@
    - Set up the initial Supabase project folder and extended the database tests for AI evaluation storage, covering duplicate, foreign key, and check constraint errors (19 to 24 tests).
    - Updated the root `README.md` (PR #10) with setup and run instructions, development sign-in accounts, and the technology stack the team uses.
    - Reviewed and merged PR #4 (US7 follow-up actions) and PR #6 (US11 reply draft review).
+
+## Vic Ying
+
+1. **Description:** Worked on the backend, specifically US8 (assigning and transferring buyers) and US4 (the overview of unresolved work).
+2. **Details:**
+   - US8: built the endpoints for the General Manager to assign an unassigned buyer and transfer an assigned one, with a required reason. Each change updates the owner, moves the open items, and writes a timeline entry in one transaction, and only the General Manager is allowed to make it. Wrote the tests.
+   - US4: built `GET /api/open-items`, which lists unresolved work across buyers, longest-waiting first, with a summary and filters. Managers see the whole store and reps only their own deals. Added the Unresolved work card to the manager dashboard and wrote the tests.
+   - Documented both features in `backend/README.md`.
