@@ -38,3 +38,12 @@
 
 1. **Description:** Worked on frontend.
 2. **Details:** Created search bar component and added to different pages in the application (manager's view - list of deals, rep view - list of customers, deal timeline).
+
+## Ethan Yang
+
+1. **Description:** Worked on open item resolution, the AI conversation timeline, database tests, and the project README.
+2. **Details:**
+   - US4 and US3 (PR #8): added resolve and cancel actions for open items, with an `open_item_events` migration that records each change, access rules for who may change an item, and backend tests. Added the open items panel and the conversation timeline to the deal record page.
+   - Set up the initial Supabase project folder and extended the database tests for AI evaluation storage, covering duplicate, foreign key, and check constraint errors (19 to 24 tests).
+   - Updated the root `README.md` (PR #10) with setup and run instructions, development sign-in accounts, and the technology stack the team uses.
+   - Reviewed and merged PR #4 (US7 follow-up actions) and PR #6 (US11 reply draft review).
