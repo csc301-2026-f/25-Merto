@@ -33,3 +33,8 @@
    - Enforced role-based access control, allowing managers to manage all appointments and sales reps to access only appointments associated with their own deals.
    - Added a calendar inteface with a monthly view, daily agenda, and appointment creation and editing forms.
    - Documented the appointment tracking and calendar feature walkthroughs in `backend/README.md`
+
+## Dong-Hyun Michael Kim
+
+1. **Description:** Worked on frontend.
+2. **Details:** Created search bar component and added to different pages in the application (manager's view - list of deals, rep view - list of customers, deal timeline).
