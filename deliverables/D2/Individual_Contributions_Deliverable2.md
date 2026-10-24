@@ -27,7 +27,7 @@
 
 ## Rachel
 
-1. **Description:** Worked on backend, specifically US6: Appointment tracking, which allows managers and sales reps to schedule, view, and update appointments with their customers.
+1. **Description:** Worked on backend, specifically US9: Appointment tracking, which allows managers and sales reps to schedule, view, and update appointments with their customers.
 2. **Details:** 
    - Implemented appointment creation and tracking feature that allows sale reps and managers to create an appointment with their customers and track its status [requested, confirmed, completed, rescheduled, cancelled, no show]
    - Enforced role-based access control, allowing managers to manage all appointments and sales reps to access only appointments associated with their own deals.
