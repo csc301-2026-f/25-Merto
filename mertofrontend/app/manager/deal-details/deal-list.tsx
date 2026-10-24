@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import type { Deal, Rep } from "@/lib/deals";
 import { assignOrTransfer } from "../actions";
 import type { Evaluation } from "@/lib/evaluation";
+import { SearchBar, cleanQuery } from "@/components/SearchBar";
 import { EvaluationSummary } from "@/components/EvaluationSummary";
 
 const DEFAULT_ASSIGN_REASON = "Customer was not attended.";
@@ -31,14 +32,23 @@ export function DealList({
   openDealId?: string;
 }) {
 
+  // For use with SearchBar
+  const [searchQuery, setSearchQuery] = useState("");
+  const cleanSearchQuery = cleanQuery(searchQuery);
+  const filteredDeals = deals.filter((item) =>
+    item.buyer.toLowerCase().replace(/[^a-z0-9 ]/g, "").includes(cleanSearchQuery) ||
+    item.vehicleInterest.toLowerCase().replace(/[^a-z0-9 ]/g, "").includes(cleanSearchQuery)
+  );
+
   const [sortKey, setSortKey] = useState<SortKey>("newest");
-  const sorted = useMemo(() => sortDeals(deals, sortKey), [deals, sortKey]);
+  const sorted = useMemo(() => sortDeals(filteredDeals, sortKey), [filteredDeals, sortKey]);
   return (
     <section className="rounded border-2">
       <header className="flex items-center justify-between border-b-2 p-4">
         <h1 className="text-2xl font-bold">
-          {deals.length} {deals.length === 1 ? "Deal" : "Deals"}
+          {sorted.length} {sorted.length === 1 ? "Deal" : "Deals"}
         </h1>
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <label className="flex items-center gap-2">
           Sort by
           <select
@@ -52,8 +62,8 @@ export function DealList({
         </label>
       </header>
 
-      {deals.length === 0 ? (
-        <p className="p-4 font-semibold">No deals right now.</p>
+      {sorted.length === 0 ? (
+        <p className="p-4 font-semibold">No deals found.</p>
       ) : (
         <ul className="divide-y-2">
           {sorted.map((deal) => (
