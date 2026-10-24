@@ -25,7 +25,7 @@
    - Built reply draft review (US11), allowing reps to generate, approve, edit, or reject drafts and record simulated sends. Added tests for both features.
    - Deployed the frontend and backend and added access instructions and feature walkthroughs to the README.
 
-## Rachel
+## Rachel Pham
 
 1. **Description:** Worked on backend, specifically US9: Appointment tracking, which allows managers and sales reps to schedule, view, and update appointments with their customers.
 2. **Details:** 
