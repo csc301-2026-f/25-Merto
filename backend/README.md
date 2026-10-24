@@ -344,7 +344,7 @@ bookkeeping apart from contact with the buyer: it does not clear `unanswered_mes
 (US6) or count as a human taking over for `missed_escalation` (US5). Resolving an overdue
 promise or callback does clear its `overdue_commitment` follow-up reason.
 
-## Appointment tracking and calendar (US11)
+## Appointment tracking and calendar (US9)
 
 The manager and sales-rep navigation includes a **Calendar** tab at
 `/manager/calendar` and `/rep/calendar`. Both pages show a month grid and an
