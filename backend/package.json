@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.5.8",
-    "@vercel/functions": "^3.10.2",
     "express": "^5.3.0",
     "pg": "^8.23.1"
   },

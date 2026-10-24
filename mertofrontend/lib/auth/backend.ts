@@ -1,6 +1,6 @@
 import type { AuthResult } from "./types";
 import type { Role } from "./types";
-import { BACKEND_URL, backendHeaders } from "@/lib/api";
+import { BACKEND_URL } from "@/lib/api";
 
 // The backend calls the GM "gm"; this app's routes call that role "manager".
 const ROLES: Record<string, Role> = { gm: "manager", rep: "rep" };
@@ -15,7 +15,7 @@ export async function authenticate(username: string,  password: string): Promise
   try {
     const res = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
-      headers: backendHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
       cache: "no-store",
     });

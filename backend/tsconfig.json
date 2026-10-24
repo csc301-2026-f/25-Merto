@@ -8,8 +8,7 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "types": ["node"],
-    "typeRoots": ["./node_modules/@types"]
+    "types": ["node"]
   },
-  "include": ["index.ts", "src", "test", "scripts"]
+  "include": ["src", "test", "scripts"]
 }
