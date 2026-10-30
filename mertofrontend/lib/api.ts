@@ -1,17 +1,25 @@
+import "server-only";
 import { getSession } from "@/lib/auth/session";
 
 // Defaults to the backend's `npm run dev` port when .env.local does not set it.
 export const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
 
+export function backendHeaders(initial?: HeadersInit) {
+  const headers = new Headers(initial);
+  headers.set("Content-Type", "application/json");
+  if (process.env.BACKEND_PROTECTION_BYPASS) {
+    headers.set("x-vercel-protection-bypass", process.env.BACKEND_PROTECTION_BYPASS);
+  }
+  return headers;
+}
+
 export async function backendFetch(path: string, init: RequestInit = {}) {
   const session = await getSession();
+  const headers = backendHeaders(init.headers);
+  headers.set("X-Staff-Id", session?.token ?? "");
   return fetch(`${BACKEND_URL}${path}`, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      "X-Staff-Id": session?.token ?? "",
-      ...init.headers,
-    },
+    headers,
     cache: "no-store",
   });
 }
