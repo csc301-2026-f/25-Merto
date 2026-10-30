@@ -6,7 +6,11 @@ import { reviewDraft, sendDraft } from '../src/reply-drafts/service.ts';
 import { useApi } from './harness.ts';
 
 describe('reply draft review (US11)', () => {
-  const api = useApi();
+  // Keep US11's legacy-template fixtures to cover review of pre-US14 drafts.
+  const api = useApi({ replyGenerator: async ({ repName, context }) => ({
+    text: `Hi ${context.buyer}, this is ${repName} from the sales team. What questions can I help with about ${context.vehicleInterest}?`,
+    source: 'simulated_template', model: null, promptVersion: null,
+  }) });
   const create = (as = STAFF.dana as string, dealId = DEALS.maya as string, body: { requestId: string; channel: string } = { requestId: randomUUID(), channel: 'sms' }) =>
     api.call(as, 'POST', `/api/deals/${dealId}/reply-drafts`, body);
   const review = (id: string, decision: string, message?: string, as = STAFF.dana as string) =>

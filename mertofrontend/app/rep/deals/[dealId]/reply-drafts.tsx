@@ -26,12 +26,23 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
         <h3 className="font-semibold">{draft.channel.toUpperCase()} draft · {status}</h3>
         <p className="text-sm opacity-70">Prepared {formatDateTime(draft.createdAt)}</p>
       </div>
+      <p className="text-sm opacity-70">{draft.source === "groq_ai" ? "AI-generated reply · review all details before approving." : "Template-generated reply"}</p>
       <div className="rounded border p-3 text-sm">
         <p className="font-semibold">Context used for this draft</p>
         <p>{draft.context.buyer} · {draft.context.vehicleInterest}</p>
         <ul className="mt-1 list-inside list-disc">
           {draft.context.reasons.map((reason, index) => <li key={index}>{reason}</li>)}
         </ul>
+        {!!draft.context.appointments?.length && <>
+          <p className="mt-2 font-semibold">Recorded appointments</p>
+          <ul className="list-inside list-disc">{draft.context.appointments.map((item, index) =>
+            <li key={index}>{formatDateTime(item.scheduledFor)} · {label(item.status)}</li>)}</ul>
+        </>}
+        {!!draft.context.openItems?.length && <>
+          <p className="mt-2 font-semibold">Unresolved work</p>
+          <ul className="list-inside list-disc">{draft.context.openItems.map((item, index) =>
+            <li key={index}>{label(item.type)}: {item.description}</li>)}</ul>
+        </>}
         <details className="mt-2">
           <summary className="cursor-pointer font-semibold">Recent messages when the draft was prepared</summary>
           <ol className="mt-2 divide-y">
@@ -92,8 +103,8 @@ export function ReplyDrafts({ dealId, initialRequestId, drafts, eligible, email,
   }, undefined);
   return (
     <section className="space-y-4" aria-labelledby="drafts-heading">
-      <h3 id="drafts-heading" className="font-semibold">Review a reply draft</h3>
-      <p className="text-sm opacity-70">Review the context and wording, then approve, edit, or reject the suggested reply.</p>
+      <h3 id="drafts-heading" className="font-semibold">Generate and review a reply</h3>
+      <p className="text-sm opacity-70">Generate an AI draft from this deal’s recent conversation and recorded details, then approve, edit, or reject it. Nothing is sent automatically.</p>
       {drafts === null ? <p role="alert">Couldn&apos;t load saved drafts. Refresh to try again.</p> : <>
         {eligible && (email?.trim() || phone?.trim()) ? (
           <form action={action} className="flex flex-wrap items-end gap-3">
@@ -108,7 +119,7 @@ export function ReplyDrafts({ dealId, initialRequestId, drafts, eligible, email,
               </select>
             </div>
             <button disabled={pending} className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">
-              {pending ? "Preparing…" : drafts.length ? "Prepare another draft" : "Prepare draft"}
+              {pending ? "Generating…" : drafts.length ? "Generate another reply" : "Generate reply"}
             </button>
           </form>
         ) : <p className="text-sm">New drafts are available when this customer is eligible for follow-up and has contact details.</p>}

@@ -272,17 +272,67 @@ Hannah's overdue quote promise is a useful comparison: recording an email leaves
 that unresolved task visible. Restarting the sandbox backend restores these
 fictional scenarios for another run.
 
-## Reply draft review (US11)
+## AI reply generation and review (US14 / US11)
 
-The rep's customer page can prepare a **simulated, template-generated draft**,
-show its saved customer context and recent messages, and approve, edit, or reject
-it. This does not call an AI model. Approval and rejection are internal reviews,
-not customer contact; only a separate simulated send records an outbound reply.
+The rep's customer page generates an **AI-drafted reply through Groq**, shows
+its saved deal context, and lets the rep approve, edit, or reject it. Generation
+and review do not contact the customer; only a separate simulated send records
+an outbound reply. Existing template drafts remain readable and reviewable.
+
+### Setup
+
+1. Apply `supabase/migrations/20261030000100_ai_reply_generation.sql` after the
+   existing reply-drafts migration. Sandbox startup applies both automatically.
+2. Create a server API key at [Groq Console](https://console.groq.com/keys).
+3. Set `GROQ_API_KEY` in `backend/.env` locally, or in the backend host's environment.
+   `GROQ_MODEL` defaults to `openai/gpt-oss-20b`; an override must support Groq chat
+   completions and `reasoning_effort: low`. Restart the backend after configuration.
+   Never put the key in frontend code or a `NEXT_PUBLIC_` variable.
+4. Sign in as Dana, open a due follow-up (for example Maya), choose **Use a suggested
+   draft**, then **Generate reply**. Review, approve, and record the simulated send.
+
+No key means a visible setup error, not a template fallback. Generation makes a
+real external API call; use fictional demo data while testing. Free-tier quotas
+and available models are controlled by Groq; see [rate limits](https://console.groq.com/docs/rate-limits).
+Manual composing remains available if generation fails.
+
+### Generation behavior
+
+The server supplies the buyer name, vehicle interest, stage, follow-up reasons,
+last 10 interaction excerpts (at most 1500 characters each), up to 10 appointments,
+and up to 10 open items. Email/phone fields and database credentials are not sent
+as structured context, but conversation text may itself contain personal information.
+The UI displays the saved context. The system prompt treats stored text as data,
+asks for a reply to the latest message, and prohibits invented prices, availability,
+financing approvals, or booking confirmations. Existing keyword rules reject known
+risky wording, empty/oversized replies, and incomplete completions. These checks
+are not comprehensive factual verification: human review is still required.
+
+Calls have a 20-second timeout and bounded completion tokens. Provider rate limits,
+configuration errors, invalid responses, and outages produce safe, retryable error
+messages without storing a draft or writing customer contact. The UI retains the
+request ID on failure and offers generation again. No tools or automatic sends are
+exposed to the model.
+
+Generation runs outside database transactions. Before saving, the service rechecks
+ownership, opt-out, eligibility, contact details, and a version of the deal activity.
+AI drafts store `source: groq_ai`, model, prompt version, and the context version.
+Changes to messages, ownership, contact details, appointments, or open items invalidate
+an unsent AI draft; approval and sending require regeneration. Rejection remains
+possible. Internal review events alone do not invalidate a draft. Completed request
+retries return the saved draft; concurrent requests persist at most one draft per
+request ID, although requests on separate executions can both consume model quota.
+
+This release uses explicit **Generate reply** actions for deals currently due for
+follow-up, consistent with US6/US7. It does not generate in the background on incoming
+messages and does not implement immediate replies before the follow-up threshold.
+Tests inject a generator or mock HTTP responses, so the test suite needs no API key
+and never contacts Groq.
 
 | Endpoint | Action |
 | --- | --- |
 | `GET /api/deals/:dealId/reply-drafts` | List saved drafts and decisions |
-| `POST /api/deals/:dealId/reply-drafts` | Prepare a draft with `{ requestId, channel }` (`email` or `sms`) |
+| `POST /api/deals/:dealId/reply-drafts` | Generate a draft with `{ requestId, channel }` (`email` or `sms`) |
 | `POST /api/reply-drafts/:draftId/review` | `{ decision: "approve" \| "edit" \| "reject", message? }`; text is required only for edits |
 | `POST /api/reply-drafts/:draftId/send` | Record a simulated send of the saved approved text |
 

@@ -22,7 +22,7 @@ The features below describe the current D2 version. The original scope is record
 1. **Manager/CRM dashboard:** Managers can view assigned and unassigned deals, create deals, assign or transfer ownership, and review buyer details, conversation history, and unresolved work.
 2. **Conversation evaluation:** Managers can run rule-based checks on stored AI conversations, review flagged replies and their reasons, and view evaluation metrics.
 3. **Follow-up actions:** Representatives can see which customers need follow-up and why, then record a simulated email, SMS, or call in the deal history. Eligibility checks exclude opted-out customers and other customers who should not currently be contacted.
-4. **Reply draft review:** Representatives can prepare a template-based reply, review the customer context, approve, edit, or reject the draft, and record an approved reply as a simulated follow-up.
+4. **Reply draft review:** Representatives can generate an AI reply through Groq, review the customer context, approve, edit, or reject the draft, and record an approved reply as a simulated follow-up.
 5. **Appointment calendar:** Managers and representatives can view appointments in a calendar and track appointments for deals.
 
 [Dashboard prototype (Figma Make)](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1)
@@ -84,10 +84,10 @@ A customer's message counts as answered only when a staff member responds with a
 5. Open the buyer record again. The history now shows who it was transferred from and to, with the reason, and any open items moved to the new owner. The conversation and earlier history stay on the deal.
 6. Sign in as the new owner (for example `arjun`) to see the deal in their list. The previous owner no longer sees it. Delivered or lost deals cannot be reassigned.
 
-### Review a suggested reply (US11)
+### Generate and review a reply (US14 / US11)
 
 1. Open a customer who currently needs follow-up and choose **Use a suggested draft** in the **Follow up** section.
-2. Choose email or SMS and click **Prepare draft**. Review the customer context, recent messages, and suggested reply.
+2. Choose email or SMS and click **Generate reply** (requires a backend Groq API key; see [setup](backend/README.md#setup)). Review the customer context, recent messages, and suggested reply.
 3. Choose **Approve**, change the text and choose **Save edits and approve**, or choose **Reject**. Rejected drafts cannot be sent.
 4. For an approved draft, click **Record follow-up** to record a simulated send. Approval alone does not record customer contact.
 5. Check the deal timeline for the review decision and follow-up. Earlier drafts are available under **Earlier drafts** when more than one has been saved.
@@ -103,7 +103,7 @@ Try draft review before recording a manual follow-up for the same customer, or u
 ### D2 limitations
 
 - Emails, SMS messages, and calls are simulated; no real customers are contacted. Scheduling a follow-up for later is not implemented.
-- Suggested replies use templates rather than a live AI model. Conversation evaluation uses deterministic rules and runs when a manager triggers it.
+- AI reply generation requires `GROQ_API_KEY` on the backend and is subject to provider quotas. Conversation evaluation still uses deterministic rules and runs when a manager triggers it.
 - The app uses the team's Supabase database and fictional scenarios rather than a live Merto API.
 
 ## Local Development Instructions
