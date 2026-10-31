@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { requireRole } from "@/lib/auth/session";
 import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
 import { FollowUpList } from "@/components/FollowUpList";
 import type { Deal } from "@/lib/deals";
+import { CustomerList } from "./customer-list";
 import type { DueFollowUp } from "@/lib/follow-ups";
 
 async function RepDashboard() {
@@ -29,26 +29,11 @@ async function RepDashboard() {
         </p>
       </Card>
 
-      <Card title="My customers" count={deals?.length}>
-        {deals === null ? (
-          <p>Couldn&apos;t load your customers.</p>
-        ) : deals.length === 0 ? (
-          <p className="font-semibold">None right now</p>
-        ) : (
-          <ul className="divide-y-2">
-            {deals.map((deal) => (
-              <li key={deal.dealId} className="py-3">
-                <Link href={`/rep/deals/${deal.dealId}`} className="block hover:underline">
-                  {deal.buyer}{" "}
-                  <span className="opacity-70">
-                    ({deal.vehicleInterest} · {deal.stage.replaceAll("_", " ")})
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      {deals === null ? (
+        <p>Couldn&apos;t load your customers.</p>
+      ) : (
+        <CustomerList deals={deals} />
+      )}
     </div>
   );
 }
