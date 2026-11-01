@@ -1,47 +1,37 @@
 # CSC301 Team 25 - zgrnf
 
- > _Note:_ This document is meant to be written during (or shortly after) your review meeting, which should happen fairly close to the due date.      
- >      
- > _Suggestion:_ Have your review meeting a day or two before the due date. This way you will have some time to go over (and edit) this document, and all team members should have a chance to make their contribution.
 
+## Iteration 02 - Review & Retrospect
 
-## Iteration XX - Review & Retrospect
-
- * When: FILL IN THE DATE WHEN YOU ACTUALLY HAD YOUR REVIEW MEETING
- * Where: PHYSICAL LOCATION AND/OR ONLINE
+ * When: October 21, 2026
+ * Where: Discord meeting
 
 ## Process - Reflection
 
 
 #### Q1. What worked well
 
-List **process-related** (i.e. team organization and how you work) decisions and actions that worked well.
+1. We successfully divided the project into different stack layers, such as database, backend, and frontend. This allowed each of the team members to focus on specific areas of the project and work on them in parallel, which make the overall development process more organized and efficient.
 
-
- * 2 - 4 important decisions, processes, actions, or anything else that worked well for you, ordered from most to least important.
- * Give a supporting argument about what makes you think that way.
- * Feel free to refer/link to process artifact(s).
+2. Each of our subteams was able to build on the structures and components developed by other subteams. For example, the backend team were able to build on the database structure, and the frontend team were able to use the backend's functionality to develop the user interface.
 
 #### Q2. What did not work well
 
-List **process-related** (i.e. team organization and how you work) decisions and actions that did not work well.
+1. We could have communicated deadlines more clearly while working on the project. There were times when some members were unsure when to expect others to complete their work. As a result, we faced some challenges on coordinating tasks and planning work that depended on other components.
 
- * 2 - 4 important decisions, processes, actions, or anything else that did not work well for you, ordered from most to least important.
- * Give a supporting argument about what makes you think that way.
- * Feel free to refer/link to process artifact(s).
-
+2. Dividing by tech stack helped us work in parallel, however it also meant that some teams depended on other teams to make progress. For example, the frontend team needed the backend to complete the necessary functionality before implementing certain features. Since we didn't have clear deadlines and expectations, the development speed may have been slowed down.
 
 #### Q3(a). Planned changes
 
-List any **process-related** (i.e. team organization and/or how you work) changes you are planning to make (if there are any)
+1. We plan to nominate a product manager who will help coordinate the team's work, communicate priorities, and establish clear deadlines. This will give the team a central point of contact for tracking progress and resolving uncertainties. This also help the team members understand what needs to be completed and when.
 
- * Ordered from most to least important, with supporting argument explaining a change.
+2. Rather than assigning work by tech stacks, we plan to split the project into user stories, and each story will involve the necessary work across the different technical layers. This will help us develop fully function features and make progress easier to track, and reduce the risk of subteams getting blocked while waiting for other subteams.
+
+3. We also plan to establish specific deadlines and expectations for each task. This will help team members understand when dependent work should be available. It should also make it easier for the product manager keep track of the progress.
 
 #### Q3(b). Integration & Next steps
-Briefly explain how you integrated the previously developed individuals components as one product (i.e. How did you split the work across your team) and how was the work integrated together.
 
- * Keep this very short (1-3 lines).
-
+We divided the work by tech stack, with the database team building the database, the backend team building on it, and the frontend team using the backend functionality. Moving forward, we plan to split work by user stories to develop and integrate complete features more efficiently.
 
 ## Product - Review
 

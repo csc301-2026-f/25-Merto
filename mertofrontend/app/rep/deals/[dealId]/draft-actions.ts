@@ -21,7 +21,7 @@ export async function createDraftAction(dealId: string, _previous: DraftActionSt
   const result = await post(`/api/deals/${encodeURIComponent(dealId)}/reply-drafts`, {
     requestId: String(form.get("requestId") ?? ""), channel: String(form.get("channel") ?? ""),
   });
-  return result.error ? result : { success: "Draft prepared for review." };
+  return result.error ? result : { success: "AI draft generated for review." };
 }
 
 export async function reviewDraftAction(id: string, _previous: DraftActionState, form: FormData): Promise<DraftActionState> {

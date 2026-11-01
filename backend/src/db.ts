@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { attachDatabasePool } from '@vercel/functions';
 
 export interface Queryable {
   query<Row>(sql: string, params?: unknown[]): Promise<Row[]>;
@@ -12,8 +13,13 @@ export interface Database extends Queryable {
 }
 
 // Server-side connection only: the database grants no access to browser roles.
-export function postgresDatabase(connectionString: string): Database {
-  const pool = new pg.Pool({ connectionString, connectionTimeoutMillis: 10_000 });
+export function postgresDatabase(connectionString: string, options: Pick<pg.PoolConfig, 'ssl'> = {}): Database {
+  const pool = new pg.Pool({
+    ...options, connectionString, connectionTimeoutMillis: 10_000,
+    max: 4, idleTimeoutMillis: 5_000, maxLifetimeSeconds: 60,
+  });
+  pool.on('error', error => console.error('Idle database connection error:', error));
+  if (process.env.VERCEL === '1') attachDatabasePool(pool);
   return {
     async query<Row>(sql: string, params: unknown[] = []) {
       return (await pool.query(sql, params)).rows as Row[];

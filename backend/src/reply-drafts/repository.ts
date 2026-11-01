@@ -1,8 +1,13 @@
 import type { Queryable } from '../db.ts';
 import type { Staff } from '../auth.ts';
+import type { GeneratedReply } from './generator.ts';
 
 export type Decision = 'approve' | 'edit' | 'reject';
 export interface DraftContext {
+  activityVersion?: string;
+  stage?: string;
+  appointments?: { scheduledFor: string; status: string }[];
+  openItems?: { type: string; description: string; dueAt: string | null }[];
   buyer: string;
   vehicleInterest: string;
   reasons: string[];
@@ -12,7 +17,9 @@ export interface Draft {
   id: string;
   dealId: string;
   channel: 'email' | 'sms';
-  source: 'simulated_template';
+  source: GeneratedReply['source'];
+  model: string | null;
+  promptVersion: string | null;
   originalText: string;
   context: DraftContext;
   createdBy: string;
@@ -25,7 +32,7 @@ export interface Draft {
   sentEventId: string | null;
 }
 
-const columns = `id, deal_id as "dealId", channel, source, original_text as "originalText",
+const columns = `id, deal_id as "dealId", channel, source, model, prompt_version as "promptVersion", original_text as "originalText",
   context, created_by as "createdBy", created_at as "createdAt", decision, final_text as "finalText",
   reviewed_by as "reviewedBy", reviewed_at as "reviewedAt", review_event_id as "reviewEventId",
   sent_event_id as "sentEventId"`;
@@ -40,17 +47,17 @@ export function list(db: Queryable, dealId: string): Promise<Draft[]> {
 
 export async function create(db: Queryable, input: {
   id: string; dealId: string; channel: 'email' | 'sms'; originalText: string;
-  context: DraftContext; createdBy: string;
+  context: DraftContext; createdBy: string; generated: GeneratedReply;
 }): Promise<Draft> {
   return (await db.query<Draft>(`insert into public.reply_drafts
-    (id, deal_id, channel, original_text, context, created_by)
-    values ($1, $2, $3, $4, $5::jsonb, $6) returning ${columns}`,
-  [input.id, input.dealId, input.channel, input.originalText, JSON.stringify(input.context), input.createdBy]))[0];
+    (id, deal_id, channel, original_text, context, created_by, source, model, prompt_version)
+    values ($1, $2, $3, $4, $5::jsonb, $6, $7, $8, $9) returning ${columns}`,
+  [input.id, input.dealId, input.channel, input.originalText, JSON.stringify(input.context), input.createdBy, input.generated.source, input.generated.model, input.generated.promptVersion]))[0];
 }
 
 export async function review(db: Queryable, draft: Draft, staff: Staff, decision: Decision, finalText: string | null): Promise<Draft> {
   const words = { approve: 'approved', edit: 'edited and approved', reject: 'rejected' };
-  const body = `${staff.name} ${words[decision]} a simulated ${draft.channel} draft.\nOriginal draft: ${draft.originalText}`
+  const body = `${staff.name} ${words[decision]} a ${draft.source === 'groq_ai' ? 'AI-generated' : 'template-generated'} ${draft.channel} draft.\nOriginal draft: ${draft.originalText}`
     + (finalText === null ? '\nNo reply approved for sending.' : `\nFinal reply: ${finalText}`);
   const [event] = await db.query<{ id: string }>(`insert into public.timeline_events
     (deal_id, event_type, actor_type, actor_id, channel, direction, body)
