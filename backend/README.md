@@ -553,3 +553,10 @@ deal at a time. Nothing checks that a rep is on shift: `staff_users` has no
 availability field. `X-Staff-Id` and the shared sign-in password are not real authentication. An LLM judge, per-run scorecards, and
 messaging endpoints are not implemented. The demo writes the AI's message to Rob
 directly into the database for that reason.
+
+## Trained signal models and local inference demo
+
+See [`ml/README.md`](ml/README.md) for the MiniLM/BGE/MPNet experiments, reproducible
+classification and final-flag reports, and a local live MPNet demo. These are
+separate from the deployed deterministic evaluator. Model weights and Python
+runtime dependencies are not committed.

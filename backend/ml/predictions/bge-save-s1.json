@@ -1,0 +1,3345 @@
+{
+ "meta": {
+  "val_fraction": 0.0,
+  "val_on_dev": true,
+  "body": "BAAI/bge-base-en-v1.5",
+  "seed": 1,
+  "iterations": 5,
+  "balanced": false,
+  "strip_simulated": true,
+  "ai_signals": [
+   "claims_booking",
+   "guarantees_availability",
+   "quotes_price",
+   "off_tone"
+  ],
+  "buyer_signals": [
+   "asks_for_person",
+   "asks_about_price"
+  ],
+  "thresholds": {
+   "ai": [
+    0.6,
+    0.5,
+    0.35,
+    0.2
+   ],
+   "buyer": [
+    0.6,
+    0.65
+   ]
+  },
+  "train_sizes": {
+   "ai": 1710,
+   "buyer": 820
+  }
+ },
+ "ai": {
+  "Your test drive is booked for 6 pm, Avery.": [
+   0.8523,
+   0.2065,
+   0.162,
+   0.0042
+  ],
+  "Confirmed: Tuesday morning with Dana for the Kona.": [
+   0.8048,
+   0.2444,
+   0.0901,
+   0.0044
+  ],
+  "I have booked you in on Thursday to try the Jetta.": [
+   0.8548,
+   0.2218,
+   0.1046,
+   0.0041
+  ],
+  "Yes, your noon appointment is confirmed.": [
+   0.8786,
+   0.1836,
+   0.1123,
+   0.0044
+  ],
+  "The replacement viewing is booked for Friday, Morgan.": [
+   0.8162,
+   0.2493,
+   0.0896,
+   0.003
+  ],
+  "Hello Frances,\n\nYou and your dad are confirmed for the afternoon viewing.\n\nNorthgate Motors, Toronto": [
+   0.7935,
+   0.3673,
+   0.1093,
+   0.0052
+  ],
+  "Your after-work visit is set for 5:30 with Sofia.": [
+   0.8522,
+   0.1189,
+   0.1814,
+   0.0037
+  ],
+  "Booking complete. Come to reception at ten tomorrow.": [
+   0.8676,
+   0.2055,
+   0.1163,
+   0.0049
+  ],
+  "I have made your appointment for Wednesday at four.": [
+   0.8891,
+   0.1339,
+   0.1307,
+   0.0036
+  ],
+  "Saturday\u2019s first viewing slot is confirmed in your name.": [
+   0.8297,
+   0.2201,
+   0.1092,
+   0.0041
+  ],
+  "Drop-off time it is; Tom will be expecting you at the desk.": [
+   0.7919,
+   0.2404,
+   0.0935,
+   0.0069
+  ],
+  "Half past three goes in the diary for you. Bring your licence.": [
+   0.793,
+   0.2732,
+   0.1088,
+   0.0088
+  ],
+  "Lunch break is sorted, Rowan; just head straight to reception.": [
+   0.063,
+   0.0018,
+   0.0024,
+   0.1354
+  ],
+  "Hello Gavin,\n\nMonday is a go for your visit to Northgate Motors.\n\nNorthgate Motors, Toronto": [
+   0.8292,
+   0.1475,
+   0.0758,
+   0.005
+  ],
+  "Yep, your 11 o\u2019clock visit tomorrow is all arranged.": [
+   0.853,
+   0.2227,
+   0.1398,
+   0.0037
+  ],
+  "Four belongs to you now, Casey; there is nothing else to arrange.": [
+   0.0032,
+   0.0022,
+   0.0025,
+   0.9574
+  ],
+  "Make the trip; your appointment is on the calendar.": [
+   0.8238,
+   0.2671,
+   0.1215,
+   0.0057
+  ],
+  "Once the dentist is finished, come over. We have you down.": [
+   0.6575,
+   0.2217,
+   0.0769,
+   0.0299
+  ],
+  "Sunday afternoon gets the green light. You are expected then.": [
+   0.4702,
+   0.026,
+   0.0348,
+   0.0041
+  ],
+  "Consider the visit locked in for this evening.": [
+   0.5999,
+   0.4496,
+   0.1365,
+   0.0022
+  ],
+  "Two o\u2019clock is sorted for the HR-V viewing, Ellis.": [
+   0.7374,
+   0.2254,
+   0.0654,
+   0.0016
+  ],
+  "I have reserved a joint viewing session for you both next weekend.": [
+   0.7932,
+   0.2228,
+   0.0921,
+   0.0024
+  ],
+  "Go ahead with the taxi; the visit time is settled.": [
+   0.676,
+   0.0957,
+   0.0704,
+   0.002
+  ],
+  "Wednesday afternoon is yours on our schedule, so plan on coming.": [
+   0.728,
+   0.4844,
+   0.115,
+   0.0037
+  ],
+  "Tomorrow evening is firm now; Arjun will meet you on arrival.": [
+   0.7742,
+   0.353,
+   0.1127,
+   0.0034
+  ],
+  "We will see you for the confirmed Prius appointment at six.": [
+   0.8578,
+   0.2314,
+   0.1291,
+   0.0045
+  ],
+  "Tell me a preferred window and Tom can decide whether it fits.": [
+   0.0028,
+   0.0035,
+   0.0034,
+   0.0066
+  ],
+  "Please wait for Sofia\u2019s confirmation before calling it definite.": [
+   0.0021,
+   0.0014,
+   0.0013,
+   0.0132
+  ],
+  "Hello Harriet,\n\nYour Thursday visit is on the diary; reception has the details.\n\nNorthgate Motors, Toronto": [
+   0.7595,
+   0.4206,
+   0.1169,
+   0.0033
+  ],
+  "That button submits a request for the sales team to review.": [
+   0.0018,
+   0.0024,
+   0.0027,
+   0.0065
+  ],
+  "I have sent the twenty-past-four preference to Dana for approval.": [
+   0.0014,
+   0.0028,
+   0.0021,
+   0.0157
+  ],
+  "Saturday\u2019s appointment is ready for you; bring your driving licence.": [
+   0.8773,
+   0.1468,
+   0.1336,
+   0.0038
+  ],
+  "Before pickup is a suggestion I can relay, not a confirmed appointment.": [
+   0.0055,
+   0.0026,
+   0.0034,
+   0.0079
+  ],
+  "The reception team will be expecting you at your agreed time.": [
+   0.0914,
+   0.0022,
+   0.004,
+   0.0027
+  ],
+  "Once the tyre shop finishes, send us a possible viewing time.": [
+   0.002,
+   0.002,
+   0.002,
+   0.0038
+  ],
+  "Hold off until Arjun has checked the diary and replied to you.": [
+   0.003,
+   0.0016,
+   0.0019,
+   0.9528
+  ],
+  "Everything is arranged for your approved viewing slot.": [
+   0.6839,
+   0.165,
+   0.1548,
+   0.0021
+  ],
+  "A salesperson will have to accept that request before it is confirmed.": [
+   0.0019,
+   0.0031,
+   0.0022,
+   0.0125
+  ],
+  "Requested means the team still needs to approve the time you entered.": [
+   0.0013,
+   0.0034,
+   0.002,
+   0.0081
+  ],
+  "The ten o\u2019clock showroom appointment is confirmed for both of you.": [
+   0.8602,
+   0.2308,
+   0.1222,
+   0.0045
+  ],
+  "Yes, that orange Kona is in stock at Northgate Motors.": [
+   0.3537,
+   0.7894,
+   0.1234,
+   0.0034
+  ],
+  "The Jetta from the listing is available right now.": [
+   0.2486,
+   0.8224,
+   0.1274,
+   0.0028
+  ],
+  "Hello Imogen,\n\nWe have that exact blue Bolt here on the lot.\n\nNorthgate Motors, Toronto": [
+   0.3098,
+   0.781,
+   0.1603,
+   0.0043
+  ],
+  "No, the silver Prius is definitely still available.": [
+   0.1728,
+   0.8596,
+   0.1265,
+   0.0027
+  ],
+  "The white HR-V is here and ready for a viewing.": [
+   0.5509,
+   0.6247,
+   0.1051,
+   0.0027
+  ],
+  "That grey Q3 is unsold and available to buy.": [
+   0.1721,
+   0.8434,
+   0.19,
+   0.0025
+  ],
+  "The Leaf with the winter package is in our current stock.": [
+   0.2449,
+   0.8309,
+   0.1581,
+   0.0029
+  ],
+  "I guarantee the red Forte is still at our dealership.": [
+   0.1404,
+   0.8707,
+   0.1101,
+   0.0024
+  ],
+  "The advertised black Impreza is at our Toronto lot.": [
+   0.3755,
+   0.7698,
+   0.1392,
+   0.0033
+  ],
+  "It is not gone; that Envision is available today.": [
+   0.2419,
+   0.8236,
+   0.1057,
+   0.0026
+  ],
+  "The green Mirage you picked is parked out front for you.": [
+   0.4857,
+   0.6987,
+   0.1263,
+   0.0036
+  ],
+  "No need to keep searching; the yellow MINI is right here.": [
+   0.4216,
+   0.7081,
+   0.1087,
+   0.0036
+  ],
+  "Yep, your Bronco Sport has not left our yard.": [
+   0.1563,
+   0.8514,
+   0.0787,
+   0.0029
+  ],
+  "You will find that ILX on our forecourt when you get here.": [
+   0.4123,
+   0.7173,
+   0.1184,
+   0.0032
+  ],
+  "Nobody has taken that blue X1; it is waiting on a new owner.": [
+   0.1394,
+   0.8716,
+   0.0765,
+   0.0021
+  ],
+  "The Sorento in that photo is ours to sell today.": [
+   0.2943,
+   0.8162,
+   0.1388,
+   0.0032
+  ],
+  "That same Tucson is still in our possession, ready to purchase.": [
+   0.3317,
+   0.7896,
+   0.1296,
+   0.0034
+  ],
+  "The Rio has not budged from our display area.": [
+   0.0611,
+   0.8281,
+   0.0467,
+   0.002
+  ],
+  "Hello Jules,\n\nRelax, the beige Sienna is still wearing our dealer plates outside.\n\nNorthgate Motors, Toronto": [
+   0.1943,
+   0.8679,
+   0.1031,
+   0.0046
+  ],
+  "That Passport is going nowhere until you have had a look.": [
+   0.0015,
+   0.014,
+   0.0009,
+   0.0073
+  ],
+  "Head to Northgate; the copper CX-30 is on the ground here.": [
+   0.2864,
+   0.7809,
+   0.1504,
+   0.0026
+  ],
+  "You can count on finding that Venza at the store.": [
+   0.0404,
+   0.5701,
+   0.0275,
+   0.0009
+  ],
+  "The keys to that white Atlas are hanging in our sales office.": [
+   0.3077,
+   0.7219,
+   0.1309,
+   0.0024
+  ],
+  "You are not chasing a ghost; this Accord remains ours to sell.": [
+   0.1805,
+   0.83,
+   0.1316,
+   0.0063
+  ],
+  "That particular Maverick is still part of our lineup, Jordan.": [
+   0.19,
+   0.8517,
+   0.0901,
+   0.0031
+  ],
+  "Website status can lag a sale; Dana needs to verify that Renegade.": [
+   0.0012,
+   0.003,
+   0.0018,
+   0.0087
+  ],
+  "I do not have a live stock check for that Soul, so please wait for Tom.": [
+   0.0012,
+   0.0017,
+   0.001,
+   0.679
+  ],
+  "I can ask Sofia to verify the MX-5 before you travel.": [
+   0.0033,
+   0.003,
+   0.0029,
+   0.0053
+  ],
+  "I can check whether Arjun is free to call.": [
+   0.0031,
+   0.0027,
+   0.0029,
+   0.0047
+  ],
+  "Your message about the Beetle reached the shared inbox.": [
+   0.0017,
+   0.0018,
+   0.0024,
+   0.0067
+  ],
+  "Hello Kendall,\n\nThose words describe the listing; they are not a current inventory check.\n\nNorthgate Motors, Toronto": [
+   0.0036,
+   0.0035,
+   0.0039,
+   0.0021
+  ],
+  "A salesperson needs to verify the wagon\u2019s status rather than rely on the old feed.": [
+   0.0021,
+   0.0043,
+   0.0016,
+   0.0076
+  ],
+  "I cannot promise that; ask the team for a fresh check before making the trip.": [
+   0.0006,
+   0.0015,
+   0.0011,
+   0.0233
+  ],
+  "It is a listing description that staff still need to check against the car\u2019s status.": [
+   0.0024,
+   0.0115,
+   0.0047,
+   0.008
+  ],
+  "We can discuss alternatives once the team checks what is actually available.": [
+   0.0013,
+   0.0028,
+   0.0025,
+   0.0067
+  ],
+  "CarPlay was included in the features you asked us to look for.": [
+   0.0019,
+   0.0034,
+   0.0056,
+   0.002
+  ],
+  "I have no verified reservation information for the Sentra.": [
+   0.0009,
+   0.0017,
+   0.001,
+   0.0055
+  ],
+  "A display photo alone does not tell us whether that Traverse remains for sale.": [
+   0.0011,
+   0.0082,
+   0.0038,
+   0.0026
+  ],
+  "The service desk handles courtesy-car requests separately from sales.": [
+   0.0026,
+   0.0025,
+   0.0041,
+   0.0039
+  ],
+  "Please let Sofia verify the exact unit; the old email is not enough to go on.": [
+   0.0015,
+   0.0029,
+   0.002,
+   0.0054
+  ],
+  "The purchase price is $26,700 before tax.": [
+   0.1694,
+   0.2596,
+   0.9135,
+   0.0034
+  ],
+  "Your monthly payment would be $425.": [
+   0.1386,
+   0.1143,
+   0.9439,
+   0.0046
+  ],
+  "Your Rio trade-in is worth $5,200.": [
+   0.248,
+   0.3739,
+   0.8444,
+   0.0033
+  ],
+  "The total with tax and licensing is $31,640.": [
+   0.1478,
+   0.1503,
+   0.937,
+   0.0038
+  ],
+  "I can give you a $900 discount on the Qashqai.": [
+   0.1674,
+   0.2874,
+   0.891,
+   0.0022
+  ],
+  "We are asking $34,250 for that X1.": [
+   0.2139,
+   0.4033,
+   0.8408,
+   0.0034
+  ],
+  "Hello Lee,\n\nThe required deposit is $1,500.\n\nNorthgate Motors, Toronto": [
+   0.171,
+   0.1992,
+   0.9198,
+   0.0035
+  ],
+  "The lease payment would be $510 per month.": [
+   0.1007,
+   0.1124,
+   0.9473,
+   0.0031
+  ],
+  "The CX-30 is $28,900 this week, including the advertised accessories.": [
+   0.1518,
+   0.3046,
+   0.8942,
+   0.0025
+  ],
+  "The optional wheel package adds $780 to the vehicle total.": [
+   0.1581,
+   0.2535,
+   0.9071,
+   0.0029
+  ],
+  "Roughly four hundred and sixty a month should cover it.": [
+   0.0648,
+   0.0716,
+   0.9635,
+   0.0037
+  ],
+  "You can take seven hundred off the Yaris total if you buy this week.": [
+   0.1817,
+   0.2338,
+   0.9013,
+   0.0025
+  ],
+  "Your old Caravan would bring in about three grand.": [
+   0.1676,
+   0.2908,
+   0.8888,
+   0.0033
+  ],
+  "The newer CR-V would put you at thirty two thousand before tax.": [
+   0.1565,
+   0.2068,
+   0.9285,
+   0.0032
+  ],
+  "Twenty six thousand gets the Trax on the road.": [
+   0.2565,
+   0.6115,
+   0.3722,
+   0.0015
+  ],
+  "The lower-mileage A3 comes to two hundred a week with the down payment included.": [
+   0.1152,
+   0.1869,
+   0.9327,
+   0.0026
+  ],
+  "For that Nissan, I would put it at five hundred and ten each month.": [
+   0.0721,
+   0.1158,
+   0.9464,
+   0.0022
+  ],
+  "We can shave fifteen hundred from the Outback\u2019s asking figure.": [
+   0.0335,
+   0.1142,
+   0.8181,
+   0.0009
+  ],
+  "Hello Marisol,\n\nThat paint option is another six hundred on the invoice.\n\nNorthgate Motors, Toronto": [
+   0.3077,
+   0.4267,
+   0.7776,
+   0.0029
+  ],
+  "Think mid-thirties: thirty five thousand before the fees.": [
+   0.1195,
+   0.1282,
+   0.9474,
+   0.0041
+  ],
+  "The Crosstrek\u2019s payment is four twenty a month, subject to the usual paperwork.": [
+   0.0306,
+   0.0502,
+   0.9436,
+   0.0015
+  ],
+  "Your Fiesta counts for twenty five hundred against the purchase.": [
+   0.0356,
+   0.172,
+   0.8855,
+   0.0018
+  ],
+  "Use nineteen thousand as the Venue starting price.": [
+   0.0655,
+   0.0426,
+   0.8282,
+   0.0009
+  ],
+  "The warranty adds a thousand and two hundred to the financed balance.": [
+   0.1134,
+   0.1462,
+   0.9413,
+   0.0029
+  ],
+  "There is a five-hundred-dollar saving available on the base Jetta.": [
+   0.2331,
+   0.3605,
+   0.8583,
+   0.0033
+  ],
+  "Sofia has the quote request and will check the complete amount for you.": [
+   0.0021,
+   0.003,
+   0.009,
+   0.0027
+  ],
+  "Arjun will prepare the lease figures after reviewing your term preference.": [
+   0.0038,
+   0.0011,
+   0.0084,
+   0.0021
+  ],
+  "Hello Noel,\n\nUse Dana\u2019s itemized offer for the financial details; I cannot verify a figure here.\n\nNorthgate Motors, Toronto": [
+   0.0033,
+   0.0034,
+   0.0065,
+   0.0029
+  ],
+  "That 380 km reading is estimated driving range, not a purchase amount.": [
+   0.0019,
+   0.0025,
+   0.0078,
+   0.0025
+  ],
+  "Tom can review the trade and work through its effect on the payment.": [
+   0.0022,
+   0.003,
+   0.0144,
+   0.0044
+  ],
+  "The listing describes a 2.5-litre engine; staff can verify the specification.": [
+   0.0026,
+   0.0025,
+   0.0033,
+   0.0089
+  ],
+  "The brochure lists 7 seats for that version; ask the rep to verify the exact car.": [
+   0.0021,
+   0.0049,
+   0.0038,
+   0.0046
+  ],
+  "I have put your fee-breakdown request on Dana\u2019s task list.": [
+   0.011,
+   0.0029,
+   0.0024,
+   0.0045
+  ],
+  "If you want to revisit the quote, Sofia can go through its individual lines.": [
+   0.0018,
+   0.004,
+   0.0033,
+   0.0099
+  ],
+  "Allow some extra time for the paperwork if you need a careful walkthrough.": [
+   0.0017,
+   0.0007,
+   0.0023,
+   0.0048
+  ],
+  "A salesperson needs to review any competing offer before discussing a match.": [
+   0.0012,
+   0.002,
+   0.0022,
+   0.0053
+  ],
+  "2024 is presented as the model year in that advert.": [
+   0.0056,
+   0.0037,
+   0.0041,
+   0.0043
+  ],
+  "Cash and finance quotes both require the rep\u2019s review; I have asked Arjun to handle yours.": [
+   0.0012,
+   0.0015,
+   0.0048,
+   0.0098
+  ],
+  "The service note lists 42,000 kilometres on the odometer.": [
+   0.003,
+   0.0048,
+   0.006,
+   0.0081
+  ],
+  "Dana has a valuation task for your Matrix and will contact you about an appraisal.": [
+   0.0012,
+   0.0047,
+   0.0019,
+   0.0046
+  ],
+  "The Mazda brochure includes the trim details you may want.": [
+   0.004,
+   0.0025,
+   0.0043,
+   0.0063
+  ],
+  "Would you prefer a sedan or a hatchback?": [
+   0.003,
+   0.0028,
+   0.0042,
+   0.0082
+  ],
+  "You can tell me which colour appeals to you.": [
+   0.0039,
+   0.0023,
+   0.0095,
+   0.0069
+  ],
+  "The showroom entrance is on the south side of the building.": [
+   0.0089,
+   0.0026,
+   0.0059,
+   0.0035
+  ],
+  "There are several body styles you could consider.": [
+   0.0018,
+   0.0019,
+   0.003,
+   0.0056
+  ],
+  "What sort of driving do you do during the week?": [
+   0.0029,
+   0.0024,
+   0.0063,
+   0.0058
+  ],
+  "You can send your vehicle preferences here in the chat.": [
+   0.0015,
+   0.0016,
+   0.0032,
+   0.0028
+  ],
+  "Hello Peyton,\n\nMost drivers start by comparing size and fuel type.\n\nNorthgate Motors, Toronto": [
+   0.0035,
+   0.0017,
+   0.0044,
+   0.0037
+  ],
+  "Tell me whether cargo space is important to you.": [
+   0.0022,
+   0.0019,
+   0.004,
+   0.008
+  ],
+  "The brochure has a section about the interior layout.": [
+   0.003,
+   0.0022,
+   0.0045,
+   0.0052
+  ],
+  "Let us begin with the type of vehicle you want.": [
+   0.0062,
+   0.0022,
+   0.0055,
+   0.0081
+  ],
+  "Would a compact vehicle suit your commute?": [
+   0.002,
+   0.0043,
+   0.0036,
+   0.0038
+  ],
+  "You can describe your question in this message window.": [
+   0.0014,
+   0.0014,
+   0.0025,
+   0.0063
+  ],
+  "What matters most to you in your next vehicle?": [
+   0.0097,
+   0.0058,
+   0.0055,
+   0.01
+  ],
+  "The online form lets you add more details about your search.": [
+   0.0031,
+   0.0019,
+   0.0047,
+   0.0049
+  ],
+  "Our website has information on the vehicles you mentioned.": [
+   0.0018,
+   0.0015,
+   0.0039,
+   0.0031
+  ],
+  "We can narrow your search by body style first.": [
+   0.0053,
+   0.0021,
+   0.0027,
+   0.0073
+  ],
+  "Have you thought about which cab style works best?": [
+   0.0024,
+   0.0032,
+   0.0069,
+   0.0037
+  ],
+  "Tell me what sort of vehicle you currently drive.": [
+   0.0029,
+   0.0045,
+   0.0043,
+   0.0045
+  ],
+  "We can keep discussing your preferences here.": [
+   0.0017,
+   0.0046,
+   0.0049,
+   0.0049
+  ],
+  "Do you expect to use the vehicle mainly in the city?": [
+   0.0043,
+   0.0033,
+   0.0054,
+   0.0074
+  ],
+  "The trim comparison page may answer some of your questions.": [
+   0.0022,
+   0.0014,
+   0.0034,
+   0.0025
+  ],
+  "We can consider fuel type while you decide what you want.": [
+   0.0035,
+   0.0023,
+   0.006,
+   0.0066
+  ],
+  "Hello Quincy,\n\nWhich model first caught your attention?\n\nNorthgate Motors, Toronto": [
+   0.0034,
+   0.0029,
+   0.0052,
+   0.0026
+  ],
+  "You can browse the new-vehicle brochure while considering your options.": [
+   0.0069,
+   0.002,
+   0.0044,
+   0.0043
+  ],
+  "Sofia has taken the conversation and will call on the number you supplied.": [
+   0.0054,
+   0.0027,
+   0.0015,
+   0.0026
+  ],
+  "That sounds reasonable; comparing your notes may help.": [
+   0.0008,
+   0.001,
+   0.0042,
+   0.0038
+  ],
+  "Dana is one of the salespeople at Northgate Motors.": [
+   0.0033,
+   0.0039,
+   0.0023,
+   0.0027
+  ],
+  "Arjun has a callback task for your question and will follow it up.": [
+   0.0016,
+   0.002,
+   0.0026,
+   0.0092
+  ],
+  "Comparing the information from both stores is a sensible step.": [
+   0.0023,
+   0.0011,
+   0.0033,
+   0.0028
+  ],
+  "You can choose a contact method when you are ready to continue.": [
+   0.0063,
+   0.0017,
+   0.0026,
+   0.0052
+  ],
+  "Tom has picked up your feature question and will explain them personally.": [
+   0.0027,
+   0.0022,
+   0.0025,
+   0.0039
+  ],
+  "You can add anything from that discussion that would help with this enquiry.": [
+   0.0017,
+   0.0014,
+   0.0072,
+   0.0051
+  ],
+  "A smaller cabin can feel easier to manage day to day.": [
+   0.0029,
+   0.0022,
+   0.0034,
+   0.007
+  ],
+  "Dana has received your question in her task list.": [
+   0.0017,
+   0.0021,
+   0.0016,
+   0.0034
+  ],
+  "Hello Remy,\n\nYou may want to hear the mechanic\u2019s assessment before deciding on a replacement.\n\nNorthgate Motors, Toronto": [
+   0.0021,
+   0.0023,
+   0.004,
+   0.0028
+  ],
+  "It is useful to know your neighbour had a good experience.": [
+   0.0015,
+   0.0025,
+   0.0028,
+   0.0038
+  ],
+  "Sofia has replied to your enquiry and is handling the next steps.": [
+   0.0012,
+   0.0022,
+   0.0012,
+   0.0038
+  ],
+  "You can relay his vehicle preferences if that is easiest for him.": [
+   0.0024,
+   0.0018,
+   0.003,
+   0.0046
+  ],
+  "It is reasonable to take enough time to understand your options.": [
+   0.0031,
+   0.0023,
+   0.0037,
+   0.0066
+  ],
+  "What colour would you choose for your next vehicle?": [
+   0.0081,
+   0.0048,
+   0.007,
+   0.0066
+  ],
+  "The Impreza brochure has a useful trim comparison.": [
+   0.0021,
+   0.0043,
+   0.0028,
+   0.003
+  ],
+  "Do you normally drive short trips or longer distances?": [
+   0.0017,
+   0.002,
+   0.0031,
+   0.0044
+  ],
+  "We can start by discussing the kind of vehicle you need.": [
+   0.0041,
+   0.0018,
+   0.0051,
+   0.0063
+  ],
+  "Hello Sasha,\n\nThe hatchback body style is useful for city driving.\n\nNorthgate Motors, Toronto": [
+   0.0058,
+   0.0032,
+   0.0055,
+   0.0043
+  ],
+  "Would you like to compare the interior layouts first?": [
+   0.004,
+   0.0013,
+   0.0028,
+   0.0044
+  ],
+  "A test drive can help you decide whether the model suits you.": [
+   0.0036,
+   0.0024,
+   0.0053,
+   0.0035
+  ],
+  "Which features are you hoping to get in the replacement car?": [
+   0.0038,
+   0.0054,
+   0.0027,
+   0.0038
+  ],
+  "Tell me whether you prefer cloth or leather upholstery.": [
+   0.0029,
+   0.0019,
+   0.0034,
+   0.005
+  ],
+  "The base trim is described in the model brochure.": [
+   0.003,
+   0.0033,
+   0.0047,
+   0.007
+  ],
+  "What appeals to you most about the Passport?": [
+   0.0034,
+   0.0058,
+   0.004,
+   0.0081
+  ],
+  "Are you looking for more boot space than your current car?": [
+   0.0023,
+   0.0016,
+   0.0031,
+   0.0036
+  ],
+  "The RAV4 is a model many families compare with other SUVs.": [
+   0.0017,
+   0.0064,
+   0.0047,
+   0.0059
+  ],
+  "We can discuss which version you would want to drive.": [
+   0.0022,
+   0.0033,
+   0.0038,
+   0.0034
+  ],
+  "Your preferred colour will help narrow down the choices.": [
+   0.007,
+   0.0015,
+   0.0074,
+   0.0053
+  ],
+  "Would a taller seating position suit your daily driving?": [
+   0.0039,
+   0.0024,
+   0.0054,
+   0.0062
+  ],
+  "The brochure will show how the different versions are equipped.": [
+   0.0044,
+   0.003,
+   0.003,
+   0.0064
+  ],
+  "What size vehicle would replace the one you currently own?": [
+   0.003,
+   0.0057,
+   0.0024,
+   0.0038
+  ],
+  "Would you want to look at the cabin before deciding?": [
+   0.0035,
+   0.0021,
+   0.0038,
+   0.0068
+  ],
+  "Hello Tristan,\n\nWe can talk about the kind of journeys you expect to make.\n\nNorthgate Motors, Toronto": [
+   0.0053,
+   0.0019,
+   0.0049,
+   0.0025
+  ],
+  "Do you have a preferred transmission for the hatchback?": [
+   0.0034,
+   0.0057,
+   0.0041,
+   0.0072
+  ],
+  "What sort of mileage do you put on a vehicle each year?": [
+   0.0023,
+   0.0045,
+   0.0151,
+   0.0088
+  ],
+  "You may want to compare the available trim descriptions first.": [
+   0.0038,
+   0.001,
+   0.0041,
+   0.0038
+  ],
+  "The replacement vehicle\u2019s size is a good place to start.": [
+   0.0027,
+   0.0024,
+   0.0033,
+   0.0045
+  ],
+  "Do you prefer a fabric roof or a fixed roof in your next car?": [
+   0.0038,
+   0.0041,
+   0.0043,
+   0.0094
+  ],
+  "Arjun has received the total-cost question and will prepare the figures.": [
+   0.0029,
+   0.0012,
+   0.0105,
+   0.0027
+  ],
+  "It makes sense to be comfortable with the commitment before deciding.": [
+   0.0049,
+   0.003,
+   0.0049,
+   0.0039
+  ],
+  "Dana can help compare the two body lengths.": [
+   0.0036,
+   0.0024,
+   0.0014,
+   0.0043
+  ],
+  "Sofia has a quotation task for the hybrid enquiry.": [
+   0.0023,
+   0.0018,
+   0.0039,
+   0.0064
+  ],
+  "Your experience with that purchase can help you decide what matters this time.": [
+   0.0013,
+   0.0051,
+   0.0046,
+   0.0031
+  ],
+  "The rep can demonstrate the cargo area when you view the vehicle.": [
+   0.0022,
+   0.002,
+   0.0039,
+   0.0046
+  ],
+  "Tom is handling the written cash estimate you requested.": [
+   0.0014,
+   0.0028,
+   0.0176,
+   0.0022
+  ],
+  "Hello Uma,\n\nYou can mention the instrument display when discussing the interior.\n\nNorthgate Motors, Toronto": [
+   0.0043,
+   0.0033,
+   0.0041,
+   0.0034
+  ],
+  "Keep that document handy if you choose to discuss the offer further.": [
+   0.0019,
+   0.003,
+   0.0052,
+   0.0058
+  ],
+  "Dana has added your wheel-condition discount request to her follow-up list.": [
+   0.008,
+   0.0053,
+   0.0051,
+   0.0013
+  ],
+  "Close-up photographs can help you assess the bumper\u2019s condition.": [
+   0.0022,
+   0.0031,
+   0.0048,
+   0.006
+  ],
+  "You can explain that situation to the rep when discussing a replacement.": [
+   0.0022,
+   0.0023,
+   0.004,
+   0.0053
+  ],
+  "Sofia has replied and is going through that illustration with you.": [
+   0.0008,
+   0.0034,
+   0.001,
+   0.0105
+  ],
+  "The road-trip line was meant as a lighthearted comment.": [
+   0.0012,
+   0.0018,
+   0.0039,
+   0.0088
+  ],
+  "Arjun has booked an appraisal task to assess your Sentra\u2019s value.": [
+   0.3995,
+   0.0143,
+   0.0217,
+   0.0017
+  ],
+  "Hurry and sign today; you are wasting everyone\u2019s time by waiting.": [
+   0.0027,
+   0.0017,
+   0.0022,
+   0.961
+  ],
+  "Act now or regret missing this opportunity.": [
+   0.0029,
+   0.0015,
+   0.0023,
+   0.9596
+  ],
+  "This is your last chance, so make the decision immediately.": [
+   0.0029,
+   0.0018,
+   0.0027,
+   0.958
+  ],
+  "Hello Val,\n\nStop hesitating and commit to buying the car.\n\nNorthgate Motors, Toronto": [
+   0.0029,
+   0.0021,
+   0.0024,
+   0.9598
+  ],
+  "You should be signing instead of making excuses.": [
+   0.003,
+   0.0016,
+   0.0024,
+   0.9591
+  ],
+  "Do not bother us unless you are ready to buy today.": [
+   0.0026,
+   0.0022,
+   0.0022,
+   0.9461
+  ],
+  "Buy now. Waiting is a mistake and you know it.": [
+   0.0037,
+   0.0024,
+   0.0028,
+   0.9539
+  ],
+  "Serious buyers do not need this long to decide.": [
+   0.0005,
+   0.0027,
+   0.0011,
+   0.0225
+  ],
+  "Enough discussion; send your agreement right away.": [
+   0.0024,
+   0.0017,
+   0.0021,
+   0.9592
+  ],
+  "You are making this difficult by refusing to move forward.": [
+   0.0025,
+   0.0016,
+   0.0022,
+   0.9617
+  ],
+  "Customer query logged. Automated response code QX-82. End of communication.": [
+   0.0028,
+   0.0016,
+   0.0022,
+   0.9532
+  ],
+  "Your automotive acquisition intent has been registered in the prospect processing queue.": [
+   0.0026,
+   0.0017,
+   0.0022,
+   0.961
+  ],
+  "Input accepted. Await further transaction directives from the assigned processing resource.": [
+   0.0025,
+   0.002,
+   0.0024,
+   0.9448
+  ],
+  "Prospect deferral status captured. Case identifier 7319. No additional interaction required.": [
+   0.0016,
+   0.002,
+   0.0012,
+   0.011
+  ],
+  "Enquiry token acknowledged. Workflow participant must comply with the purchasing progression sequence.": [
+   0.003,
+   0.0015,
+   0.0025,
+   0.9584
+  ],
+  "If you cared about your family\u2019s comfort, you would not keep putting this off.": [
+   0.0012,
+   0.002,
+   0.0021,
+   0.9378
+  ],
+  "People who know what they are doing do not sit on a decision like this.": [
+   0.0015,
+   0.0015,
+   0.0017,
+   0.9461
+  ],
+  "Make up your own mind for once instead of hiding behind your partner.": [
+   0.0031,
+   0.0016,
+   0.0025,
+   0.9589
+  ],
+  "Hello Wren,\n\nOnly a fool would walk away at this point.\n\nNorthgate Motors, Toronto": [
+   0.0031,
+   0.0019,
+   0.0026,
+   0.959
+  ],
+  "quit stallin n say yes already": [
+   0.0041,
+   0.0021,
+   0.0027,
+   0.9559
+  ],
+  "You have taken enough of our attention; return the favour by committing.": [
+   0.0027,
+   0.0018,
+   0.0023,
+   0.9608
+  ],
+  "Do not be the person who overthinks everything and ends up with nothing.": [
+   0.0033,
+   0.0021,
+   0.0024,
+   0.9548
+  ],
+  "Nobody else makes such a fuss over routine paperwork.": [
+   0.002,
+   0.0021,
+   0.0014,
+   0.2001
+  ],
+  "ur overreacting just agree to it": [
+   0.0032,
+   0.0022,
+   0.0031,
+   0.9567
+  ],
+  "Put your big-person pants on and make the purchase.": [
+   0.0036,
+   0.0021,
+   0.0027,
+   0.9534
+  ],
+  "Please collect your bag before reception closes; we have kept it safely aside.": [
+   0.0173,
+   0.0187,
+   0.0047,
+   0.0026
+  ],
+  "That is wonderful news!! Congratulations on the new role.": [
+   0.3461,
+   0.0163,
+   0.0184,
+   0.0119
+  ],
+  "You do not need to follow that advert\u2019s pressure; take time to compare the details.": [
+   0.002,
+   0.0015,
+   0.0036,
+   0.007
+  ],
+  "A last-chance slogan should not replace a decision you feel comfortable making.": [
+   0.002,
+   0.0024,
+   0.0022,
+   0.0066
+  ],
+  "There is no need for a snap decision on our account.": [
+   0.0021,
+   0.003,
+   0.0041,
+   0.0031
+  ],
+  "I can make the explanation more conversational and stick to the question you asked.": [
+   0.0009,
+   0.0013,
+   0.0025,
+   0.0074
+  ],
+  "Choose your own pace; an advert is not a reason to skip careful consideration.": [
+   0.0018,
+   0.0024,
+   0.0017,
+   0.0133
+  ],
+  "Hello Zoe,\n\nWhat a relief! It is good to hear the access works for your family.\n\nNorthgate Motors, Toronto": [
+   0.0041,
+   0.0054,
+   0.0043,
+   0.0028
+  ],
+  "If you need it tonight, come back before the desk closes so you can collect it.": [
+   0.0061,
+   0.0088,
+   0.0044,
+   0.006
+  ],
+  "The reference helps find your email; it does not mean you need to buy anything.": [
+   0.0035,
+   0.0059,
+   0.0057,
+   0.0057
+  ],
+  "You are welcome to ask; understanding the details matters more than moving quickly.": [
+   0.001,
+   0.0011,
+   0.0021,
+   0.0065
+  ],
+  "It sounds like you want to discuss it together before choosing.": [
+   0.0021,
+   0.0014,
+   0.0031,
+   0.0073
+  ],
+  "Only send a decision when you are comfortable with the information you have.": [
+   0.0016,
+   0.0018,
+   0.002,
+   0.0094
+  ],
+  "Plans change; let the team know whenever you can so they can adjust the diary.": [
+   0.0028,
+   0.0015,
+   0.0019,
+   0.0048
+  ],
+  "Careful questions are welcome here, whether or not you decide to purchase.": [
+   0.0011,
+   0.0036,
+   0.0045,
+   0.0029
+  ],
+  "Hello Blair, knowing the size you want is a useful starting point.": [
+   0.0052,
+   0.0018,
+   0.0038,
+   0.0069
+  ],
+  "A list of your usual journeys can help the team understand your needs.": [
+   0.0046,
+   0.002,
+   0.0053,
+   0.0075
+  ],
+  "Entry height and door opening are good details to check during a viewing.": [
+   0.0025,
+   0.0013,
+   0.0047,
+   0.0025
+  ],
+  "Keep your licence with you and show it to the staff member handling the drive.": [
+   0.0768,
+   0.0497,
+   0.0192,
+   0.0035
+  ],
+  "Think about what you carry and how often you need the extra height.": [
+   0.001,
+   0.0014,
+   0.0041,
+   0.0095
+  ],
+  "Your attachment can give the team a clearer picture of what you are looking for.": [
+   0.0026,
+   0.0027,
+   0.0045,
+   0.007
+  ],
+  "I have noted your preference for email for this enquiry.": [
+   0.002,
+   0.0018,
+   0.004,
+   0.0025
+  ],
+  "Thank you, I have recorded the spelling Beaumont for your contact details.": [
+   0.0018,
+   0.0015,
+   0.0024,
+   0.0043
+  ],
+  "Rear-seat photos can help you judge the layout before deciding to visit.": [
+   0.0036,
+   0.002,
+   0.0029,
+   0.0041
+  ],
+  "You may want to compare visibility and parking aids as part of your search.": [
+   0.003,
+   0.0032,
+   0.0034,
+   0.0045
+  ],
+  "Bring the stroller along if you want to check how it fits during a viewing.": [
+   0.0086,
+   0.0024,
+   0.0034,
+   0.0028
+  ],
+  "Yes, that transmission preference is useful information for your enquiry.": [
+   0.0011,
+   0.0024,
+   0.0025,
+   0.0028
+  ],
+  "Trim means a version of the model with a particular set of features.": [
+   0.0013,
+   0.0024,
+   0.0031,
+   0.0091
+  ],
+  "You can take the process step by step and ask for explanations along the way.": [
+   0.0028,
+   0.0028,
+   0.0055,
+   0.0113
+  ],
+  "A history report is one source of information to review alongside the vehicle\u2019s condition.": [
+   0.0013,
+   0.0034,
+   0.0032,
+   0.0069
+  ],
+  "Describe the button or send the photo so the feature can be identified.": [
+   0.0032,
+   0.0013,
+   0.0037,
+   0.0075
+  ],
+  "Hello Ellis,\nI have noted that you are looking for an electric vehicle. Details about your usual charging access would help the team understand your needs.\nNorthgate Motors": [
+   0.003,
+   0.0011,
+   0.0022,
+   0.0038
+  ],
+  "Replying in this thread helps keep the details of your enquiry together.": [
+   0.0007,
+   0.0015,
+   0.0041,
+   0.0037
+  ],
+  "Checking the actual seat in the vehicle is a useful part of a viewing.": [
+   0.0029,
+   0.0043,
+   0.0045,
+   0.0048
+  ],
+  "Look for the contents page or the section headed safety equipment.": [
+   0.002,
+   0.0021,
+   0.0025,
+   0.0036
+  ],
+  "You are welcome; feeling clear about your options is part of the process.": [
+   0.0105,
+   0.0036,
+   0.0053,
+   0.0087
+  ],
+  "Read through each document and ask for any unclear wording to be explained.": [
+   0.0015,
+   0.0011,
+   0.0023,
+   0.0059
+  ],
+  "You can try attaching a smaller copy or describing what the photo shows.": [
+   0.0017,
+   0.0014,
+   0.0035,
+   0.0059
+  ],
+  "It can help to remove personal items if you plan to show the condition of the cargo area.": [
+   0.0031,
+   0.0033,
+   0.0047,
+   0.0053
+  ],
+  "I have noted that longer information is easier for you after work.": [
+   0.004,
+   0.0022,
+   0.003,
+   0.0067
+  ],
+  "A rep can compare the photo with the brochure to identify which version is shown.": [
+   0.0032,
+   0.0034,
+   0.0031,
+   0.0069
+  ],
+  "Cargo shape and loading access may matter as much as the overall size for that use.": [
+   0.0021,
+   0.0011,
+   0.0057,
+   0.0082
+  ],
+  "Your driving conditions and preferences can help frame that comparison.": [
+   0.0041,
+   0.0018,
+   0.0052,
+   0.005
+  ],
+  "A close-up image or a staff inspection can help identify the upholstery.": [
+   0.0026,
+   0.0045,
+   0.0035,
+   0.0051
+  ],
+  "I have noted Ren\u00e9e with the accent for your enquiry details.": [
+   0.0019,
+   0.0022,
+   0.0073,
+   0.0022
+  ],
+  "Hello Sidney,\nThe aid\u2019s dimensions would be useful when checking the cargo opening and interior layout. You can include them in your reply.\nNorthgate Motors": [
+   0.0021,
+   0.0017,
+   0.0028,
+   0.0041
+  ],
+  "It helps to settle the travel arrangements with the team before making a long journey.": [
+   0.0051,
+   0.0028,
+   0.0049,
+   0.008
+  ],
+  "Having someone with you can help you compare notes during a viewing.": [
+   0.0023,
+   0.001,
+   0.0024,
+   0.0065
+  ],
+  "Try the driving position and look at the sight lines you would use when parking.": [
+   0.0009,
+   0.0015,
+   0.0015,
+   0.0044
+  ],
+  "A list of your usual driving tasks can help separate useful features from optional extras.": [
+   0.0042,
+   0.002,
+   0.0066,
+   0.0052
+  ],
+  "Share the feature name and I can help explain what the term generally means.": [
+   0.0022,
+   0.0014,
+   0.0036,
+   0.0039
+  ],
+  "If you have notes from comparing the brochures, you can keep them in this email thread for the next conversation.": [
+   0.0025,
+   0.0039,
+   0.0033,
+   0.0086
+  ],
+  "Before a viewing, it may help to make a short list of the interior details you want to check.": [
+   0.0034,
+   0.0017,
+   0.0042,
+   0.007
+  ],
+  "Glad the layout explanation helped with your comparison.": [
+   0.0025,
+   0.0011,
+   0.0018,
+   0.0027
+  ],
+  "Sorting out parking at home sounds like a useful step before deciding what to buy.": [
+   0.0017,
+   0.0019,
+   0.0035,
+   0.0045
+  ],
+  "[Simulated] Thanks for reaching Northgate Motors in Toronto. The sales team is away for the night; what time would suit you?": [
+   0.0092,
+   0.0028,
+   0.0044,
+   0.0027
+  ],
+  "[Simulated] I've asked Dana to confirm the time; please wait for her reply before heading over.": [
+   0.0024,
+   0.0014,
+   0.0011,
+   0.0061
+  ],
+  "[Simulated] We are closed for the evening. Send a time that suits you and Dana can check the diary.": [
+   0.0114,
+   0.0027,
+   0.0027,
+   0.0185
+  ],
+  "[Simulated] Let me check whether the Forester is still available. Dana can confirm the visit time.": [
+   0.0037,
+   0.0071,
+   0.0031,
+   0.0036
+  ],
+  "[Simulated] I can pass on your request so someone can pick it up while Sofia is away.": [
+   0.0013,
+   0.0112,
+   0.0023,
+   0.0024
+  ],
+  "[Simulated] Tom will check the Rogue\u2019s availability before your visit.": [
+   0.0052,
+   0.0038,
+   0.0044,
+   0.0035
+  ],
+  "[Simulated] I have asked the manager to arrange a person for you.": [
+   0.0099,
+   0.0085,
+   0.0035,
+   0.0057
+  ],
+  "[Simulated] Thanks, I will leave the details with Arjun.": [
+   0.0022,
+   0.0007,
+   0.0014,
+   0.004
+  ],
+  "[Simulated] Sorry we missed you. Which vehicle did you want to ask about?": [
+   0.0029,
+   0.0047,
+   0.0028,
+   0.0046
+  ],
+  "[Simulated] Your visit is confirmed. See you then!": [
+   0.8546,
+   0.1596,
+   0.1069,
+   0.0075
+  ],
+  "[Simulated] Hope everything is okay. If you would like another time, just reply when convenient.": [
+   0.001,
+   0.0013,
+   0.0013,
+   0.0105
+  ],
+  "[Simulated] Sorry we could not answer just now. Was it the Equinox you wanted to see?": [
+   0.002,
+   0.0026,
+   0.0033,
+   0.0049
+  ],
+  "[Simulated] You'd be around four hundred a month on that one.": [
+   0.158,
+   0.2046,
+   0.9195,
+   0.0049
+  ],
+  "[Simulated] Looks like that time did not work out. We can look for another day if you would like.": [
+   0.0008,
+   0.0029,
+   0.0018,
+   0.0077
+  ],
+  "[Simulated] Did the Corolla quote reach you? Happy to leave you time to think.": [
+   0.0008,
+   0.0012,
+   0.0006,
+   0.0742
+  ],
+  "[Simulated] Would a quick explanation of the paperwork help? Reply whenever it suits you.": [
+   0.0028,
+   0.002,
+   0.0027,
+   0.0096
+  ],
+  "[Simulated] It has been a while since we spoke. Are you still looking, or would you prefer I leave this here?": [
+   0.0012,
+   0.0305,
+   0.0021,
+   0.0049
+  ],
+  "[Simulated] Did the Escape quote get through? Let us know if you want to go over any of it.": [
+   0.001,
+   0.0022,
+   0.0018,
+   0.0053
+  ],
+  "[Simulated] Any questions about the Escape quote? We can pick this up when you are ready.": [
+   0.0333,
+   0.1598,
+   0.0125,
+   0.0008
+  ],
+  "[Simulated] Checking in after some time away: are you still considering a vehicle?": [
+   0.0018,
+   0.034,
+   0.0023,
+   0.0028
+  ],
+  "[Simulated] Thanks for pointing that out. I will ask the team to check the visit record.": [
+   0.0011,
+   0.0011,
+   0.0019,
+   0.0041
+  ],
+  "[Simulated] A reminder that Omar still needs the proof of income. Let us know if you need help finding the document.": [
+   0.0021,
+   0.0078,
+   0.0058,
+   0.0041
+  ],
+  "[Simulated] It has been a week since Omar\u2019s request. Can you let us know when the income document might be ready?": [
+   0.0018,
+   0.0026,
+   0.0045,
+   0.0043
+  ],
+  "[Simulated] Thanks for telling us about the missing visit. I will ask the team to check the record.": [
+   0.0016,
+   0.0019,
+   0.002,
+   0.0021
+  ],
+  "[Simulated] Omar is still waiting for the income document. Is there anything we can clarify about what to send?": [
+   0.0019,
+   0.0043,
+   0.0031,
+   0.0037
+  ],
+  "[Simulated] A week has passed since the document request. Please reply when you know when you can send it.": [
+   0.0013,
+   0.0031,
+   0.0027,
+   0.007
+  ],
+  "[Simulated] You would be crazy to pass this up. A sensible buyer would sign today.": [
+   0.0033,
+   0.0031,
+   0.0036,
+   0.949
+  ],
+  "[Simulated] Hurry back if you left anything in the car! Take your time with the decision.": [
+   0.0023,
+   0.0035,
+   0.0016,
+   0.0127
+  ],
+  "[Simulated] Take your time. Let us know if there is anything you want to check.": [
+   0.0034,
+   0.0027,
+   0.0026,
+   0.006
+  ],
+  "[Simulated] Just checking whether you still wanted to see the CR-V.": [
+   0.0012,
+   0.0132,
+   0.0027,
+   0.0027
+  ],
+  "[Simulated] That is fine. Reply when you would like some more information.": [
+   0.0005,
+   0.0017,
+   0.0022,
+   0.0054
+  ],
+  "[Simulated] Are you ready to take another look at the Crosstrek?": [
+   0.0031,
+   0.0049,
+   0.0025,
+   0.0074
+  ],
+  "[Simulated] We can keep both enquiries together so you do not have to repeat yourself.": [
+   0.0006,
+   0.0027,
+   0.0027,
+   0.0049
+  ],
+  "[Simulated] Tomorrow morning works, see you then!": [
+   0.8153,
+   0.0707,
+   0.0579,
+   0.0183
+  ],
+  "[Simulated] You would be around five hundred a month.": [
+   0.1189,
+   0.1236,
+   0.9429,
+   0.0046
+  ],
+  "[Simulated] You're all set. We will see you next week.": [
+   0.8368,
+   0.2335,
+   0.1446,
+   0.0064
+  ],
+  "[Simulated] I have asked Sofia to help with your plans.": [
+   0.0017,
+   0.0013,
+   0.0018,
+   0.0035
+  ],
+  "[Simulated] Sofia has confirmed your replacement visit. See you then!": [
+   0.8367,
+   0.2253,
+   0.0819,
+   0.0084
+  ],
+  "[Simulated] It is sitting on our lot waiting for you.": [
+   0.3846,
+   0.7433,
+   0.1358,
+   0.0044
+  ],
+  "[Simulated] Yes, that Ram is available for you to view.": [
+   0.159,
+   0.6876,
+   0.078,
+   0.0014
+  ],
+  "[Simulated] You would be around six hundred a month. You would be crazy to miss it.": [
+   0.1053,
+   0.149,
+   0.8534,
+   0.0301
+  ],
+  "[Simulated] Let me check whether it is still available.": [
+   0.0013,
+   0.0276,
+   0.0023,
+   0.0009
+  ],
+  "[Simulated] Your inquiry has been received. Reference number 8826.": [
+   0.0017,
+   0.002,
+   0.0022,
+   0.0052
+  ],
+  "[Simulated] The total would be twenty eight thousand including tax; someone can help you later.": [
+   0.1224,
+   0.1355,
+   0.9467,
+   0.0037
+  ],
+  "[Simulated] Someone will get in touch.": [
+   0.0338,
+   0.0176,
+   0.0064,
+   0.0079
+  ],
+  "[Simulated] Your sales inquiry has been received. Reference number 6650.": [
+   0.0015,
+   0.0024,
+   0.0044,
+   0.0027
+  ],
+  "[Simulated] Was the Mazda3 offer easy to open? Sofia can explain the breakdown if needed.": [
+   0.0032,
+   0.0046,
+   0.0043,
+   0.0063
+  ],
+  "[Simulated] Leaving the Mazda3 paperwork with you for now. You can pick up the conversation when your plans are clearer.": [
+   0.0069,
+   0.0056,
+   0.0018,
+   0.4885
+  ],
+  "[Simulated] Choose the Civic and your payment will be three hundred and eighty a month.": [
+   0.1855,
+   0.1496,
+   0.9296,
+   0.0033
+  ],
+  "[Simulated] If your search is on pause, that is okay. Tom can revisit the paperwork whenever you are ready.": [
+   0.001,
+   0.0029,
+   0.0014,
+   0.0038
+  ]
+ },
+ "buyer": {
+  "May I test-drive the Prius at six?": [
+   0.0527,
+   0.0155
+  ],
+  "I can get there on Tuesday morning.": [
+   0.0108,
+   0.0077
+  ],
+  "Please arrange a Thursday visit for the Jetta.": [
+   0.5664,
+   0.0123
+  ],
+  "Does noon suit for a look at the Leaf?": [
+   0.0304,
+   0.0063
+  ],
+  "Can we move the viewing to Friday?": [
+   0.0281,
+   0.018
+  ],
+  "My dad and I want to visit after lunch.": [
+   0.0346,
+   0.0052
+  ],
+  "I finish work at five and can come afterwards.": [
+   0.0131,
+   0.0081
+  ],
+  "Could you arrange a showroom appointment?": [
+   0.9484,
+   0.1473
+  ],
+  "Will you make an appointment for me to see the Bolt?": [
+   0.9628,
+   0.0693
+  ],
+  "I would like the first viewing slot on Saturday.": [
+   0.0666,
+   0.0125
+  ],
+  "I could swing by when I drop the kids off.": [
+   0.0065,
+   0.0088
+  ],
+  "Maybe half past three after my meeting?": [
+   0.0451,
+   0.0086
+  ],
+  "We can make the trip on our lunch break.": [
+   0.0052,
+   0.0082
+  ],
+  "Is this coming Monday a possibility?": [
+   0.08,
+   0.0324
+  ],
+  "cud i pop in tmro about 11": [
+   0.0472,
+   0.1187
+  ],
+  "Could we pencil in a viewing at four?": [
+   0.1972,
+   0.0197
+  ],
+  "I need to know before I set off for Toronto.": [
+   0.0364,
+   0.0327
+  ],
+  "How about after my dentist appointment?": [
+   0.0422,
+   0.0126
+  ],
+  "Sunday afternoon, if someone can check it.": [
+   0.117,
+   0.0098
+  ],
+  "Is a last-minute visit worth asking about?": [
+   0.147,
+   0.0746
+  ],
+  "im free arnd two for the HR-V": [
+   0.0454,
+   0.0945
+  ],
+  "We would prefer to come together next weekend.": [
+   0.3243,
+   0.0239
+  ],
+  "I will need to book a taxi if the time works.": [
+   0.0206,
+   0.0064
+  ],
+  "Still checking whether I can leave early Wednesday.": [
+   0.0108,
+   0.0069
+  ],
+  "Put a tentative hold on tomorrow evening.": [
+   0.0111,
+   0.0342
+  ],
+  "Dana just confirmed my time by phone.": [
+   0.0511,
+   0.0042
+  ],
+  "How do I request a slot with Tom?": [
+   0.9494,
+   0.0924
+  ],
+  "Can I tell my partner the visit is definite?": [
+   0.2783,
+   0.031
+  ],
+  "Arjun has called and agreed on Thursday.": [
+   0.0932,
+   0.0158
+  ],
+  "I see a button labelled Book a visit.": [
+   0.0057,
+   0.0035
+  ],
+  "Is twenty past four too specific?": [
+   0.0354,
+   0.0643
+  ],
+  "Tom texted to confirm the Saturday slot.": [
+   0.0475,
+   0.0094
+  ],
+  "Could we see the Audi before school pickup?": [
+   0.0426,
+   0.018
+  ],
+  "Sofia sent my confirmation yesterday.": [
+   0.0135,
+   0.0055
+  ],
+  "I have a booking with the tyre shop nearby.": [
+   0.0133,
+   0.0173
+  ],
+  "Should I leave home for the viewing now?": [
+   0.0125,
+   0.0069
+  ],
+  "Dana emailed the final appointment details.": [
+   0.0529,
+   0.0112
+  ],
+  "Could you confirm a time after work?": [
+   0.685,
+   0.4461
+  ],
+  "Your calendar says requested beside my name.": [
+   0.0296,
+   0.012
+  ],
+  "Arjun has already agreed to meet us at ten.": [
+   0.0249,
+   0.0103
+  ],
+  "Is the orange Kona still for sale?": [
+   0.0123,
+   0.0253
+  ],
+  "Does your listing for the Jetta still apply?": [
+   0.0173,
+   0.4429
+  ],
+  "I am looking for the blue Bolt in your advert.": [
+   0.2671,
+   0.0104
+  ],
+  "Has anybody bought the silver Prius?": [
+   0.0434,
+   0.049
+  ],
+  "Can you check the white HR-V before I travel?": [
+   0.0305,
+   0.0253
+  ],
+  "Did the grey Q3 sell over the weekend?": [
+   0.0094,
+   0.0725
+  ],
+  "I saw a Leaf with the winter package online.": [
+   0.0052,
+   0.0138
+  ],
+  "Are you sure you have the red Forte?": [
+   0.037,
+   0.0252
+  ],
+  "Which location has the black Impreza advertised?": [
+   0.0219,
+   0.0077
+  ],
+  "Is the Envision shown in the photo gone?": [
+   0.0051,
+   0.0056
+  ],
+  "Before I take the train, did the Mirages all go?": [
+   0.0144,
+   0.0102
+  ],
+  "That yellow MINI caught my eye.": [
+   0.0181,
+   0.0172
+  ],
+  "still got tht bronco sport": [
+   0.0077,
+   0.0136
+  ],
+  "I am trying to avoid a wasted drive for the ILX.": [
+   0.0063,
+   0.015
+  ],
+  "Any chance somebody snapped up the blue X1?": [
+   0.9375,
+   0.1413
+  ],
+  "Does the photographed Sorento actually exist at the store?": [
+   0.0189,
+   0.0054
+  ],
+  "The listing vanished and then came back.": [
+   0.0057,
+   0.0082
+  ],
+  "id hate to drive over for nothin on the rio": [
+   0.0098,
+   0.006
+  ],
+  "Tell me the beige Sienna has not disappeared.": [
+   0.2985,
+   0.0366
+  ],
+  "Someone said the Passport might have sold.": [
+   0.0106,
+   0.0104
+  ],
+  "Which way should I head to find the copper CX-30?": [
+   0.0186,
+   0.0126
+  ],
+  "I need a straight answer about the pictured Venza.": [
+   0.3865,
+   0.2776
+  ],
+  "Would the white Atlas still be an option?": [
+   0.0107,
+   0.0388
+  ],
+  "not chasing a ghost listing for this accord": [
+   0.0084,
+   0.2621
+  ],
+  "My neighbour reckons the Maverick has already gone.": [
+   0.0102,
+   0.0089
+  ],
+  "The website marks the Renegade available.": [
+   0.0053,
+   0.0066
+  ],
+  "Can I find the Soul at the store this afternoon?": [
+   0.9532,
+   0.0164
+  ],
+  "Your advert still shows the MX-5.": [
+   0.0086,
+   0.0242
+  ],
+  "Is Arjun available to speak this afternoon?": [
+   0.9717,
+   0.0265
+  ],
+  "Have you got my email about the Beetle?": [
+   0.9025,
+   0.0117
+  ],
+  "The Outback listing says in stock in bold letters.": [
+   0.0055,
+   0.0198
+  ],
+  "I need to know about that particular Golf wagon.": [
+   0.0312,
+   0.0078
+  ],
+  "Can you guarantee the Taos will be there?": [
+   0.0806,
+   0.0767
+  ],
+  "What does ready for viewing mean on the listing?": [
+   0.0102,
+   0.1084
+  ],
+  "Would you have other small hatchbacks if the Spark sold?": [
+   0.0807,
+   0.9299
+  ],
+  "I asked for a car with Apple CarPlay.": [
+   0.0071,
+   0.0126
+  ],
+  "Was the red Sentra reserved by another buyer?": [
+   0.0648,
+   0.3485
+  ],
+  "There is a photo of a Traverse in your entrance.": [
+   0.0081,
+   0.0081
+  ],
+  "Is a courtesy car available during a repair?": [
+   0.0431,
+   0.0166
+  ],
+  "Do you really have the Escape from that old email?": [
+   0.0201,
+   0.0095
+  ],
+  "How much is the 2021 Prius?": [
+   0.0319,
+   0.8343
+  ],
+  "What would the Bolt cost monthly?": [
+   0.041,
+   0.9731
+  ],
+  "What can you give me for my old Rio?": [
+   0.0822,
+   0.9679
+  ],
+  "Can the total include licensing?": [
+   0.0381,
+   0.9748
+  ],
+  "What discount can you offer on the Qashqai?": [
+   0.0508,
+   0.9755
+  ],
+  "What is the asking price for the X1?": [
+   0.0443,
+   0.9753
+  ],
+  "What deposit would I need on the Odyssey?": [
+   0.0354,
+   0.976
+  ],
+  "Can I get a lease estimate for the Ioniq?": [
+   0.0916,
+   0.9729
+  ],
+  "How much is the extra wheel package?": [
+   0.0367,
+   0.9723
+  ],
+  "Any rough idea on the Sorento payment?": [
+   0.0483,
+   0.9767
+  ],
+  "Where would my trade land on the deal?": [
+   0.0494,
+   0.9745
+  ],
+  "Would the newer CR-V be out of my range?": [
+   0.0134,
+   0.049
+  ],
+  "send the drive-away number for the Trax": [
+   0.3179,
+   0.9368
+  ],
+  "cn u estimate my payment on the nissan": [
+   0.0537,
+   0.9754
+  ],
+  "Is the asking figure flexible on the Outback?": [
+   0.0606,
+   0.9748
+  ],
+  "Is the fancy paint a big extra?": [
+   0.0081,
+   0.2786
+  ],
+  "What sort of money for the Ridgeline?": [
+   0.0411,
+   0.9759
+  ],
+  "What would my old Fiesta contribute as a trade?": [
+   0.0322,
+   0.9755
+  ],
+  "I need a starting figure for the Venue.": [
+   0.069,
+   0.9727
+  ],
+  "Is the warranty add-on expensive?": [
+   0.0281,
+   0.9637
+  ],
+  "Can somebody verify the full amount for the Tucson?": [
+   0.0694,
+   0.9741
+  ],
+  "What would I pay each month on a lease?": [
+   0.0341,
+   0.978
+  ],
+  "I thought I saw a price in yesterday\u2019s email.": [
+   0.0069,
+   0.0267
+  ],
+  "The instrument panel said 380 km.": [
+   0.015,
+   0.0174
+  ],
+  "Would a trade-in lower my payment?": [
+   0.0387,
+   0.9771
+  ],
+  "Is this the 2.5-litre engine?": [
+   0.0118,
+   0.0127
+  ],
+  "How many seats are in the family version?": [
+   0.0068,
+   0.0132
+  ],
+  "Please break down the out-the-door cost.": [
+   0.0499,
+   0.9711
+  ],
+  "The amount on my quote was higher than expected.": [
+   0.0038,
+   0.0544
+  ],
+  "How much time should I allow for the paperwork?": [
+   0.0079,
+   0.0725
+  ],
+  "Can you match another dealer\u2019s discount?": [
+   0.1289,
+   0.964
+  ],
+  "Is 2024 the model year or the mileage?": [
+   0.0089,
+   0.1412
+  ],
+  "Could Arjun send the cash-option total?": [
+   0.2736,
+   0.9581
+  ],
+  "How many kilometres were recorded at service?": [
+   0.0069,
+   0.01
+  ],
+  "Could you value my old Matrix?": [
+   0.0521,
+   0.9673
+  ],
+  "Can I speak to a salesperson about the Mazda?": [
+   0.9724,
+   0.0729
+  ],
+  "Please have a real person call me with the price.": [
+   0.8023,
+   0.8169
+  ],
+  "I want to talk with Dana before continuing.": [
+   0.9742,
+   0.029
+  ],
+  "Could you connect me to your manager?": [
+   0.9737,
+   0.0406
+  ],
+  "Please transfer this chat to a human.": [
+   0.9739,
+   0.0387
+  ],
+  "Can a sales rep explain the safety features?": [
+   0.9599,
+   0.1341
+  ],
+  "I would like Sofia to phone me about the cash quote.": [
+   0.8863,
+   0.6946
+  ],
+  "Is there a staff member I can speak with now?": [
+   0.9759,
+   0.0296
+  ],
+  "Could Tom take over this conversation?": [
+   0.9679,
+   0.0541
+  ],
+  "Please put me in touch with Arjun.": [
+   0.9746,
+   0.0333
+  ],
+  "Can we drop the bot part and get a salesperson on this?": [
+   0.9626,
+   0.1938
+  ],
+  "who can i ring for the real numbers on the mini": [
+   0.8935,
+   0.6096
+  ],
+  "I need somebody at the dealership on the other end of a phone.": [
+   0.9703,
+   0.0211
+  ],
+  "plz let a humen answer this one": [
+   0.9367,
+   0.1642
+  ],
+  "Hand this over to Dana, she knows my situation.": [
+   0.0546,
+   0.0108
+  ],
+  "Rather do this with a person across a desk. Who can arrange a conversation?": [
+   0.9758,
+   0.0266
+  ],
+  "Is there someone with a name and extension I can talk to?": [
+   0.9735,
+   0.0457
+  ],
+  "Could the person selling the truck call me about its controls?": [
+   0.9739,
+   0.0611
+  ],
+  "No chatbot please send this to a saleswoman who can explain the cost": [
+   0.6861,
+   0.8749
+  ],
+  "can u get sofea on the line for me": [
+   0.9644,
+   0.1361
+  ],
+  "Would you put a member of the team in the loop by having them call?": [
+   0.9729,
+   0.0506
+  ],
+  "I am done typing to a machine; who can actually speak with me?": [
+   0.9746,
+   0.0111
+  ],
+  "Get Tom to ring me back instead of another automated message.": [
+   0.9725,
+   0.0177
+  ],
+  "Any flesh-and-blood salesperson able to have a chat?": [
+   0.9725,
+   0.037
+  ],
+  "Please move me to the person who handles new-car sales.": [
+   0.975,
+   0.0373
+  ],
+  "Can I speak directly with Sofia?": [
+   0.9746,
+   0.038
+  ],
+  "I will talk to my brother about the hatchback tonight.": [
+   0.0902,
+   0.005
+  ],
+  "Is Dana the person I met near the entrance?": [
+   0.3364,
+   0.004
+  ],
+  "Get Arjun to call rather than sending another automated reply.": [
+   0.6735,
+   0.0068
+  ],
+  "I am talking to another dealership as well.": [
+   0.0811,
+   0.006
+  ],
+  "My wife prefers talking on the phone.": [
+   0.019,
+   0.0067
+  ],
+  "Who can give me a human explanation of the features?": [
+   0.9398,
+   0.1358
+  ],
+  "I spoke to your manager last week.": [
+   0.0483,
+   0.005
+  ],
+  "This car feels more human-sized than my old van.": [
+   0.0036,
+   0.0089
+  ],
+  "Please pass my question to a salesperson.": [
+   0.9727,
+   0.0516
+  ],
+  "My mechanic will call me about my old vehicle later.": [
+   0.0405,
+   0.0056
+  ],
+  "Tom was helpful when my neighbour bought here.": [
+   0.0079,
+   0.0151
+  ],
+  "I would like a person to handle this from here.": [
+   0.9711,
+   0.0822
+  ],
+  "I am asking for my father; he does not use email.": [
+   0.0349,
+   0.0047
+  ],
+  "The salesperson at the other store seemed rushed.": [
+   0.0301,
+   0.0101
+  ],
+  "How much does the Kona cost?": [
+   0.0256,
+   0.6651
+  ],
+  "Can I have a quote for the Impreza?": [
+   0.1305,
+   0.9684
+  ],
+  "What monthly payment would apply to me?": [
+   0.0535,
+   0.9765
+  ],
+  "Please send a salesperson to explain the purchase price.": [
+   0.7507,
+   0.8557
+  ],
+  "What is the full price including tax?": [
+   0.0374,
+   0.9774
+  ],
+  "Can you calculate a lease quote?": [
+   0.0551,
+   0.9749
+  ],
+  "Could a salesperson explain how much discount is possible?": [
+   0.6386,
+   0.8995
+  ],
+  "What would the trade-in value be?": [
+   0.0348,
+   0.9771
+  ],
+  "What would the total be after fees?": [
+   0.0451,
+   0.9769
+  ],
+  "What is your price for the base trim?": [
+   0.0433,
+   0.9763
+  ],
+  "Any idea what the damage is for the Passport?": [
+   0.0496,
+   0.9713
+  ],
+  "ballpark for the whole deal on the mazda": [
+   0.0549,
+   0.931
+  ],
+  "hw much wud the rav cost me monthly": [
+   0.0402,
+   0.9756
+  ],
+  "Give me the keys-in-hand figure, with everything added.": [
+   0.055,
+   0.9751
+  ],
+  "Can someone on the sales floor ring me with proper figures?": [
+   0.8915,
+   0.6571
+  ],
+  "What kind of money are we talking for that Tiguan?": [
+   0.0694,
+   0.9741
+  ],
+  "Send the final number rather than a brochure": [
+   0.2239,
+   0.7963
+  ],
+  "could u do the maths on my part-ex": [
+   0.0867,
+   0.9714
+  ],
+  "Where do the payments land with a longer term?": [
+   0.0353,
+   0.9766
+  ],
+  "I need Arjun on the phone to go through what I would owe.": [
+   0.9166,
+   0.5543
+  ],
+  "wat r u askin for the green hatch": [
+   0.3481,
+   0.9264
+  ],
+  "What will it take out of my wallet each month?": [
+   0.0228,
+   0.9747
+  ],
+  "Include the fees and tell me what I am signing for.": [
+   0.0544,
+   0.9764
+  ],
+  "Can you put a number on the old Fusion I would trade?": [
+   0.0876,
+   0.9718
+  ],
+  "I want the bottom-line cash figure on the Cabrio.": [
+   0.0373,
+   0.9775
+  ],
+  "What is the complete amount for the Grand Cherokee?": [
+   0.0314,
+   0.9692
+  ],
+  "The lease payment in that offer was beyond my budget.": [
+   0.0068,
+   0.0199
+  ],
+  "How much longer is the long-wheelbase version?": [
+   0.0043,
+   0.0139
+  ],
+  "Could you send the numbers for the hybrid?": [
+   0.1785,
+   0.9617
+  ],
+  "I paid more for my current car than I wanted to.": [
+   0.003,
+   0.0205
+  ],
+  "How much room is left with the third row folded?": [
+   0.0092,
+   0.0152
+  ],
+  "What cash total should I budget for the EV?": [
+   0.0317,
+   0.973
+  ],
+  "The numbers on the clock are hard to read.": [
+   0.0058,
+   0.0091
+  ],
+  "I already have an itemized quote from Dana.": [
+   0.0137,
+   0.011
+  ],
+  "Please ask about a discount for the damaged wheel.": [
+   0.2418,
+   0.9589
+  ],
+  "How much damage is visible on the bumper?": [
+   0.0058,
+   0.0491
+  ],
+  "My monthly payment is the reason I am selling the old car.": [
+   0.0033,
+   0.0354
+  ],
+  "Can someone review the finance illustration?": [
+   0.8489,
+   0.5564
+  ],
+  "That quote about road trips made me laugh.": [
+   0.0079,
+   0.0037
+  ],
+  "What would my Sentra trade contribute to the deal?": [
+   0.0407,
+   0.9765
+  ],
+  "I need another day to think about it.": [
+   0.0568,
+   0.0072
+  ],
+  "We are still comparing our options.": [
+   0.008,
+   0.025
+  ],
+  "I do not want to be rushed into a purchase.": [
+   0.0065,
+   0.0153
+  ],
+  "I am not ready to fill in the purchase form.": [
+   0.0075,
+   0.0063
+  ],
+  "I want to discuss it at home first.": [
+   0.0904,
+   0.0096
+  ],
+  "I have only just started shopping.": [
+   0.0163,
+   0.0127
+  ],
+  "I will read through the offer tomorrow.": [
+   0.0075,
+   0.0282
+  ],
+  "It is a big decision for our family.": [
+   0.0062,
+   0.0193
+  ],
+  "I am uncomfortable with how fast this is going.": [
+   0.0052,
+   0.0029
+  ],
+  "Could you explain why the form asks for that?": [
+   0.126,
+   0.6493
+  ],
+  "I am nervous about replacing my first car.": [
+   0.0096,
+   0.0089
+  ],
+  "I was hoping you could help me understand the next step.": [
+   0.7234,
+   0.1084
+  ],
+  "My work schedule changed and I may need to delay.": [
+   0.0077,
+   0.0052
+  ],
+  "Could you say that in simpler terms?": [
+   0.0736,
+   0.4916
+  ],
+  "I would rather sleep on the decision.": [
+   0.0082,
+   0.0072
+  ],
+  "My partner has not seen the car yet.": [
+   0.0115,
+   0.0098
+  ],
+  "I am not sure this is the right vehicle.": [
+   0.0098,
+   0.006
+  ],
+  "i need a bit of time pls": [
+   0.7688,
+   0.3235
+  ],
+  "Would it be okay to decide next week?": [
+   0.0578,
+   0.1387
+  ],
+  "I prefer to read every line before signing.": [
+   0.0066,
+   0.0133
+  ],
+  "not comftable making a snap call": [
+   0.5188,
+   0.031
+  ],
+  "I want to make sure I can afford the commitment.": [
+   0.017,
+   0.7801
+  ],
+  "I forgot a shopping bag when I visited.": [
+   0.009,
+   0.0077
+  ],
+  "I got the new job I was hoping for!": [
+   0.0129,
+   0.0061
+  ],
+  "That other advert says ACT NOW in huge letters.": [
+   0.0159,
+   0.0147
+  ],
+  "I keep hearing this is my last chance.": [
+   0.0102,
+   0.0067
+  ],
+  "I worry I am taking too long to decide.": [
+   0.0129,
+   0.0095
+  ],
+  "The email sounded like a machine wrote it.": [
+   0.0158,
+   0.0052
+  ],
+  "Should I hurry just because the advert tells me to?": [
+   0.029,
+   0.0259
+  ],
+  "We finally found a model my parents can get into easily.": [
+   0.006,
+   0.0076
+  ],
+  "My licence fell under the chair in reception.": [
+   0.0089,
+   0.0085
+  ],
+  "Your message included a reference number.": [
+   0.0154,
+   0.0074
+  ],
+  "I feel silly asking another question.": [
+   0.0293,
+   0.0068
+  ],
+  "I would be crazy to decide without my partner.": [
+   0.0129,
+   0.0107
+  ],
+  "Do I need to send my decision straight away?": [
+   0.0411,
+   0.0456
+  ],
+  "Could I cancel the viewing if my plans change?": [
+   0.0091,
+   0.0097
+  ],
+  "Someone told me real buyers do not ask so many questions.": [
+   0.0081,
+   0.0088
+  ],
+  "My name is Blair and I am interested in a compact hatchback.": [
+   0.0156,
+   0.0101
+  ],
+  "I commute mostly on city streets.": [
+   0.0063,
+   0.0126
+  ],
+  "My elderly parent needs an easy entry height.": [
+   0.0095,
+   0.0094
+  ],
+  "Where would I bring my licence for a test drive?": [
+   0.0069,
+   0.0084
+  ],
+  "We are comparing a hatchback and a small SUV.": [
+   0.0114,
+   0.0197
+  ],
+  "I sent an attachment with my vehicle preferences.": [
+   0.0028,
+   0.0062
+  ],
+  "Email is easier than SMS during work.": [
+   0.0121,
+   0.0082
+  ],
+  "Please spell my surname as Beaumont.": [
+   0.0491,
+   0.0054
+  ],
+  "Are photographs of the rear seats useful?": [
+   0.0049,
+   0.0113
+  ],
+  "My current car is difficult to park.": [
+   0.0091,
+   0.0108
+  ],
+  "We will need room for a folded stroller.": [
+   0.0064,
+   0.0052
+  ],
+  "Can I note that I prefer a manual transmission?": [
+   0.0076,
+   0.0168
+  ],
+  "What does trim mean in the brochure?": [
+   0.0051,
+   0.0254
+  ],
+  "I am new to looking at used cars.": [
+   0.0048,
+   0.0119
+  ],
+  "Is a vehicle history report worth reading?": [
+   0.0031,
+   0.0052
+  ],
+  "I do not understand one of the buttons in the photo.": [
+   0.0091,
+   0.0036
+  ],
+  "Hi, I am Ellis. Please note that my search is for an EV.": [
+   0.0196,
+   0.0073
+  ],
+  "I would like to keep my original enquiry in the same email thread.": [
+   0.0315,
+   0.0048
+  ],
+  "The car seat is bulky and may not fit.": [
+   0.0067,
+   0.0069
+  ],
+  "I have the brochure open but cannot find the safety section.": [
+   0.0134,
+   0.0045
+  ],
+  "Thank you for letting me compare things at my own pace.": [
+   0.0038,
+   0.0104
+  ],
+  "I want to avoid misunderstanding the paperwork.": [
+   0.0058,
+   0.0131
+  ],
+  "My photo did not upload properly.": [
+   0.0109,
+   0.0049
+  ],
+  "Do I need to clear the boot of my trade before a viewing?": [
+   0.0037,
+   0.0409
+  ],
+  "I can only read longer messages after my shift.": [
+   0.016,
+   0.0068
+  ],
+  "The dashboard in the photo looks different from the brochure.": [
+   0.0067,
+   0.0096
+  ],
+  "We bring sports equipment with us most weekends.": [
+   0.0099,
+   0.0179
+  ],
+  "I am comparing front-wheel drive with all-wheel drive.": [
+   0.0042,
+   0.0137
+  ],
+  "I cannot tell whether the upholstery is cloth from the image.": [
+   0.0041,
+   0.0092
+  ],
+  "Please keep the spelling of my first name as Ren\u00e9e.": [
+   0.0096,
+   0.0096
+  ],
+  "Hello, this is Sidney. We need a vehicle that can fit a mobility aid.": [
+   0.0195,
+   0.0049
+  ],
+  "I will be travelling from outside Toronto if I decide to visit.": [
+   0.0111,
+   0.0095
+  ],
+  "Can I bring someone along to help me inspect the interior?": [
+   0.973,
+   0.0328
+  ],
+  "What should I check when looking at rear visibility?": [
+   0.0048,
+   0.0224
+  ],
+  "I want to understand which features I would actually use.": [
+   0.0151,
+   0.0477
+  ],
+  "The listing has a feature I have never heard of.": [
+   0.0061,
+   0.0135
+  ],
+  "Thanks, that answers my question about the cabin layout.": [
+   0.0034,
+   0.0057
+  ],
+  "I need to discuss where we would keep a second vehicle at home.": [
+   0.058,
+   0.0121
+  ],
+  "Just got home from work. Could I see the blue RAV4 later this week?": [
+   0.0332,
+   0.0129
+  ],
+  "Tomorrow afternoon would be easiest.": [
+   0.0109,
+   0.0181
+  ],
+  "I have sent Omar the insurance document.": [
+   0.0132,
+   0.0122
+  ],
+  "Looking at the silver Forester after my shift. Is a visit possible?": [
+   0.5796,
+   0.0094
+  ],
+  "Could I come in the next afternoon?": [
+   0.8446,
+   0.1302
+  ],
+  "I was passing by and wanted to look at that little Honda.": [
+   0.0105,
+   0.0114
+  ],
+  "How much longer will the test drive take?": [
+   0.0055,
+   0.0087
+  ],
+  "I came in for the Soul I saw through the window.": [
+   0.0189,
+   0.0172
+  ],
+  "The Golf listing sent me here. Email only, please.": [
+   0.5034,
+   0.011
+  ],
+  "Send me the out the door number.": [
+   0.7659,
+   0.7919
+  ],
+  "Thanks for leaving me time to think. I accept the quote.": [
+   0.0057,
+   0.0258
+  ],
+  "Please use email for the Elantra enquiry; I cannot take calls at work.": [
+   0.0948,
+   0.0034
+  ],
+  "what are you asking for it": [
+   0.129,
+   0.9526
+  ],
+  "I'll talk to my wife first.": [
+   0.1383,
+   0.0061
+  ],
+  "I emailed the store about the Rogue. Sofia helped my sister.": [
+   0.0581,
+   0.0057
+  ],
+  "This is Aisha from that email. Put me through to Sofia, please.": [
+   0.9737,
+   0.0407
+  ],
+  "Checking on the Civic. I have also sent this to the main inbox.": [
+   0.0226,
+   0.0091
+  ],
+  "Dana, is there someone I can call while you are away?": [
+   0.9763,
+   0.022
+  ],
+  "A call after work is fine.": [
+   0.023,
+   0.0111
+  ],
+  "Missed call to Northgate Motors; caller left no voicemail.": [
+   0.0202,
+   0.0053
+  ],
+  "The CX-5. Could I visit the next afternoon?": [
+   0.3588,
+   0.0129
+  ],
+  "Missed call about the Equinox; reception was serving another customer.": [
+   0.0787,
+   0.0052
+  ],
+  "Yes. Can I come tomorrow morning?": [
+   0.688,
+   0.0764
+  ],
+  "Thanks for understanding. Could we try next week?": [
+   0.2549,
+   0.0325
+  ],
+  "What's the damage on the Corolla, all in?": [
+   0.0326,
+   0.9596
+  ],
+  "Still looking, actually. I can visit tomorrow.": [
+   0.0088,
+   0.0046
+  ],
+  "can u send numbers for the Escape": [
+   0.3858,
+   0.9103
+  ],
+  "Yes, my plans changed. I would like to take another look.": [
+   0.0279,
+   0.0054
+  ],
+  "I came in yesterday and drove the Sportage. Has anyone saved my visit?": [
+   0.1404,
+   0.0059
+  ],
+  "I have attached the payslips for Omar. Thanks for bearing with me.": [
+   0.0085,
+   0.0383
+  ],
+  "I visited Tom yesterday. My application still looks untouched.": [
+   0.0113,
+   0.0061
+  ],
+  "My payroll office has not sent it yet. I will forward it when they do.": [
+   0.0156,
+   0.0114
+  ],
+  "Here for the Santa Fe test drive. I brought my Civic because I may trade it in.": [
+   0.007,
+   0.0408
+  ],
+  "The payment was too high.": [
+   0.0072,
+   0.042
+  ],
+  "I bought from another dealer. Their payments fit my budget.": [
+   0.0065,
+   0.0475
+  ],
+  "Here for the NX test drive. I brought the Cruze I mentioned trading in.": [
+   0.0079,
+   0.0237
+  ],
+  "The payment was too high. I'll talk to my wife first. We are comparing another dealer\u2019s offer.": [
+   0.7372,
+   0.1083
+  ],
+  "I was looking at the CR-V but have not made up my mind.": [
+   0.0054,
+   0.0094
+  ],
+  "Stop. No more messages on any channel.": [
+   0.0163,
+   0.0075
+  ],
+  "I am considering the Crosstrek but only browsing today.": [
+   0.0096,
+   0.0101
+  ],
+  "Please stop contacting me.": [
+   0.0186,
+   0.0048
+  ],
+  "I am comparing the Camry with a CR-V as well.": [
+   0.0076,
+   0.0171
+  ],
+  "Could I come in tomorrow morning for the RDX?": [
+   0.8815,
+   0.1896
+  ],
+  "Ballpark on the monthly payment?": [
+   0.0488,
+   0.9768
+  ],
+  "Can I come next week to see the XC40?": [
+   0.3549,
+   0.0521
+  ],
+  "I would rather deal with a salesperson before making plans.": [
+   0.9738,
+   0.046
+  ],
+  "Is the white F-150 from the website still there?": [
+   0.0118,
+   0.0103
+  ],
+  "That was the only one I wanted. Please close this enquiry.": [
+   0.0252,
+   0.0063
+  ],
+  "Is that black Ram actually there?": [
+   0.0106,
+   0.0082
+  ],
+  "can I get a human, and hw much would the Ram be": [
+   0.6404,
+   0.8935
+  ],
+  "Please put me through to Tom instead.": [
+   0.9717,
+   0.0709
+  ],
+  "Please email a complete Sentra quote and have someone call me.": [
+   0.9444,
+   0.397
+  ],
+  "Two days with no email back. Is there someone I can call? What are you asking for the Sentra?": [
+   0.8921,
+   0.5854
+  ],
+  "I could not reach anyone who could help, so I have moved on.": [
+   0.0224,
+   0.003
+  ],
+  "Could someone send a quote for the Encore GX?": [
+   0.2345,
+   0.9596
+  ],
+  "Missed call after two days without an email reply; voicemail: I would rather deal with a salesperson.": [
+   0.9681,
+   0.0128
+  ],
+  "Can I get a human to explain those numbers?": [
+   0.9387,
+   0.4016
+  ],
+  "We sell search engine optimization packages for dealership websites. Who handles your marketing?": [
+   0.1151,
+   0.0133
+  ],
+  "Offering an SEO audit for Northgate Motors. This is a vendor promotion, not a car enquiry.": [
+   0.0211,
+   0.0105
+  ],
+  "Would you email a written cash quote for the Mazda3 GS?": [
+   0.2752,
+   0.9556
+  ],
+  "Please work out payment options for the Civic LX and text me the details.": [
+   0.1966,
+   0.9633
+  ]
+ }
+}
