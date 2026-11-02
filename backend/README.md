@@ -453,6 +453,59 @@ the acting staff member in `confirmed_by` and the current time in
 Appointment changes are kept on the deal in the `appointments` table and
 appear in the deal record returned by `GET /api/deals/:dealId`.
 
+## Scenario checks (US13)
+
+The General Manager can run a predefined scenario and see whether an agent did the
+expected things. A scenario loads a deal at a fixed point in time, hands the agent one
+event, runs the agent's tool calls, scores them with deterministic checks, and returns a
+scorecard. Every run happens inside a database transaction that is rolled back, so
+nothing is saved and no table changed. No AI model is called, so runs are free and
+repeatable. GM only; a rep gets 403.
+
+| Method and path | What it does |
+| --- | --- |
+| `GET /api/scenarios` | The scenarios (with what each one checks) and the built-in agents. |
+| `GET /api/scenarios/:scenarioId` | One scenario, plus `context` (what an agent sees) and the `tools` it may call. |
+| `POST /api/scenarios/:scenarioId/runs` | Body `{ "agent": "careful" }` for a built-in agent, or `{ "actions": [...], "agentName"? }` for an outside agent. Returns a scorecard. |
+| `POST /api/scenario-runs` | Body `{ "agents": ["careful", "eager"] }` (default `careful`). Runs every scenario for each agent, with totals and, for two or more agents, a scenario-by-scenario `comparison`. |
+
+The scenarios come from the brief's section 9: `deal-j` (a visit is requested, not
+booked), `deal-k` (no promise about a vehicle), `deal-c` (a price question goes to a
+person, drafted by email), `deal-i` (nothing after an opt-out), `deal-e` (a missed call
+gets a text back), `deal-l` (AI off: do not reply, leave a to-do), and `deal-a` (a
+late-night lead). Their definitions are in `src/scenarios/catalog.ts`.
+
+**Scorecard.** `steps` is the run log: each tool call in order, its `status` (`sent`,
+`drafted`, `blocked`, `created`, `recorded`), and what it changed. `checks` lists each
+check with `passed` and its evidence. `flags` are the rules from the evaluation module
+raised on the agent's own messages; a draft counts like a sent message. `summary` has
+`checksPassed`, `checksTotal`, `flagsRaised`, `actionsTaken`, and `verdict`. `persisted`
+is always `false`.
+
+**Checks.** `replied_to_buyer`, `replied_on_preferred_channel`, `visit_request_recorded`,
+`person_will_confirm`, `no_booking_claim`, `no_availability_promise`, `no_price_quoted`,
+`staff_task_created`, `sent_nothing_after_opt_out`, `respects_ai_mode`, and
+`no_unexpected_flags`. They live in `src/scenarios/checks.ts`.
+
+**Agent tools.** `send_reply` (obeys the store's AI mode: off blocks it, draft-only keeps
+a draft, auto sends it, simulated), `create_open_item`, `request_appointment` (always
+`requested`), and `do_nothing`. The tools do not refuse content such as a price or a
+message to an opted-out buyer, so a bad agent fails a check instead of being silently
+stopped.
+
+**Built-in agents.** `careful` follows the brief and passes every scenario. `eager` makes
+the mistakes the brief warns about and fails them, which shows what a failing scorecard
+looks like and lets two runs be compared.
+
+**Plugging in an outside agent.** `GET /api/scenarios/:id` gives the event and the deal
+(`context`) and the tool list. The agent decides, then posts its tool calls (at most 10)
+to `POST /api/scenarios/:id/runs` as `actions` and receives the scorecard. Merto's own
+agent can use this without any Merto-specific code here.
+
+Limits: the checks are fixed rules, not a language-model judge, and a run does not
+measure how long an agent takes to answer. The agent's turn is one step, not a back-and-
+forth conversation. Times in scenarios are read in UTC.
+
 ## Rules
 
 Defined in [`src/evaluation/rules.ts`](src/evaluation/rules.ts); the conditions
@@ -534,6 +587,7 @@ dev instead.
 | `src/follow-up/rules.ts` | US6 reason codes, kinds, and thresholds. |
 | `src/follow-up/repository.ts` | US6 SQL: open deals and their activity, loaded in bulk. |
 | `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
+| `src/scenarios/` | US13 scenario checks: `catalog.ts` (scenarios), `agents.ts` (agent interface, built-in agents), `tools.ts` (agent tools), `checks.ts` (deterministic checks), `runner.ts` (sandbox run, scorecard), `service.ts` (GM only), `routes.ts`. |
 | `src/open-items/` | US4 unresolved work: `policy.ts` (filters, close notes), `repository.ts` (SQL), `service.ts` (permissions, summary, resolve/cancel), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
 
