@@ -126,7 +126,7 @@ async function AiReviewPage() {
             </h3>
 
             {metrics === null ? (
-              <p>Couldn't load metrics.</p>
+              <p>Couldn&apos;t load metrics.</p>
             ) : Object.keys(metrics).length === 0 ? (
               <p className="font-semibold">
                 No metrics yet
@@ -145,7 +145,7 @@ async function AiReviewPage() {
         count={queue?.length}
       >
         {queue === null ? (
-          <p>Couldn't load the flag queue.</p>
+          <p>Couldn&apos;t load the flag queue.</p>
         ) : queue.length === 0 ? (
           <p className="font-semibold">
             None right now

@@ -32,7 +32,7 @@ async function FullRecord({
   ]);
 
   if (!deal) {
-    return <p>Couldn't load this customer.</p>;
+    return <p>Couldn&apos;t load this customer.</p>;
   }
 
   return (

@@ -49,7 +49,7 @@ async function ManagerHome() {
         }
       >
         {openItems === null ? (
-          <p>Couldn't load unresolved work.</p>
+          <p>Couldn&apos;t load unresolved work.</p>
         ) : openItems.summary.open === 0 ? (
           <p className="font-semibold">
             None right now
@@ -82,7 +82,7 @@ async function ManagerHome() {
         count={queue?.length}
       >
         {queue === null ? (
-          <p>Couldn't load the flag queue.</p>
+          <p>Couldn&apos;t load the flag queue.</p>
         ) : queue.length === 0 ? (
           <p className="font-semibold">
             None right now
