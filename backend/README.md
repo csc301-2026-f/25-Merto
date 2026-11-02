@@ -272,17 +272,67 @@ Hannah's overdue quote promise is a useful comparison: recording an email leaves
 that unresolved task visible. Restarting the sandbox backend restores these
 fictional scenarios for another run.
 
-## Reply draft review (US11)
+## AI reply generation and review (US14 / US11)
 
-The rep's customer page can prepare a **simulated, template-generated draft**,
-show its saved customer context and recent messages, and approve, edit, or reject
-it. This does not call an AI model. Approval and rejection are internal reviews,
-not customer contact; only a separate simulated send records an outbound reply.
+The rep's customer page generates an **AI-drafted reply through Groq**, shows
+its saved deal context, and lets the rep approve, edit, or reject it. Generation
+and review do not contact the customer; only a separate simulated send records
+an outbound reply. Existing template drafts remain readable and reviewable.
+
+### Setup
+
+1. Apply `supabase/migrations/20261030000100_ai_reply_generation.sql` after the
+   existing reply-drafts migration. Sandbox startup applies both automatically.
+2. Create a server API key at [Groq Console](https://console.groq.com/keys).
+3. Set `GROQ_API_KEY` in `backend/.env` locally, or in the backend host's environment.
+   `GROQ_MODEL` defaults to `openai/gpt-oss-20b`; an override must support Groq chat
+   completions and `reasoning_effort: low`. Restart the backend after configuration.
+   Never put the key in frontend code or a `NEXT_PUBLIC_` variable.
+4. Sign in as Dana, open a due follow-up (for example Maya), choose **Use a suggested
+   draft**, then **Generate reply**. Review, approve, and record the simulated send.
+
+No key means a visible setup error, not a template fallback. Generation makes a
+real external API call; use fictional demo data while testing. Free-tier quotas
+and available models are controlled by Groq; see [rate limits](https://console.groq.com/docs/rate-limits).
+Manual composing remains available if generation fails.
+
+### Generation behavior
+
+The server supplies the buyer name, vehicle interest, stage, follow-up reasons,
+last 10 interaction excerpts (at most 1500 characters each), up to 10 appointments,
+and up to 10 open items. Email/phone fields and database credentials are not sent
+as structured context, but conversation text may itself contain personal information.
+The UI displays the saved context. The system prompt treats stored text as data,
+asks for a reply to the latest message, and prohibits invented prices, availability,
+financing approvals, or booking confirmations. Existing keyword rules reject known
+risky wording, empty/oversized replies, and incomplete completions. These checks
+are not comprehensive factual verification: human review is still required.
+
+Calls have a 20-second timeout and bounded completion tokens. Provider rate limits,
+configuration errors, invalid responses, and outages produce safe, retryable error
+messages without storing a draft or writing customer contact. The UI retains the
+request ID on failure and offers generation again. No tools or automatic sends are
+exposed to the model.
+
+Generation runs outside database transactions. Before saving, the service rechecks
+ownership, opt-out, eligibility, contact details, and a version of the deal activity.
+AI drafts store `source: groq_ai`, model, prompt version, and the context version.
+Changes to messages, ownership, contact details, appointments, or open items invalidate
+an unsent AI draft; approval and sending require regeneration. Rejection remains
+possible. Internal review events alone do not invalidate a draft. Completed request
+retries return the saved draft; concurrent requests persist at most one draft per
+request ID, although requests on separate executions can both consume model quota.
+
+This release uses explicit **Generate reply** actions for deals currently due for
+follow-up, consistent with US6/US7. It does not generate in the background on incoming
+messages and does not implement immediate replies before the follow-up threshold.
+Tests inject a generator or mock HTTP responses, so the test suite needs no API key
+and never contacts Groq.
 
 | Endpoint | Action |
 | --- | --- |
 | `GET /api/deals/:dealId/reply-drafts` | List saved drafts and decisions |
-| `POST /api/deals/:dealId/reply-drafts` | Prepare a draft with `{ requestId, channel }` (`email` or `sms`) |
+| `POST /api/deals/:dealId/reply-drafts` | Generate a draft with `{ requestId, channel }` (`email` or `sms`) |
 | `POST /api/reply-drafts/:draftId/review` | `{ decision: "approve" \| "edit" \| "reject", message? }`; text is required only for edits |
 | `POST /api/reply-drafts/:draftId/send` | Record a simulated send of the saved approved text |
 
@@ -343,6 +393,65 @@ The `open_item` event type (migration `20261020000100_open_item_events.sql`) kee
 bookkeeping apart from contact with the buyer: it does not clear `unanswered_message`
 (US6) or count as a human taking over for `missed_escalation` (US5). Resolving an overdue
 promise or callback does clear its `overdue_commitment` follow-up reason.
+
+## Appointment tracking and calendar (US9)
+
+The manager and sales-rep navigation includes a **Calendar** tab at
+`/manager/calendar` and `/rep/calendar`. Both pages show a month grid and an
+agenda for the selected day. Choose a day and use the form to create an
+appointment, or select an existing appointment to edit its date, time, status,
+or notes. The manager calendar includes appointments for all deals, including
+unassigned deals; a rep sees appointments only for deals they own. Customer
+choices for new appointments come from that user's open-deal list, so managers
+can schedule for unassigned customers and reps can schedule for their own
+customers.
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
+| `POST /api/appointments` | GM, owning rep | Creates an appointment (requested by default). Body: `{ "dealId", "scheduledFor", "status"?, "outcomeNote"? }`. |
+| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates `scheduledFor`, `status`, and `outcomeNote`. Status is `requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, or `no_show`. |
+
+Calendar times are entered and displayed in the dealership's
+`America/Toronto` time zone. The API stores `scheduledFor` as a timestamp with
+time zone; send an ISO 8601 date-time with an explicit offset (for example,
+`2026-11-10T10:30:00-05:00`) to avoid ambiguity. Daylight-saving transitions
+can make a local time invalid or ambiguous; the calendar reports a nonexistent
+local time instead of silently saving a different time. When the clock moves
+back and a local time occurs twice, the calendar selects the earlier occurrence.
+
+All appointment endpoints require the normal `X-Staff-Id` authentication.
+Managers can read and edit appointments for any deal. Reps can read and edit
+appointments only when their staff ID owns the associated deal; attempts to
+access another rep's or an unassigned deal return 403. Creating an appointment
+for an unknown deal returns 404.
+
+`GET /api/appointments` includes every appointment regardless of status, sorted
+by scheduled time, and returns `id`, `dealId`, `scheduledFor`, `status`,
+`outcomeNote`, `buyer`, `vehicleInterest`, `ownerId`, and `owner`. On an
+unassigned deal, `ownerId` and `owner` are null. Create and update requests
+accept:
+
+```json
+{
+  "dealId": "deal UUID (create only)",
+  "scheduledFor": "ISO 8601 date-time with timezone",
+  "status": "requested",
+  "outcomeNote": "Optional note, up to 500 characters"
+}
+```
+
+`POST /api/appointments` requires `dealId` and `scheduledFor`; `status`
+defaults to `requested`, and `outcomeNote` is optional.
+`PATCH /api/appointments/:appointmentId` requires `scheduledFor` and accepts
+the same status and note fields. Send the current status when changing only the
+date or note, since an omitted status defaults to `requested`. Status values are
+`requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, and
+`no_show`. Setting a status to `confirmed`, `completed`, or `no_show` records
+the acting staff member in `confirmed_by` and the current time in
+`confirmed_at`; changing to another status clears those confirmation fields.
+Appointment changes are kept on the deal in the `appointments` table and
+appear in the deal record returned by `GET /api/deals/:dealId`.
 
 ## Rules
 

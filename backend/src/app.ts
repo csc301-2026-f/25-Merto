@@ -1,3 +1,5 @@
+import { HttpError } from './errors.ts';
+import type { ReplyGenerator } from './reply-drafts/generator.ts';
 import express, { type ErrorRequestHandler } from 'express';
 import { requireStaff } from './auth.ts';
 import { devLoginRoutes, meRoutes } from './auth-routes.ts';
@@ -11,6 +13,7 @@ import { replyDraftRoutes } from './reply-drafts/routes.ts';
 import { appointmentRoutes } from './appointments/routes.ts';
 
 export interface AppOptions {
+  replyGenerator?: ReplyGenerator;
   // Shared password for POST /auth/login. Leave unset to turn sign-in off.
   devLoginPassword?: string;
 }
@@ -18,7 +21,8 @@ export interface AppOptions {
 // Client errors (ours, or express.json's 400 for a malformed body) keep their
 // message; anything else is logged and hidden behind a generic 500.
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
-  const status = typeof error?.status === 'number' && error.status < 500 ? error.status : 500;
+  const status = error instanceof HttpError ? error.status
+    : typeof error?.status === 'number' && error.status < 500 ? error.status : 500;
   if (status === 500) console.error(error);
   res.status(status).json({ error: status === 500 ? 'Internal server error.' : error.message });
 };
@@ -33,7 +37,7 @@ export function createApp(db: Database, options: AppOptions = {}) {
   // Every /api route needs X-Staff-Id; look the caller up once per request.
   // Assignment routes come before deal routes so /deals/unassigned is not a deal ID.
   app.use('/api', requireStaff(db), meRoutes(), evaluationRoutes(db), assignmentRoutes(db),
-    followUpRoutes(db), replyDraftRoutes(db), openItemRoutes(db), appointmentRoutes(db), dealRoutes(db));
+    followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), dealRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });
   });

@@ -39,6 +39,16 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
         <ul className="mt-1 list-inside list-disc">
           {draft.context.reasons.map((reason, index) => <li key={index}>{reason}</li>)}
         </ul>
+        {!!draft.context.appointments?.length && <>
+          <p className="mt-2 font-semibold">Recorded appointments</p>
+          <ul className="list-inside list-disc">{draft.context.appointments.map((item, index) =>
+            <li key={index}>{formatDateTime(item.scheduledFor)} · {label(item.status)}</li>)}</ul>
+        </>}
+        {!!draft.context.openItems?.length && <>
+          <p className="mt-2 font-semibold">Unresolved work</p>
+          <ul className="list-inside list-disc">{draft.context.openItems.map((item, index) =>
+            <li key={index}>{label(item.type)}: {item.description}</li>)}</ul>
+        </>}
         <details className="mt-2">
           <summary className="cursor-pointer font-semibold">Recent messages when the draft was prepared</summary>
           <ol className="mt-2 divide-y divide-zinc-300 dark:divide-zinc-700">

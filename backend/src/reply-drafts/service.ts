@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { requireDealAccess, requireUuid, type Staff } from '../auth.ts';
 import type { Database, Queryable } from '../db.ts';
 import { badRequest, conflict, notFound } from '../errors.ts';
@@ -7,6 +8,7 @@ import { findRecorded, lockDeal, lockRequest, type ContactableDeal } from '../fo
 import { recordFollowUp } from '../follow-up/send-service.ts';
 import { MAX_FOLLOW_UP_LENGTH } from '../follow-up/send-policy.ts';
 import * as repo from './repository.ts';
+import { groqReplyGenerator, validateGeneratedText, type ReplyGenerator } from './generator.ts';
 
 async function eligible(db: Queryable, deal: ContactableDeal, channel: 'email' | 'sms') {
   const activity = (await loadActivity(db, [deal])).get(deal.dealId)!;
@@ -23,12 +25,44 @@ export async function listDrafts(db: Database, staff: Staff, dealId: string) {
   return repo.list(db, dealId);
 }
 
-export async function createDraft(db: Database, staff: Staff, dealId: string, body: Record<string, unknown>) {
+// Review events and elapsed reminder wording do not invalidate a draft. Changes
+// to actual deal data do, including messages, ownership, appointments and work.
+async function draftContext(db: Queryable, deal: ContactableDeal): Promise<repo.DraftContext> {
+  const activity = (await loadActivity(db, [deal])).get(deal.dealId)!;
+  const assessment = assessFollowUp(activity, new Date());
+  const interactions = activity.events.filter(event => event.eventType === 'interaction');
+  const version = createHash('sha256').update(JSON.stringify({
+    buyer: deal.buyer, vehicle: deal.vehicleInterest, owner: deal.ownerId,
+    stage: deal.stage, email: deal.email, phone: deal.phone,
+    interactions, appointments: activity.appointments, openItems: activity.openItems,
+  })).digest('hex');
+  return {
+    activityVersion: version, buyer: deal.buyer, vehicleInterest: deal.vehicleInterest, stage: deal.stage,
+    reasons: assessment.reasons.map(reason => reason.text),
+    messages: interactions.slice(-10).map(event => ({ eventId: event.id, actorType: event.actorType,
+      body: event.body.slice(0, 1500), createdAt: event.createdAt.toISOString() })),
+    appointments: activity.appointments.slice(-10).map(item => ({
+      scheduledFor: item.scheduledFor.toISOString(), status: item.status,
+    })),
+    openItems: activity.openItems.filter(item => item.status === 'open').slice(0, 10).map(item => ({
+      type: item.type, description: item.description.slice(0, 500), dueAt: item.dueAt?.toISOString() ?? null,
+    })),
+  };
+}
+
+async function requireFresh(db: Queryable, deal: ContactableDeal, draft: repo.Draft) {
+  if (draft.source === 'groq_ai' && draft.context.activityVersion !== (await draftContext(db, deal)).activityVersion) {
+    throw conflict('This draft is out of date because the deal changed. Generate a new reply and review it.');
+  }
+}
+
+export async function createDraft(db: Database, staff: Staff, dealId: string, body: Record<string, unknown>,
+  generate: ReplyGenerator = groqReplyGenerator({ apiKey: process.env.GROQ_API_KEY, model: process.env.GROQ_MODEL })) {
   if (typeof body.requestId !== 'string') throw badRequest('requestId must be a UUID.');
   const id = requireUuid(body.requestId, 'requestId');
   if (body.channel !== 'email' && body.channel !== 'sms') throw badRequest('channel must be email or sms.');
   const channel = body.channel;
-  return db.transaction(async tx => {
+  const prepare = async (tx: Queryable) => {
     await lockRequest(tx, id);
     const deal = await lockDeal(tx, dealId);
     if (!deal) throw notFound('Deal not found.');
@@ -38,21 +72,25 @@ export async function createDraft(db: Database, staff: Staff, dealId: string, bo
       if (previous.dealId !== dealId || previous.channel !== channel || previous.createdBy !== staff.id) {
         throw conflict('requestId is already used by a different draft.');
       }
-      return previous;
+      return { previous, deal, context: previous.context };
     }
     if (await findRecorded(tx, id)) throw conflict('requestId is already used by a timeline event.');
-    const { activity, assessment } = await eligible(tx, deal, channel);
-    const visit = assessment.reasons.some(reason => reason.code === 'visit_no_follow_up' || reason.code === 'missed_appointment');
-    const originalText = `Hi ${deal.buyer}, this is ${staff.name} from the sales team. `
-      + (visit ? 'I wanted to follow up after your planned visit. ' : 'I wanted to follow up on your enquiry. ')
-      + `What questions can I help with about ${deal.vehicleInterest}?`;
-    return repo.create(tx, {
-      id, dealId, channel, originalText, createdBy: staff.id,
-      context: { buyer: deal.buyer, vehicleInterest: deal.vehicleInterest,
-        reasons: assessment.reasons.map(reason => reason.text),
-        messages: activity.events.filter(event => event.eventType === 'interaction').slice(-5)
-          .map(event => ({ eventId: event.id, actorType: event.actorType, body: event.body, createdAt: event.createdAt.toISOString() })) },
-    });
+    await eligible(tx, deal, channel);
+    return { previous, deal, context: await draftContext(tx, deal) };
+  };
+  const snapshot = await db.transaction(prepare);
+  if (snapshot.previous) return snapshot.previous;
+  // Never hold a database connection or row lock while waiting for the model.
+  const generated = await generate({ channel, repName: staff.name, context: snapshot.context });
+  const originalText = generated.source === 'groq_ai' ? validateGeneratedText(generated.text) : generated.text;
+  return db.transaction(async tx => {
+    const current = await prepare(tx);
+    if (current.previous) return current.previous;
+    if (current.context.activityVersion !== snapshot.context.activityVersion) {
+      throw conflict('The deal changed while the reply was generated. Please generate another draft.');
+    }
+    return repo.create(tx, { id, dealId, channel, originalText, createdBy: staff.id,
+      context: snapshot.context, generated });
   });
 }
 
@@ -84,16 +122,20 @@ export function reviewDraft(db: Database, staff: Staff, id: string, body: Record
       if (draft.decision === decision && draft.finalText === finalText) return draft;
       throw conflict('This draft has already been reviewed. Create a new draft to change the reply.');
     }
-    if (decision !== 'reject') await eligible(tx, deal, draft.channel);
+    if (decision !== 'reject') {
+      await eligible(tx, deal, draft.channel);
+      await requireFresh(tx, deal, draft);
+    }
     return repo.review(tx, draft, staff, decision, finalText);
   });
 }
 
 export function sendDraft(db: Database, staff: Staff, id: string) {
-  return withDraft(db, staff, id, async (tx, draft) => {
+  return withDraft(db, staff, id, async (tx, draft, deal) => {
     if ((draft.decision !== 'approve' && draft.decision !== 'edit') || draft.finalText === null) {
       throw conflict('Only an approved draft can be sent.');
     }
+    if (!draft.sentEventId) await requireFresh(tx, deal, draft);
     const scoped: Database = { query: tx.query, transaction: work => work(tx), close: async () => {} };
     const sent = await recordFollowUp(scoped, staff, draft.dealId,
       { requestId: draft.id, channel: draft.channel, message: draft.finalText });
