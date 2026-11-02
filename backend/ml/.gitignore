@@ -1,0 +1,10 @@
+models/
+artifacts/
+.venv/
+vendor/
+__pycache__/
+*.pyc
+*.onnx
+*.safetensors
+*.pkl
+.env
