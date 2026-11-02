@@ -8,6 +8,7 @@ const links: NavLink[] = [
   { label: "Calendar", href: "/manager/calendar" },
   { label: "Create customer", href: "/manager/create-customer" },
   { label: "AI review", href: "/manager/ai-review" },
+  { label: "Scenarios", href: "/manager/scenarios" },
 ];
 
 export default function ManagerLayout({
