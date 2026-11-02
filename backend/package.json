@@ -6,8 +6,9 @@
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "demo": "tsx scripts/demo.ts",
+    "demo:model": "node scripts/start-model-demo.mjs",
     "check:hosted": "tsx scripts/check-hosted.ts",
-    "test": "tsx --test test/*.test.ts",
+    "test": "tsx --test --test-concurrency=1 test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "eval:rules": "tsx scripts/eval-rules.ts"
   },

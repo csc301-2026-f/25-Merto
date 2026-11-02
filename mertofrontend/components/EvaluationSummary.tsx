@@ -1,4 +1,5 @@
 import type { Evaluation } from "@/lib/evaluation";
+import { FlagReview } from "./FlagReview";
 
 const STATUS_LABELS: Record<string, string> = {
   not_evaluated: "Not evaluated yet",
@@ -11,8 +12,14 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function EvaluationSummary({
   evaluation,
+  canReview = false,
+  evaluatorId,
+  evaluatorName,
 }: {
   evaluation: Evaluation | null | undefined;
+  canReview?: boolean;
+  evaluatorId?: string;
+  evaluatorName?: string;
 }) {
   return (
     <section className="rounded-xl bg-slate-100 p-4 text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-zinc-100">
@@ -20,6 +27,7 @@ export function EvaluationSummary({
       <h3 className="font-semibold text-lg">
         AI Review
       </h3>
+      {evaluatorName && <p className="mt-1 text-sm">Evaluator: {evaluatorName}</p>}
 
       {!evaluation ? (
         <p className="mt-2 text-sm">
@@ -85,6 +93,9 @@ export function EvaluationSummary({
                         {flag.evidenceBody}
                       </blockquote>
                     )}
+
+                    {flag.reviewNote && <p className="mt-2 text-sm">Review note: {flag.reviewNote}</p>}
+                    {canReview && <FlagReview flag={flag} evaluatorId={evaluatorId} />}
 
                   </li>
                 ))}

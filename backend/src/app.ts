@@ -7,6 +7,7 @@ import type { Database } from './db.ts';
 import { assignmentRoutes } from './assignment/routes.ts';
 import { dealRoutes } from './deals/routes.ts';
 import { evaluationRoutes } from './evaluation/routes.ts';
+import type { EvaluationEngine } from './evaluation/engine.ts';
 import { followUpRoutes } from './follow-up/routes.ts';
 import { openItemRoutes } from './open-items/routes.ts';
 import { replyDraftRoutes } from './reply-drafts/routes.ts';
@@ -14,6 +15,7 @@ import { appointmentRoutes } from './appointments/routes.ts';
 import { scenarioRoutes } from './scenarios/routes.ts';
 
 export interface AppOptions {
+  evaluationEngine?: EvaluationEngine;
   replyGenerator?: ReplyGenerator;
   // Shared password for POST /auth/login. Leave unset to turn sign-in off.
   devLoginPassword?: string;
@@ -37,7 +39,7 @@ export function createApp(db: Database, options: AppOptions = {}) {
   app.use('/auth', devLoginRoutes(db, options.devLoginPassword));
   // Every /api route needs X-Staff-Id; look the caller up once per request.
   // Assignment routes come before deal routes so /deals/unassigned is not a deal ID.
-  app.use('/api', requireStaff(db), meRoutes(), evaluationRoutes(db), assignmentRoutes(db),
+  app.use('/api', requireStaff(db), meRoutes(), evaluationRoutes(db, options.evaluationEngine), assignmentRoutes(db),
     followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), scenarioRoutes(db), dealRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });

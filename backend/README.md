@@ -11,14 +11,18 @@ and the buyer record.
 
 ## Run it
 
+For the **local CRM with MiniLM, BGE, MPNet v3 and deterministic rules**, see
+[Local model demo](ml/LOCAL_CRM_DEMO.md). Run `npm run demo:model` here, then open
+http://127.0.0.1:3000/manager/ai-review and sign in as `karen` / `test`.
+This separate launcher uses an isolated sandbox; the regular server defaults
+below and the hosted deployment remain deterministic.
+
 Requires Node.js 20 or newer. From this folder:
 
 ```sh
 npm install
 npm run demo    # walks through the whole flow over HTTP and prints each step
-npm test        # rule unit tests + API tests
-# If many test files at once run out of memory (each loads its own sandbox):
-#   npx tsx --test --test-concurrency=1 test/*.test.ts
+npm test        # rule unit tests + API tests; serial files bound sandbox memory
 npm run eval:rules   # scores the rules against the labelled datasets
 npm run dev     # API on http://localhost:3001
 ```
