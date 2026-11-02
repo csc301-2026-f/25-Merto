@@ -1,0 +1,868 @@
+{
+  "passed": true,
+  "messages": 3840,
+  "groups": {
+    "train/ai": {
+      "messages": 1200,
+      "bucket_counts": {
+        "none": 400,
+        "single": 400,
+        "multi": 400
+      },
+      "positive_counts": {
+        "claims_booking": 350,
+        "guarantees_availability": 350,
+        "quotes_price": 350,
+        "off_tone": 350
+      },
+      "format_counts": {
+        "short_message": 954,
+        "email": 246
+      },
+      "lexical_probes": {
+        "claims_booking": {
+          "colour": {
+            "positive": {
+              "matches": 87,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 278,
+              "messages": 850
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 134,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 300,
+              "messages": 850
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 188,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 251,
+              "messages": 850
+            }
+          }
+        },
+        "guarantees_availability": {
+          "colour": {
+            "positive": {
+              "matches": 78,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 287,
+              "messages": 850
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 163,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 271,
+              "messages": 850
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 155,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 284,
+              "messages": 850
+            }
+          }
+        },
+        "quotes_price": {
+          "colour": {
+            "positive": {
+              "matches": 86,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 279,
+              "messages": 850
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 132,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 302,
+              "messages": 850
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 265,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 174,
+              "messages": 850
+            }
+          }
+        },
+        "off_tone": {
+          "colour": {
+            "positive": {
+              "matches": 100,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 265,
+              "messages": 850
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 146,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 288,
+              "messages": 850
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 171,
+              "messages": 350
+            },
+            "negative": {
+              "matches": 268,
+              "messages": 850
+            }
+          }
+        }
+      }
+    },
+    "train/buyer": {
+      "messages": 1200,
+      "bucket_counts": {
+        "none": 400,
+        "single": 400,
+        "multi": 400
+      },
+      "positive_counts": {
+        "asks_for_person": 600,
+        "asks_about_price": 600
+      },
+      "format_counts": {
+        "short_message": 950,
+        "email": 250
+      },
+      "lexical_probes": {
+        "asks_for_person": {
+          "colour": {
+            "positive": {
+              "matches": 31,
+              "messages": 600
+            },
+            "negative": {
+              "matches": 92,
+              "messages": 600
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 138,
+              "messages": 600
+            },
+            "negative": {
+              "matches": 111,
+              "messages": 600
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 21,
+              "messages": 600
+            },
+            "negative": {
+              "matches": 40,
+              "messages": 600
+            }
+          }
+        },
+        "asks_about_price": {
+          "colour": {
+            "positive": {
+              "matches": 59,
+              "messages": 600
+            },
+            "negative": {
+              "matches": 64,
+              "messages": 600
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 146,
+              "messages": 600
+            },
+            "negative": {
+              "matches": 103,
+              "messages": 600
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 40,
+              "messages": 600
+            },
+            "negative": {
+              "matches": 21,
+              "messages": 600
+            }
+          }
+        }
+      }
+    },
+    "dev/ai": {
+      "messages": 240,
+      "bucket_counts": {
+        "none": 80,
+        "single": 80,
+        "multi": 80
+      },
+      "positive_counts": {
+        "claims_booking": 70,
+        "guarantees_availability": 70,
+        "quotes_price": 70,
+        "off_tone": 70
+      },
+      "format_counts": {
+        "short_message": 199,
+        "email": 41
+      },
+      "lexical_probes": {
+        "claims_booking": {
+          "colour": {
+            "positive": {
+              "matches": 20,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 53,
+              "messages": 170
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 22,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 55,
+              "messages": 170
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 44,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 59,
+              "messages": 170
+            }
+          }
+        },
+        "guarantees_availability": {
+          "colour": {
+            "positive": {
+              "matches": 19,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 54,
+              "messages": 170
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 21,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 56,
+              "messages": 170
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 35,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 68,
+              "messages": 170
+            }
+          }
+        },
+        "quotes_price": {
+          "colour": {
+            "positive": {
+              "matches": 20,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 53,
+              "messages": 170
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 20,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 57,
+              "messages": 170
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 60,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 43,
+              "messages": 170
+            }
+          }
+        },
+        "off_tone": {
+          "colour": {
+            "positive": {
+              "matches": 21,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 52,
+              "messages": 170
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 21,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 56,
+              "messages": 170
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 39,
+              "messages": 70
+            },
+            "negative": {
+              "matches": 64,
+              "messages": 170
+            }
+          }
+        }
+      }
+    },
+    "dev/buyer": {
+      "messages": 240,
+      "bucket_counts": {
+        "none": 80,
+        "single": 80,
+        "multi": 80
+      },
+      "positive_counts": {
+        "asks_for_person": 120,
+        "asks_about_price": 120
+      },
+      "format_counts": {
+        "short_message": 180,
+        "email": 60
+      },
+      "lexical_probes": {
+        "asks_for_person": {
+          "colour": {
+            "positive": {
+              "matches": 29,
+              "messages": 120
+            },
+            "negative": {
+              "matches": 35,
+              "messages": 120
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 30,
+              "messages": 120
+            },
+            "negative": {
+              "matches": 40,
+              "messages": 120
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 8,
+              "messages": 120
+            },
+            "negative": {
+              "matches": 16,
+              "messages": 120
+            }
+          }
+        },
+        "asks_about_price": {
+          "colour": {
+            "positive": {
+              "matches": 37,
+              "messages": 120
+            },
+            "negative": {
+              "matches": 27,
+              "messages": 120
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 40,
+              "messages": 120
+            },
+            "negative": {
+              "matches": 30,
+              "messages": 120
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 15,
+              "messages": 120
+            },
+            "negative": {
+              "matches": 9,
+              "messages": 120
+            }
+          }
+        }
+      }
+    },
+    "test/ai": {
+      "messages": 480,
+      "bucket_counts": {
+        "none": 160,
+        "single": 160,
+        "multi": 160
+      },
+      "positive_counts": {
+        "claims_booking": 140,
+        "guarantees_availability": 140,
+        "quotes_price": 140,
+        "off_tone": 140
+      },
+      "format_counts": {
+        "short_message": 422,
+        "email": 58
+      },
+      "lexical_probes": {
+        "claims_booking": {
+          "colour": {
+            "positive": {
+              "matches": 30,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 90,
+              "messages": 340
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 24,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 86,
+              "messages": 340
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 64,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 101,
+              "messages": 340
+            }
+          }
+        },
+        "guarantees_availability": {
+          "colour": {
+            "positive": {
+              "matches": 29,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 91,
+              "messages": 340
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 21,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 89,
+              "messages": 340
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 54,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 111,
+              "messages": 340
+            }
+          }
+        },
+        "quotes_price": {
+          "colour": {
+            "positive": {
+              "matches": 30,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 90,
+              "messages": 340
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 24,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 86,
+              "messages": 340
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 104,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 61,
+              "messages": 340
+            }
+          }
+        },
+        "off_tone": {
+          "colour": {
+            "positive": {
+              "matches": 38,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 82,
+              "messages": 340
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 31,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 79,
+              "messages": 340
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 71,
+              "messages": 140
+            },
+            "negative": {
+              "matches": 94,
+              "messages": 340
+            }
+          }
+        }
+      }
+    },
+    "test/buyer": {
+      "messages": 480,
+      "bucket_counts": {
+        "none": 160,
+        "single": 160,
+        "multi": 160
+      },
+      "positive_counts": {
+        "asks_for_person": 240,
+        "asks_about_price": 240
+      },
+      "format_counts": {
+        "short_message": 360,
+        "email": 120
+      },
+      "lexical_probes": {
+        "asks_for_person": {
+          "colour": {
+            "positive": {
+              "matches": 1,
+              "messages": 240
+            },
+            "negative": {
+              "matches": 3,
+              "messages": 240
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 2,
+              "messages": 240
+            },
+            "negative": {
+              "matches": 4,
+              "messages": 240
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 2,
+              "messages": 240
+            },
+            "negative": {
+              "matches": 12,
+              "messages": 240
+            }
+          }
+        },
+        "asks_about_price": {
+          "colour": {
+            "positive": {
+              "matches": 3,
+              "messages": 240
+            },
+            "negative": {
+              "matches": 1,
+              "messages": 240
+            }
+          },
+          "listed_model": {
+            "positive": {
+              "matches": 3,
+              "messages": 240
+            },
+            "negative": {
+              "matches": 3,
+              "messages": 240
+            }
+          },
+          "digit": {
+            "positive": {
+              "matches": 8,
+              "messages": 240
+            },
+            "negative": {
+              "matches": 6,
+              "messages": 240
+            }
+          }
+        }
+      }
+    }
+  },
+  "errors": [],
+  "normalized_duplicate_groups": [],
+  "cross_split_token_jaccard_ge_0_8": [],
+  "within_split_token_jaccard_ge_0_8": {},
+  "maximum_repeated_sentence": 5,
+  "near_duplicate_comparison_scope": "same author; AI and buyer train separate encoders",
+  "token_length_checks": {
+    "minilm": {
+      "base_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "maximum": 81,
+      "over_128": []
+    },
+    "bge": {
+      "base_revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+      "maximum": 81,
+      "over_128": []
+    },
+    "mpnet": {
+      "base_revision": "e8c3b32edf5434bc2275fc9bab85f82640a19130",
+      "maximum": 81,
+      "over_128": []
+    }
+  },
+  "lexical_probe_regexes": {
+    "colour": "\\b(red|blue|white|black|silver|grey|gray|beige|cream|green|brown|navy|copper|charcoal|orange|yellow|bronze|teal|maroon|purple|burgundy|ivory)\\b",
+    "listed_model": "\\b(accord|tucson|cx-5|pilot|elantra|camry|focus|impreza|soul|pathfinder|jetta|cr-v|sorento|passat|sentra|kona|odyssey|terrain|rogue|s60|rio|forte|venza|matrix|compass|legacy|edge|accent|a3|malibu|journey|rdx|beetle|trax|qashqai|cx-3|a4|tsx|equinox|grand cherokee|prius|acadia|micra|avalon|impala|im|ilx|sonata|juke|traverse|c-max|lancer|mazda2|rav4|civic|crosstrek|sienna|golf|forester|yaris|hr-v|sportage|corolla|outback|fit|niro|q3|v60|mirage|clarity|note)\\b",
+    "digit": "\\d"
+  },
+  "lexical_probe_scope": "Literal keyword occurrences, including ambiguous words such as fit/note; not named-entity recognition.",
+  "semantic_review_current": true,
+  "packaged_sample_messages": 200,
+  "test_preserved": true,
+  "file_hashes": {
+    "train": "13416f7858e5900ae05c2382dc33796b9643b885b9e1976371a2b5ffa5627239",
+    "dev": "27290ed20e3e1adc6e85fdda8b93d31004be46e2d7b603c945da59b1c893ce87",
+    "test": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064"
+  },
+  "limits": [
+    "Synthetic, assistant-authored and assistant-reviewed; no independent human annotation.",
+    "Lexical checks do not establish semantic independence or prove label correctness.",
+    "Difficulty is unassigned; no hard-subset metric may be inferred from quotas.",
+    "Colour/model/digit regexes are limited probes, not exhaustive entity detection.",
+    "A capitalisation-sensitive model-word diagnostic leaves a 16.5 percentage-point availability-label gap in train; nuisance vocabulary is not perfectly balanced. Dev/test gaps are smaller. The frozen data were not edited after training to hide this diagnostic."
+  ],
+  "capitalised_model_word_diagnostic": {
+    "train": {
+      "claims_booking": {
+        "positive": {
+          "matches": 129,
+          "messages": 350
+        },
+        "negative": {
+          "matches": 290,
+          "messages": 850
+        }
+      },
+      "guarantees_availability": {
+        "positive": {
+          "matches": 163,
+          "messages": 350
+        },
+        "negative": {
+          "matches": 256,
+          "messages": 850
+        }
+      },
+      "quotes_price": {
+        "positive": {
+          "matches": 132,
+          "messages": 350
+        },
+        "negative": {
+          "matches": 287,
+          "messages": 850
+        }
+      },
+      "off_tone": {
+        "positive": {
+          "matches": 146,
+          "messages": 350
+        },
+        "negative": {
+          "matches": 273,
+          "messages": 850
+        }
+      }
+    },
+    "dev": {
+      "claims_booking": {
+        "positive": {
+          "matches": 21,
+          "messages": 70
+        },
+        "negative": {
+          "matches": 54,
+          "messages": 170
+        }
+      },
+      "guarantees_availability": {
+        "positive": {
+          "matches": 21,
+          "messages": 70
+        },
+        "negative": {
+          "matches": 54,
+          "messages": 170
+        }
+      },
+      "quotes_price": {
+        "positive": {
+          "matches": 20,
+          "messages": 70
+        },
+        "negative": {
+          "matches": 55,
+          "messages": 170
+        }
+      },
+      "off_tone": {
+        "positive": {
+          "matches": 21,
+          "messages": 70
+        },
+        "negative": {
+          "matches": 54,
+          "messages": 170
+        }
+      }
+    },
+    "test": {
+      "claims_booking": {
+        "positive": {
+          "matches": 23,
+          "messages": 140
+        },
+        "negative": {
+          "matches": 81,
+          "messages": 340
+        }
+      },
+      "guarantees_availability": {
+        "positive": {
+          "matches": 21,
+          "messages": 140
+        },
+        "negative": {
+          "matches": 83,
+          "messages": 340
+        }
+      },
+      "quotes_price": {
+        "positive": {
+          "matches": 24,
+          "messages": 140
+        },
+        "negative": {
+          "matches": 80,
+          "messages": 340
+        }
+      },
+      "off_tone": {
+        "positive": {
+          "matches": 31,
+          "messages": 140
+        },
+        "negative": {
+          "matches": 73,
+          "messages": 340
+        }
+      }
+    }
+  }
+}

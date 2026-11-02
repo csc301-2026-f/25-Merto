@@ -1,0 +1,229 @@
+{
+  "review_date": "2026-11-02",
+  "reviewer": "authoring AI assistant",
+  "test_sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064",
+  "source_sha256": "2cafff33b9ce05f2f1262d2088372c5374d3ea1181f132d4e14d85ecbee2e351",
+  "source_review": {
+    "messages_read": 960,
+    "criteria": [
+      "meaning of all six labels against message words alone",
+      "unlabelled extra signals",
+      "natural complete message in a dealership conversation",
+      "price versus non-price numbers",
+      "indirect references and explicit negation",
+      "prior staff contact versus new human-contact request"
+    ]
+  },
+  "packaged_review": {
+    "messages": 68,
+    "selection": "First, middle and last message in each of 20 author/label-pattern groups, then longest unselected messages until 68.",
+    "message_ids": [
+      "v3n-test-ai-0001",
+      "v3n-test-ai-0081",
+      "v3n-test-ai-0160",
+      "v3n-test-ai-0161",
+      "v3n-test-ai-0181",
+      "v3n-test-ai-0200",
+      "v3n-test-ai-0201",
+      "v3n-test-ai-0221",
+      "v3n-test-ai-0240",
+      "v3n-test-ai-0241",
+      "v3n-test-ai-0261",
+      "v3n-test-ai-0280",
+      "v3n-test-ai-0281",
+      "v3n-test-ai-0301",
+      "v3n-test-ai-0320",
+      "v3n-test-ai-0321",
+      "v3n-test-ai-0329",
+      "v3n-test-ai-0336",
+      "v3n-test-ai-0337",
+      "v3n-test-ai-0345",
+      "v3n-test-ai-0352",
+      "v3n-test-ai-0353",
+      "v3n-test-ai-0361",
+      "v3n-test-ai-0368",
+      "v3n-test-ai-0369",
+      "v3n-test-ai-0377",
+      "v3n-test-ai-0384",
+      "v3n-test-ai-0385",
+      "v3n-test-ai-0393",
+      "v3n-test-ai-0400",
+      "v3n-test-ai-0401",
+      "v3n-test-ai-0409",
+      "v3n-test-ai-0416",
+      "v3n-test-ai-0417",
+      "v3n-test-ai-0423",
+      "v3n-test-ai-0428",
+      "v3n-test-ai-0429",
+      "v3n-test-ai-0435",
+      "v3n-test-ai-0440",
+      "v3n-test-ai-0441",
+      "v3n-test-ai-0447",
+      "v3n-test-ai-0452",
+      "v3n-test-ai-0453",
+      "v3n-test-ai-0459",
+      "v3n-test-ai-0464",
+      "v3n-test-ai-0465",
+      "v3n-test-ai-0473",
+      "v3n-test-ai-0480",
+      "v3n-test-buyer-0001",
+      "v3n-test-buyer-0081",
+      "v3n-test-buyer-0160",
+      "v3n-test-buyer-0161",
+      "v3n-test-buyer-0201",
+      "v3n-test-buyer-0240",
+      "v3n-test-buyer-0241",
+      "v3n-test-buyer-0281",
+      "v3n-test-buyer-0320",
+      "v3n-test-buyer-0321",
+      "v3n-test-buyer-0401",
+      "v3n-test-buyer-0480",
+      "v3n-test-ai-0351",
+      "v3n-test-ai-0335",
+      "v3n-test-ai-0415",
+      "v3n-test-ai-0277",
+      "v3n-test-ai-0142",
+      "v3n-test-ai-0278",
+      "v3n-test-ai-0237",
+      "v3n-test-ai-0318"
+    ]
+  },
+  "boundary_decisions": [
+    {
+      "id": "v3n-test-ai-0004",
+      "text": "Tuesday at 2:30 is your preference for seeing the white Sienna. Staff still need to agree to it.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "Preferred visiting time plus staff still needing to agree: neither a booking claim nor an availability guarantee."
+    },
+    {
+      "id": "v3n-test-ai-0161",
+      "text": "I've confirmed your Friday 2 pm visit to discuss the blue Civic. Dana will check its stock status before you travel.",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "The visit is confirmed, but inventory is explicitly left for Dana to check: booking only."
+    },
+    {
+      "id": "v3n-test-ai-0201",
+      "text": "Yep, it's still up for sale.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": true,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "The definite pronoun refers to the offered item; saying it is still up for sale guarantees availability without naming a model."
+    },
+    {
+      "id": "v3n-test-ai-0241",
+      "text": "The quote for the blue Corolla would be CAD 24,800 before tax. Stock still needs to be checked.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "reason": "Quotes a monetary amount while leaving stock unverified: price only."
+    },
+    {
+      "id": "v3n-test-ai-0282",
+      "text": "Only an idiot would struggle with the silver RAV4's 2-page inspection report.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "reason": "An insult about an inspection document is off-tone. The two-page count is not a price."
+    },
+    {
+      "id": "v3n-test-ai-0318",
+      "text": "Hello,\n\nI received the new address and added it to your enquiry. As for the warranty question, we already explained that on Tuesday. Asking the same basic thing again makes it look as though you aren't paying attention. The salesperson will need to respond about the missing attachment.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "reason": "Routine document handling does not cancel the condescending sentence in the middle: off-tone."
+    },
+    {
+      "id": "v3n-test-buyer-0013",
+      "text": "The payment you sent is more than I can manage.",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Says a quoted payment is unaffordable but requests no revised amount: no price-request signal."
+    },
+    {
+      "id": "v3n-test-buyer-0014",
+      "text": "I talked to Dana yesterday and she answered my question.",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Reports a completed conversation with Dana; does not request new human contact."
+    },
+    {
+      "id": "v3n-test-buyer-0016",
+      "text": "Please stop sending me messages.",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "An opt-out is valid ordinary buyer content here. The ignored-opt-out flag requires later outbound history and is not one of these six labels."
+    },
+    {
+      "id": "v3n-test-buyer-0025",
+      "text": "How much room is there behind the third row?",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "How much room asks about physical space, not money."
+    },
+    {
+      "id": "v3n-test-buyer-0162",
+      "text": "dana can u call me back",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "reason": "Directly asks named staff to call back: human-contact signal despite informal spelling."
+    },
+    {
+      "id": "v3n-test-buyer-0241",
+      "text": "whats the total with tax",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "reason": "Asks for total including tax without asking for a person: price only, even without a question mark."
+    },
+    {
+      "id": "v3n-test-buyer-0321",
+      "text": "Can a salesperson call me with the total price?",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "reason": "Explicitly requests a salesperson call with a price: both buyer signals."
+    }
+  ],
+  "limits": [
+    "Review by the same assistant that authored the data is not independent annotation.",
+    "No measured human agreement or label-accuracy percentage is claimed.",
+    "No model predictions were used to select or revise these messages.",
+    "Hard-subset difficulty is not assigned by a quota.",
+    "The balanced synthetic stress test does not estimate real dealership class prevalence."
+  ]
+}

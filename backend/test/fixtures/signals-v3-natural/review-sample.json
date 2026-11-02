@@ -1,0 +1,3530 @@
+[
+  {
+    "id": "v3n-train-ai-0001",
+    "text": "Just checking whether the brochure came through yesterday. Happy to resend it if it didn't.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0201",
+    "text": "Would 10:15 on Wednesday work for you if the team can accommodate it?",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0400",
+    "text": "The ivory Q3's question about rear-door access has reached the team; we still need an actual measurement.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0401",
+    "text": "Your appointment is entered for Thursday at 12:45.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0451",
+    "text": "The visit is booked under McLeod, and you can bring the child seat to check the fit.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0500",
+    "text": "Hello,\n\nWe have you on the confirmed list for Monday at 12:30. The front desk also has your note that you will arrive on public transport.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0501",
+    "text": "It hasn't been bought. You can still enquire about purchasing it.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0551",
+    "text": "No sale has gone through for the example from your screenshot.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0600",
+    "text": "Hello,\n\nThe Odyssey you selected remains in our current stock. It is unsold, and the team has your request for a photo showing all the seat belts.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0601",
+    "text": "We can offer the vehicle at twenty-five thousand dollars before tax.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0651",
+    "text": "The biweekly amount is three hundred and two dollars.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0700",
+    "text": "Hello,\n\nThe silver Camry quote would be $506 a month. Staff haven't verified that the specific vehicle remains available, so please wait for their stock answer.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0701",
+    "text": "You've had the paperwork for 3 days. Stop dithering and decide.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0751",
+    "text": "Don't send another message unless it contains an actual decision.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0800",
+    "text": "Hello,\n\nThe licence instructions are attached yet again. Stop expecting everyone to compensate for you not reading a simple message.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0801",
+    "text": "It is still for sale, and I've arranged your appointment for 12:15 Thursday.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0821",
+    "text": "The manual one is still ours, and you're booked to view it after your morning shift.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0840",
+    "text": "Hello,\n\nThe Accent from the advert is unsold here. Your test drive is booked for the afternoon of the 11th, and staff have your equipment question.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0841",
+    "text": "I've booked your visit for Friday at 12:15. The proposed payment is $438 monthly.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0861",
+    "text": "The test drive has been booked under your surname. The quoted loan rate is 4.69%.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0880",
+    "text": "Hello,\n\nYour Monday appointment about the white CX-5 is confirmed. The proposed total would be $30,650; a current stock answer is still needed.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0881",
+    "text": "I've booked you in at 12:15. Stop being such a nuisance about the paperwork.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0901",
+    "text": "Your test drive is confirmed for the 22nd. A real buyer wouldn't need all this reassurance.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0920",
+    "text": "Hello,\n\nI've arranged the test drive after your shift. Stop making excuses about the paperwork and show some commitment.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0921",
+    "text": "We still have it, and the cash quote is twenty-eight thousand dollars.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0941",
+    "text": "The manual one is still here for sale; adding the coverage would cost $1,160.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0960",
+    "text": "Hello,\n\nWe still have the Edge you selected, and the cash figure would be CAD 28,590. I've noted the request for a photograph of the spare wheel.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0961",
+    "text": "It hasn't sold. Stop acting like we owe you a new answer every hour.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0981",
+    "text": "The one you saved is still on our lot for sale. Decide today or stop messaging us.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1000",
+    "text": "Hello,\n\nThe Edge you asked about is unsold. Your inability to make up your mind isn't something the team should have to keep dealing with.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1001",
+    "text": "The quoted payment is $454 monthly. Try understanding basic arithmetic before asking again.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1021",
+    "text": "The proposed rate is 7.59 percent. If you can't follow that, bring somebody competent.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1040",
+    "text": "Hello,\n\nWe could take two thousand dollars off the proposal. Stop making staff chase you and commit to something.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1041",
+    "text": "It's still ours to sell, and you're booked at 12:15 Thursday. The quote is CAD 28,240.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1056",
+    "text": "It is unsold, and I've finalised Saturday's appointment. The full amount would be CAD 33,480.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1070",
+    "text": "Hello,\n\nWe have the Rogue you selected. Your appointment is booked for Saturday morning, and its proposed lease payment is $276 every two weeks.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1071",
+    "text": "It is still here, and your test drive is confirmed for Thursday. Stop acting like we owe you endless reassurance.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1086",
+    "text": "It will be here when you arrive for the arranged appointment. Stop expecting us to hold your hand.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1100",
+    "text": "Hello,\n\nThe Rogue is unsold and I've booked your Saturday test drive. After all our effort, another vague reply would be insulting.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1101",
+    "text": "You're booked at 12:15. The proposed payment is $446 monthly, so stop pretending this is hard to understand.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1116",
+    "text": "You're booked after your shift. We'd value the trade at six thousand dollars, and you should be grateful.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1130",
+    "text": "Hello,\n\nThe appointment about the white Accord is booked. Its quote would be $439 monthly, subject to checking stock. Only someone not reading our answers would miss that.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1131",
+    "text": "It's still for sale at a quoted $25,680. Stop wasting our time and decide.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1146",
+    "text": "It's available at this branch for a proposed $601 monthly. Stop making staff chase you.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1160",
+    "text": "Hello,\n\nThe Rogue you selected is unsold. The payment proposal is $508 monthly, and you should feel obliged to decide after all our effort.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1161",
+    "text": "It's unsold at a quoted $28,360, and you're booked for Thursday. Stop making us chase you.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1181",
+    "text": "The Pathfinder is here for a quoted $35,480. Your Friday appointment is confirmed; stop expecting us to think for you.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-1200",
+    "text": "Hello,\n\nWe still have the Venza. Your viewing is arranged for Tuesday, with a proposed $8,200 trade allowance. You've had enough help, so show some commitment.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-buyer-0001",
+    "text": "Does the screen support Android Auto without a cable?",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0201",
+    "text": "got it now, cheers",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0400",
+    "text": "Could you send a photograph with the steering wheel pulled all the way out?",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0401",
+    "text": "Please get somebody at the dealership to answer me directly.",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0501",
+    "text": "Can someone put me through to the used-car team?",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0600",
+    "text": "Hello,\n\nCould the manager send me a direct email about the access arrangements? I would like somebody at the store to take over this conversation.\n\nKamal",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0601",
+    "text": "Could I see a quote showing the full purchase amount?",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0701",
+    "text": "How much would it cost to include the charging cable package?",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0800",
+    "text": "Hello,\n\nCan you itemise the required and optional charges on the silver Lancer? I want the full tax-inclusive figure.\n\nSaif",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-0801",
+    "text": "Could Dana call with a cash purchase quote?",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-1001",
+    "text": "The offer arrived while I was driving. Could Dana call later and go through the total with me?",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-train-buyer-1200",
+    "text": "Please ask Sofia to contact me with the actual cash figure before adding optional products.",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-ai-0001",
+    "text": "Great, the replacement image shows the full page now.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0041",
+    "text": "Is a morning visit essential, or would staff have another option to consider?",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0080",
+    "text": "Hello,\n\nThe grey RAV4's advert is older than the latest staff update. We need a current stock answer before saying that specific vehicle is here.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0081",
+    "text": "Reception has a confirmed viewing for you at 3:20 tomorrow.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0091",
+    "text": "I've booked the discussion about the beige Civic; a separate inventory answer is still needed.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0100",
+    "text": "Hi Zara,\n\nI've finished arranging your showroom visit after the school run. The booking is confirmed, and the document-format request is attached to the enquiry.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0101",
+    "text": "The one in your saved search is here and still on sale.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0111",
+    "text": "We still have the copper Mazda2 at this location.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0120",
+    "text": "Hi Mara,\n\nThe white Outback you selected is available at this store. Nobody has bought it, and staff have your request for a loading-area photograph.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0121",
+    "text": "We could quote a monthly amount of $463 for that proposal.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0131",
+    "text": "The beige Civic quote would be $382 monthly, pending inventory verification.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0140",
+    "text": "Hi Imani,\n\nWe could reduce the proposed amount by $925. The separate equipment question needs a verified answer from the salesperson.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0141",
+    "text": "You've had 8 days to read that file. Stop being indecisive.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0151",
+    "text": "The orange Crosstrek enquiry is a waste of time unless you decide now.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0160",
+    "text": "Hi,\n\nEnquiry payload 620 has been categorised as repetitive. Contextual replies in ordinary language are not authorised for this category.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0161",
+    "text": "Bring your licence at 8:45 on Saturday; the test drive is booked and the one you chose hasn't sold.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0165",
+    "text": "The navy RAV4 is available, and Friday's appointment is now confirmed with your updated surname.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0168",
+    "text": "Hi Sol,\n\nYour Saturday appointment is confirmed for 10:20. The Civic you linked is unsold, and I've added the note that you'll bring a child seat to try.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0169",
+    "text": "Your visit is booked for the afternoon of the 24th. We could offer a reduction of $875.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0173",
+    "text": "I have confirmed your meeting about the copper Mazda2. Its payment quote is $396 monthly, subject to an inventory check.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0176",
+    "text": "Hello,\n\nI've completed Tuesday's booking for 4:35. The quoted total would be CAD 33,170, and the inspection-record question remains with the salesperson.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0177",
+    "text": "Your test drive is booked for the next morning you are free. Quit making staff drag a decision out of you.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0181",
+    "text": "Your orange Crosstrek meeting is arranged. Its status is unverified, and we don't owe you an instant stock answer.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0184",
+    "text": "Hi,\n\nThe viewing is arranged for Sunday at 12:40. After all our help, another vague reply would be disrespectful. Either commit or stop taking up staff time.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0185",
+    "text": "The one you meant is still on sale, and we could quote $489 monthly with that term.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0189",
+    "text": "Stock unit F728 remains available. The finance example uses a 6.44% rate.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0192",
+    "text": "Hello,\n\nIt remains for sale here. The quote would include a $345 document fee; your separate question about the key count has been passed to staff.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0193",
+    "text": "It's still available, okay? We aren't going to explain the same thing every time you hesitate.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0197",
+    "text": "Nobody's bought the one in the screenshot. If that isn't clear, ask someone competent to read this to you.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0200",
+    "text": "Hi,\n\nYou can still buy the vehicle from your link. We spent half an hour answering your questions, so you should feel obliged to make a decision.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0201",
+    "text": "The proposed total is $30,895. Stop acting as though every figure needs a private lesson.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0205",
+    "text": "Your teal Sportage payment quote is $517 monthly, pending inventory verification. Stop pestering staff about it.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0208",
+    "text": "Hello,\n\nThe lease would be $271 biweekly. Quote response 119 is final; the customer's personal circumstances are not accepted as further input.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0209",
+    "text": "You're expected at 10:20 for the booked viewing. The same one is still for sale, with a quoted $455 monthly payment.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0212",
+    "text": "I've settled your Friday viewing for after lunch. The manual example remains available at a proposed 6.14% rate.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0214",
+    "text": "Hello,\n\nYour Tuesday visit is confirmed for 4:35. The car in your screenshot remains unsold, and the proposed price includes a $975 reduction.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0215",
+    "text": "Your viewing is booked for Thursday afternoon, and it hasn't sold. Stop acting as though we owe you endless reassurance.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0218",
+    "text": "Nobody has bought that exact one. Friday's visit is arranged; a serious customer wouldn't keep making excuses.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0220",
+    "text": "Hi,\n\nThe example you selected is still unsold. Your Monday viewing is confirmed, so stop expecting staff to hold your hand through every minor detail.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0221",
+    "text": "I've arranged Friday's test drive, with a quoted payment of $536 monthly. Stop making this unnecessarily difficult.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0224",
+    "text": "The black V60 discussion is arranged for Sunday. Its quote uses a 6.84% rate; inventory is unverified, which you should know by now.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0226",
+    "text": "Hello,\n\nYour green Mirage enquiry appointment is booked. The proposed deposit is $475, subject to checking stock. Only someone not reading our replies would miss that.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0227",
+    "text": "It's here and unsold at a proposed $24,885. Quit wasting our time with more hesitation.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0230",
+    "text": "The exact one is still for sale, with a proposed 5.94% rate. Stop acting helpless.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0232",
+    "text": "Hi,\n\nIt remains on sale at this store. The proposed lease is $283 biweekly, and your repeated refusal to decide is insulting after all our work.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0233",
+    "text": "I've booked you in for Thursday at 10:20. It's still unsold at a quoted $29,185; stop making us chase you.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0237",
+    "text": "It hasn't sold. Your test drive is arranged for after work, the proposed deposit is $675, and your excuses are getting tiresome.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-ai-0240",
+    "text": "Hello,\n\nThe exact one in your screenshot is still for sale. Your visit is confirmed for Sunday, with a quoted $2,950 down payment. After 7 messages, show some gratitude and decide.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-dev-buyer-0001",
+    "text": "The inspection stamp is clearer in the new photo, thanks.",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0041",
+    "text": "I can only visit when my support worker has a free afternoon.",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0080",
+    "text": "Hello,\n\nThe cream Golf link is correct. I just wanted to confirm that you received it, and I haven't chosen a day to visit yet.\n\nYara",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0081",
+    "text": "Could someone from the dealership respond personally to my inspection question?",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0101",
+    "text": "can dana text me herself about the report",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0120",
+    "text": "Hello,\n\nI don't need another quote. I do need a human to contact me about the surname correction on the application.\n\nOmar",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0121",
+    "text": "What is the complete amount due including the tax?",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0141",
+    "text": "whats the full total not just the sticker",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0160",
+    "text": "Hello,\n\nCan you send the purple Note's deposit amount and refund conditions? I need to know how much would be returned if I cancelled.\n\nJamil",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0161",
+    "text": "Please have Dana call with a quote for the complete purchase.",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0201",
+    "text": "The calculator uses the wrong term. Please have Dana call with a corrected payment.",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-dev-buyer-0240",
+    "text": "Hello,\n\nCan Arjun phone about the final instalment and the full repayment amount? I need a personal explanation of the financial terms.\n\nOmar",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "dev",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-ai-0001",
+    "text": "Thanks for the update on the silver Corolla. Take the weekend to think it over.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0081",
+    "text": "Thanks for flagging the mismatch between the two photographs.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0160",
+    "text": "Hi Mae,\n\nI can ask for a photo of the loading area with the seats folded. That should be more useful than guessing from the exterior dimensions.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0161",
+    "text": "I've confirmed your Friday 2 pm visit to discuss the blue Civic. Dana will check its stock status before you travel.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0181",
+    "text": "See you for the test drive at four; your booking is complete.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0200",
+    "text": "Hi,\n\nYour visit has been entered as a confirmed appointment for the morning of the eighth. You don't need to wait for a further booking message.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0201",
+    "text": "Yep, it's still up for sale.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0221",
+    "text": "The one with the manual gearbox is still unsold.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0240",
+    "text": "Hi,\n\nThe blue minivan from the advert is still for sale at our store. Nobody has purchased it.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0241",
+    "text": "The quote for the blue Corolla would be CAD 24,800 before tax. Stock still needs to be checked.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0261",
+    "text": "The winter-wheel package adds $950 to the price.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0280",
+    "text": "Hi Sara,\n\nWe could remove $750 from the advertised price. The remaining price would be CAD 23,150 before tax.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0281",
+    "text": "You've sent 6 questions about the blue Civic's seats. Decide already.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0301",
+    "text": "Whatever. Turn to page 8 and figure the warranty out yourself.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0320",
+    "text": "Hello,\n\nYour communication payload has been classified as a non-converting prospect interaction. Individual discussion is not an authorised response mode.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0321",
+    "text": "The blue Civic is still unsold, and I've confirmed your viewing for Saturday at ten.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0329",
+    "text": "The specific pickup from the advert remains for sale. You're down for a confirmed viewing at six.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0336",
+    "text": "Hello,\n\nThe advertised hatchback remains unsold at our store. I've completed your test-drive booking for Tuesday at four.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0337",
+    "text": "I've confirmed your Thursday visit about the blue Golf. Its quoted payment would be $425 a month; staff still need to check the listing.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0345",
+    "text": "I've reserved your test-drive time on Wednesday. The car's asking price is twenty-three thousand dollars.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0352",
+    "text": "Hello,\n\nI've completed the booking for Monday's viewing. The price I can give you is CAD 28,950 before tax.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0353",
+    "text": "You're booked for 4 to discuss the blue Outback. Staff haven't checked the stock yet, so stop pestering us about it.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0361",
+    "text": "Your new appointment time is confirmed. Quit making excuses about coming in.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0368",
+    "text": "Hello,\n\nI've booked your showroom visit for Saturday morning. Either take this seriously or stop wasting our staff's time.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0369",
+    "text": "That silver Corolla is still here at $21,900 before tax.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0377",
+    "text": "We still have that particular SUV. Adding the coverage would cost $1,100.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0384",
+    "text": "Hello,\n\nWe still have the exact minivan you enquired about. The payment would be $620 a month with $2,000 down.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0385",
+    "text": "That exact car is still in stock. Stop asking us the same thing over and over.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0393",
+    "text": "The red coupe is still ours to sell. Quit bothering us unless you're ready to commit.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0400",
+    "text": "Hello,\n\nThat exact pickup remains in stock. Either make a serious decision or stop taking up the staff's attention.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0401",
+    "text": "The proposed payment for the white Outback is $399 a month. Availability still needs checking; stop acting like that is hard to understand.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0409",
+    "text": "The fee is two hundred dollars. This is hardly complicated, so keep up.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0416",
+    "text": "Hello,\n\nWe can allow $7,000 for your current car. Either commit to the deal or stop wasting our staff's time.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0417",
+    "text": "The listed Civic is still here for $22,800, and your test drive is confirmed for Saturday morning.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0423",
+    "text": "The white minivan remains for sale, your test drive is booked for Monday, and the deposit would be $500.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0428",
+    "text": "Hello,\n\nThe exact hatchback you selected remains available. I've completed the Saturday test-drive booking. Its price would be CAD 20,900 before tax.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0429",
+    "text": "That blue Civic is still here, and you're booked for a viewing at four. Stop wasting time with the same questions.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0435",
+    "text": "That specific hybrid remains in stock. You're down for a confirmed visit at three; try actually paying attention this time.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0440",
+    "text": "Hello,\n\nWe still have the exact pickup you selected, and I've booked your Saturday viewing. After all our effort, another excuse would be disrespectful.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0441",
+    "text": "Your visit about the grey Corolla is booked for 4. The payment would be $415 monthly, subject to a stock check. Stop making excuses about deciding.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0447",
+    "text": "Your viewing is confirmed for Thursday at six. The total is CAD 29,300, so stop acting like this is impossible to understand.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0452",
+    "text": "Hello,\n\nI've completed your Thursday appointment booking. The all-in figure is $33,800. Either take this seriously or stop taking up staff time.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0453",
+    "text": "The blue hatchback is still here at $21,700. Stop wasting our time and decide.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0459",
+    "text": "We still have the white minivan. Your current car would receive a $7,200 trade allowance, and you owe us a decision now.",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0464",
+    "text": "Hello,\n\nWe have the exact truck you asked about. The monthly payment would be $680. Either make up your mind or stop wasting our staff's time.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 3,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0465",
+    "text": "The blue Civic is still here at $23,400, and I've booked your Saturday viewing. Stop wasting our time with more hesitation.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0473",
+    "text": "Nobody's bought it. You're booked for Wednesday, and the all-in quote is $24,600. Quit wasting our time over this.",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0480",
+    "text": "Hello,\n\nWe have the pickup you selected in stock. I've completed the booking for your Tuesday visit. The price would be CAD 36,900 before tax, so quit wasting our staff's time and decide.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 4,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-buyer-0001",
+    "text": "got the email thx",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0081",
+    "text": "I'm not interested in a different vehicle right now.",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0160",
+    "text": "Hello,\n\nThank you for the corrected listing. The model year and registration now match the photographs.\n\nSana",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0161",
+    "text": "can i get an actual person pls",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0201",
+    "text": "can sumone real answer me",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0240",
+    "text": "Hello,\n\nI need to discuss an accessibility accommodation with a person. Could the showroom manager call me tomorrow?\n\nFaye",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0241",
+    "text": "whats the total with tax",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0281",
+    "text": "Is there any wiggle room in the asking figure?",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0320",
+    "text": "Hello,\n\nWhat would you offer for a 2015 Mazda3 in trade against this purchase? I can send mileage and photographs for an estimate.\n\nDarius",
+    "signals": {
+      "asks_for_person": false,
+      "asks_about_price": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0321",
+    "text": "Can a salesperson call me with the total price?",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0401",
+    "text": "Please get Dana to send the quote again directly; the attachment didn't open.",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "short_message",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-buyer-0480",
+    "text": "Hello,\n\nCould Arjun explain how much would remain after trading in my current car? I'd like him to get in touch directly.\n\nFelix",
+    "signals": {
+      "asks_for_person": true,
+      "asks_about_price": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "buyer"
+  },
+  {
+    "id": "v3n-test-ai-0351",
+    "text": "Hi Miles,\n\nThe upload link is working again, so you can send the second page there. Your visit is confirmed for tomorrow at 10:30, and the proposed finance rate would be 5.99% with $2,500 down. I've noted that you want to discuss winter driving when you come in. The team still needs to verify which listing you meant.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0335",
+    "text": "Hi Freya,\n\nThanks for clarifying which link you meant. The Outback is still here, and you're booked to view it at 10 am on Saturday. You said you'll be arriving by bus with a stroller; reception can show you the level entrance when you get here. The service documents can be sent by email if that is easier to read.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0415",
+    "text": "Hi,\n\nThe second attachment contains the inspection photographs, including the close-up you requested. The total would be CAD 25,400. Asking for yet another explanation makes it look as though you haven't bothered to read anything. Your separate question about service dates still needs to go to the workshop.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0277",
+    "text": "Hi Luca,\n\nThanks for explaining that you'd be travelling from Kingston. I can ask the team about collecting you from the station. The purchase total would be CAD 29,740 including tax and the listed fees. Your question about the second key is still with staff; I don't have a verified answer on that yet.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0142",
+    "text": "Hello,\n\nI've passed on your request to see the blue Forester on Thursday at 3. You mentioned that the drive takes nearly 2 hours, so please wait for a person to confirm both the time and the car's stock status before leaving. Let us know if a later start would work better around school pickup.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0278",
+    "text": "Hello,\n\nBoth photos of your current vehicle came through. The trade allowance would be $8,200, applied toward the purchase. The mark on the bumper is visible, so you don't need to photograph it again. If you have a copy of the service record, you can upload that through the same secure link.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0237",
+    "text": "Hi Ben,\n\nI received the link, thanks. The used Forester is still here and available. You mentioned wanting to inspect the rear seats with your child seat; I can pass that request to Dana. I don't have an agreed visiting time from her yet, so please wait for her reply before travelling.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0318",
+    "text": "Hello,\n\nI received the new address and added it to your enquiry. As for the warranty question, we already explained that on Tuesday. Asking the same basic thing again makes it look as though you aren't paying attention. The salesperson will need to respond about the missing attachment.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0383",
+    "text": "Hi Tess,\n\nI can see why the two interior photos looked different; one has the rear seats folded. The listed Forester is still available here at CAD 27,450 before tax. You asked about its service history too, and I can request the actual document rather than guess from the photographs.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": true,
+      "off_tone": false
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0399",
+    "text": "Hi,\n\nThe CR-V you linked is still available here. I've noted your question about the roof rack and your preference for email. After everything we've answered, it is insulting that you are still wasting time on this. Dana will need to reply about the accessory paperwork herself.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 2,
+    "bucket": "multi",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0197",
+    "text": "Hi Nia,\n\nThanks for mentioning the child seat. You're welcome to bring it to check the fit, and your test drive is confirmed for 3 pm tomorrow. Please bring your driving licence as well. If the upload link is still giving you trouble, you can show the document at reception.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0238",
+    "text": "Hello,\n\nYour screenshot was enough to identify it: we still have stock unit H39 at this location, and it is unsold. I've also noted your request for a photograph under the cargo floor. The team will need to send that separately because the current gallery doesn't show it.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": true,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0141",
+    "text": "Hi Mina,\n\nThe corrected document opens now. The old address is still on page 2, so the team may need to ask you about that. I've attached it to your enquiry about the 2021 Corolla. You don't need to send your licence again; that photo was clear.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0198",
+    "text": "Hello,\n\nThe photographs of your trade have arrived, including the close-up of the rear bumper. Your showroom visit is booked for Saturday at 10:30. You said email is easiest during your shift, so I'll keep that preference on the enquiry.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": true,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-test-ai-0317",
+    "text": "Hi,\n\nThe 2021 CR-V inspection report has 4 pages, and the tire photograph is on the last one. You have taken up enough of our time asking about things that are already there. Either read what we sent or stop contacting the store.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": true
+    },
+    "signal_count": 1,
+    "bucket": "single",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "test",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0322",
+    "text": "Hello Mara,\n\nThank you for pointing out the incorrect surname on the inspection attachment. I've passed that back to the sender. Please wait for a corrected document rather than signing the existing copy.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0323",
+    "text": "Hi,\n\nYou asked whether the red V60 has the optional sound system. The brochure covers several versions and doesn't settle that question. I'll request a photograph of the controls on the actual vehicle.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0329",
+    "text": "Hi,\n\nThe silver Tucson report is attached to your enquiry now. Page 3 contains the inspection notes, but a technician needs to explain the wording you highlighted. I have passed the question along.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0331",
+    "text": "Hi Tessa,\n\nThe white Corolla's photos don't show the underside of the cargo floor. I can request that view. You mentioned needing a flat area for a mobility aid, so I've included that explanation.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  },
+  {
+    "id": "v3n-train-ai-0325",
+    "text": "Hi Esra,\n\nThe blue Pilot's listing link works, but we still need staff to check whether it is unsold. You said you would be driving from London, so please wait for their reply before setting off.\n\nNorthgate Motors",
+    "signals": {
+      "claims_booking": false,
+      "guarantees_availability": false,
+      "quotes_price": false,
+      "off_tone": false
+    },
+    "signal_count": 0,
+    "bucket": "none",
+    "format": "email",
+    "channel": null,
+    "source": "individually_authored_complete_message",
+    "difficulty": null,
+    "split": "train",
+    "author": "ai"
+  }
+]

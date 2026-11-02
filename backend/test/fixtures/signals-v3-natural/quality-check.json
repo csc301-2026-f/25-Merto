@@ -1,0 +1,213 @@
+{
+  "ai": {
+    "messages": 480,
+    "bucket_counts": {
+      "none": 160,
+      "single": 160,
+      "multi": 160
+    },
+    "positive_counts": {
+      "claims_booking": 140,
+      "guarantees_availability": 140,
+      "quotes_price": 140,
+      "off_tone": 140
+    },
+    "format_counts": {
+      "short_message": 422,
+      "email": 58
+    }
+  },
+  "buyer": {
+    "messages": 480,
+    "bucket_counts": {
+      "none": 160,
+      "single": 160,
+      "multi": 160
+    },
+    "positive_counts": {
+      "asks_for_person": 240,
+      "asks_about_price": 240
+    },
+    "format_counts": {
+      "short_message": 360,
+      "email": 120
+    }
+  },
+  "lexical": {
+    "normalized_duplicates": 0,
+    "within_test_token_jaccard_ge_0_8_pairs": 0,
+    "maximum_repeated_sentence_at_least_four_words": 2
+  },
+  "length": {
+    "performed": true,
+    "tokenizer": "saved MPNet tokenizer",
+    "maximum_tokens": 81,
+    "over_128": 0
+  },
+  "legacy_train_overlap": {
+    "train_sha256": "d768f71fd80e4581a666ef14f2105f366c1df0274eef0819f972954dcf6b891d",
+    "results": {
+      "ai": {
+        "train_messages": 1710,
+        "test_messages": 480,
+        "normalized_matches": 0,
+        "token_jaccard_ge_0_8_pairs": 0
+      },
+      "buyer": {
+        "train_messages": 820,
+        "test_messages": 480,
+        "normalized_matches": 0,
+        "token_jaccard_ge_0_8_pairs": 0
+      }
+    },
+    "limit": "Lexical checks do not establish semantic independence."
+  },
+  "shortcut_probes": {
+    "regex_definitions": {
+      "digit": "\\d",
+      "colour": "\\b(red|blue|white|black|silver|grey|gray|beige|cream)\\b",
+      "listed_model_name": "\\b(corolla|civic|outback|mazda|mazda3|sienna|cr-v|golf|forester|rav4)\\b"
+    },
+    "scope": "Small explicit lexical probes, not an exhaustive entity or naturalness detector.",
+    "ai_label_counts": {
+      "claims_booking": {
+        "digit": {
+          "positive": {
+            "matches": 64,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 101,
+            "messages": 340
+          }
+        },
+        "colour": {
+          "positive": {
+            "matches": 30,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 90,
+            "messages": 340
+          }
+        },
+        "listed_model_name": {
+          "positive": {
+            "matches": 26,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 92,
+            "messages": 340
+          }
+        }
+      },
+      "guarantees_availability": {
+        "digit": {
+          "positive": {
+            "matches": 54,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 111,
+            "messages": 340
+          }
+        },
+        "colour": {
+          "positive": {
+            "matches": 29,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 91,
+            "messages": 340
+          }
+        },
+        "listed_model_name": {
+          "positive": {
+            "matches": 25,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 93,
+            "messages": 340
+          }
+        }
+      },
+      "quotes_price": {
+        "digit": {
+          "positive": {
+            "matches": 104,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 61,
+            "messages": 340
+          }
+        },
+        "colour": {
+          "positive": {
+            "matches": 30,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 90,
+            "messages": 340
+          }
+        },
+        "listed_model_name": {
+          "positive": {
+            "matches": 28,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 90,
+            "messages": 340
+          }
+        }
+      },
+      "off_tone": {
+        "digit": {
+          "positive": {
+            "matches": 71,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 94,
+            "messages": 340
+          }
+        },
+        "colour": {
+          "positive": {
+            "matches": 38,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 82,
+            "messages": 340
+          }
+        },
+        "listed_model_name": {
+          "positive": {
+            "matches": 36,
+            "messages": 140
+          },
+          "negative": {
+            "matches": 82,
+            "messages": 340
+          }
+        }
+      }
+    }
+  },
+  "source_and_freeze_match": true,
+  "semantic_review": {
+    "authoring": "complete messages independently written by assistant",
+    "source_messages_read": 960,
+    "packaged_stratified_review_messages": 68,
+    "independent_human_annotation": false,
+    "label_accuracy_percentage_claimed": false
+  },
+  "model_predictions_used_for_construction": false,
+  "test_sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064"
+}
