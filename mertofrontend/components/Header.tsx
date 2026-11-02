@@ -6,7 +6,7 @@ export async function Header() {
   const session = await getSession();
 
   return (
-    <header className="flex h-16 items-center justify-between border-b-2 px-6">
+    <header className="flex h-16 items-center justify-between border-b border-slate-300 bg-slate-100 px-6 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white">
       <div className="flex items-center gap-3">
         <Image src="/logo.svg" alt="Merto.ai logo" width={40} height={40} priority />
         <span className="text-xl font-bold">Merto.ai</span>

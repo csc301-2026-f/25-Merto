@@ -5,10 +5,17 @@ import type { ReplyDraft } from "@/lib/reply-drafts";
 import { formatDateTime, label } from "@/lib/format";
 import { createDraftAction, reviewDraftAction, sendDraftAction, type DraftActionState } from "./draft-actions";
 
+const inputClass =
+  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-black focus:border-[#d5bd91] focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-white";
+const buttonClass =
+  "rounded-lg border border-zinc-300 px-3 py-2 font-semibold transition hover:bg-zinc-300 disabled:opacity-50 dark:border-zinc-600 dark:hover:bg-zinc-700";
+const primaryButtonClass =
+  "rounded-lg bg-[#d5bd91] px-3 py-2 font-semibold text-black transition hover:bg-[#e3cda6] disabled:opacity-50";
+
 function Feedback({ state }: { state: DraftActionState }) {
   return <>
-    {state?.error && <p role="alert" className="mt-2 text-sm text-red-600">{state.error}</p>}
-    {state?.success && <p role="status" className="mt-2 text-sm text-green-700">{state.success}</p>}
+    {state?.error && <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+    {state?.success && <p role="status" className="mt-2 text-sm text-green-700 dark:text-green-400">{state.success}</p>}
   </>;
 }
 
@@ -21,13 +28,12 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
     : draft.decision === "approve" ? "Approved" : draft.decision === "edit" ? "Edited and approved"
       : draft.decision === "reject" ? "Rejected" : "Awaiting review";
   return (
-    <article className="space-y-3 rounded border-2 p-4">
+    <article className="space-y-3 rounded-lg bg-slate-200 p-4 dark:bg-zinc-800">
       <div className="flex flex-wrap justify-between gap-2">
         <h3 className="font-semibold">{draft.channel.toUpperCase()} draft · {status}</h3>
         <p className="text-sm opacity-70">Prepared {formatDateTime(draft.createdAt)}</p>
       </div>
-      <p className="text-sm opacity-70">{draft.source === "groq_ai" ? "AI-generated reply · review all details before approving." : "Template-generated reply"}</p>
-      <div className="rounded border p-3 text-sm">
+      <div className="rounded-lg bg-slate-100 p-3 text-sm dark:bg-zinc-900">
         <p className="font-semibold">Context used for this draft</p>
         <p>{draft.context.buyer} · {draft.context.vehicleInterest}</p>
         <ul className="mt-1 list-inside list-disc">
@@ -45,7 +51,7 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
         </>}
         <details className="mt-2">
           <summary className="cursor-pointer font-semibold">Recent messages when the draft was prepared</summary>
-          <ol className="mt-2 divide-y">
+          <ol className="mt-2 divide-y divide-zinc-300 dark:divide-zinc-700">
             {draft.context.messages.map(message => <li key={message.eventId} className="py-2">
               <p className="font-semibold">{label(message.actorType)} · {formatDateTime(message.createdAt)}</p>
               <p className="whitespace-pre-wrap">{message.body}</p>
@@ -57,14 +63,14 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
         <form action={reviewAction} className="space-y-3">
           <label className="block text-sm font-semibold" htmlFor={`draft-${draft.id}`}>Reply text</label>
           <textarea id={`draft-${draft.id}`} name="message" value={text} rows={4} maxLength={2000}
-            disabled={reviewing} onChange={event => setText(event.target.value)} className="w-full rounded border-2 p-2" />
+            disabled={reviewing} onChange={event => setText(event.target.value)} className={inputClass} />
           <div className="flex flex-wrap gap-2">
             <button name="decision" value="approve" disabled={reviewing || changed || !eligible}
-              className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">Approve</button>
+              className={primaryButtonClass}>Approve</button>
             <button name="decision" value="edit" disabled={reviewing || !changed || !text.trim() || !eligible}
-              className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">Save edits and approve</button>
+              className={primaryButtonClass}>Save edits and approve</button>
             <button name="decision" value="reject" disabled={reviewing}
-              className="rounded border-2 px-3 py-2 disabled:opacity-50">Reject</button>
+              className={buttonClass}>Reject</button>
           </div>
         </form>
       ) : (
@@ -72,14 +78,14 @@ function DraftCard({ draft, eligible }: { draft: ReplyDraft; eligible: boolean }
           <p className="font-semibold">Original draft</p>
           <p className="whitespace-pre-wrap">{draft.originalText}</p>
           {draft.decision === "edit" && <><p className="font-semibold">Approved reply</p><p className="whitespace-pre-wrap">{draft.finalText}</p></>}
-          <p>{status} · reviewed {formatDateTime(draft.reviewedAt)}</p>
+          <p className="opacity-70">{status} · reviewed {formatDateTime(draft.reviewedAt)}</p>
           {draft.decision === "reject" && <p>This draft cannot be sent.</p>}
         </div>
       )}
       {!draft.sentEventId && <Feedback state={reviewState} />}
       {(draft.decision === "approve" || draft.decision === "edit") && !draft.sentEventId && (
         <form action={sendAction}>
-          <button disabled={sending || !eligible} className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">
+          <button disabled={sending || !eligible} className={primaryButtonClass}>
             {sending ? "Recording…" : "Record follow-up"}
           </button>
           {!eligible && <p className="mt-2 text-sm">Sending is unavailable while this customer is not eligible for follow-up.</p>}
@@ -103,23 +109,23 @@ export function ReplyDrafts({ dealId, initialRequestId, drafts, eligible, email,
   }, undefined);
   return (
     <section className="space-y-4" aria-labelledby="drafts-heading">
-      <h3 id="drafts-heading" className="font-semibold">Generate and review a reply</h3>
-      <p className="text-sm opacity-70">Generate an AI draft from this deal’s recent conversation and recorded details, then approve, edit, or reject it. Nothing is sent automatically.</p>
-      {drafts === null ? <p role="alert">Couldn&apos;t load saved drafts. Refresh to try again.</p> : <>
+      <h3 id="drafts-heading" className="font-semibold">Review a reply draft</h3>
+      <p className="text-sm opacity-70">Review the context and wording, then approve, edit, or reject the suggested reply.</p>
+      {drafts === null ? <p role="alert" className="text-red-600 dark:text-red-400">Couldn&apos;t load saved drafts. Refresh to try again.</p> : <>
         {eligible && (email?.trim() || phone?.trim()) ? (
           <form action={action} className="flex flex-wrap items-end gap-3">
             <input type="hidden" name="requestId" value={requestId} />
-            <div>
-              <label htmlFor="draft-channel" className="block text-sm font-semibold">Draft channel</label>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="draft-channel" className="font-semibold">Draft channel</label>
               <select id="draft-channel" name="channel" value={channel} disabled={pending}
                 onChange={event => { setChannel(event.target.value); setRequestId(crypto.randomUUID()); }}
-                className="mt-1 rounded border-2 px-2 py-1">
-                {email?.trim() && <option value="email">Email</option>}
-                {phone?.trim() && <option value="sms">SMS</option>}
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-black focus:border-[#d5bd91] focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white">
+                {email?.trim() && <option value="email" className="bg-white text-black">Email</option>}
+                {phone?.trim() && <option value="sms" className="bg-white text-black">SMS</option>}
               </select>
             </div>
-            <button disabled={pending} className="rounded border-2 px-3 py-2 font-semibold disabled:opacity-50">
-              {pending ? "Generating…" : drafts.length ? "Generate another reply" : "Generate reply"}
+            <button disabled={pending} className={primaryButtonClass}>
+              {pending ? "Preparing…" : drafts.length ? "Prepare another draft" : "Prepare draft"}
             </button>
           </form>
         ) : <p className="text-sm">New drafts are available when this customer is eligible for follow-up and has contact details.</p>}
@@ -127,11 +133,11 @@ export function ReplyDrafts({ dealId, initialRequestId, drafts, eligible, email,
         {drafts.length === 0 && <p className="text-sm">No saved drafts yet.</p>}
         {drafts.slice(0, 1).map(draft => <DraftCard key={draft.id} draft={draft} eligible={eligible} />)}
         {drafts.length > 1 && (
-          <details className="rounded border p-3">
+          <details className="rounded-lg bg-slate-200 p-3 dark:bg-zinc-800">
             <summary className="cursor-pointer text-sm font-semibold">Earlier drafts ({drafts.length - 1})</summary>
             <div className="mt-3 space-y-3">
               {drafts.slice(1).map(draft => (
-                <details key={draft.id} className="rounded border p-3">
+                <details key={draft.id} className="rounded-lg bg-slate-100 p-3 dark:bg-zinc-900">
                   <summary className="cursor-pointer text-sm">
                     {draft.channel.toUpperCase()} · {draft.sentEventId ? "Follow-up recorded"
                       : draft.decision === "reject" ? "Rejected" : draft.decision ? "Approved" : "Awaiting review"}
