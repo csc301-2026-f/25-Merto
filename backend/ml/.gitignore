@@ -1,6 +1,7 @@
 models/
 artifacts/
 .venv/
+.venv-v3/
 vendor/
 __pycache__/
 *.pyc

@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "independent_library": "scikit-learn",
+  "groups_verified": [
+    "minilm/ai/all",
+    "minilm/ai/none",
+    "minilm/ai/single",
+    "minilm/ai/multi",
+    "minilm/buyer/all",
+    "minilm/buyer/none",
+    "minilm/buyer/single",
+    "minilm/buyer/multi",
+    "bge/ai/all",
+    "bge/ai/none",
+    "bge/ai/single",
+    "bge/ai/multi",
+    "bge/buyer/all",
+    "bge/buyer/none",
+    "bge/buyer/single",
+    "bge/buyer/multi",
+    "mpnet/ai/all",
+    "mpnet/ai/none",
+    "mpnet/ai/single",
+    "mpnet/ai/multi",
+    "mpnet/buyer/all",
+    "mpnet/buyer/none",
+    "mpnet/buyer/single",
+    "mpnet/buyer/multi"
+  ],
+  "split_hashes_preserved": true,
+  "saved_role_models_checked": 6,
+  "fine_tuned_tensor_checks": [
+    {
+      "model": "minilm",
+      "side": "ai",
+      "tensor": "encoder.layer.0.attention.self.query.weight",
+      "maximum_absolute_change": 0.0020837297197431326
+    },
+    {
+      "model": "minilm",
+      "side": "buyer",
+      "tensor": "encoder.layer.0.attention.self.query.weight",
+      "maximum_absolute_change": 0.0020002946257591248
+    },
+    {
+      "model": "bge",
+      "side": "ai",
+      "tensor": "encoder.layer.0.attention.self.query.weight",
+      "maximum_absolute_change": 0.001471417024731636
+    },
+    {
+      "model": "bge",
+      "side": "buyer",
+      "tensor": "encoder.layer.0.attention.self.query.weight",
+      "maximum_absolute_change": 0.0014608018100261688
+    },
+    {
+      "model": "mpnet",
+      "side": "ai",
+      "tensor": "encoder.layer.0.attention.attn.q.weight",
+      "maximum_absolute_change": 0.00138864666223526
+    },
+    {
+      "model": "mpnet",
+      "side": "buyer",
+      "tensor": "encoder.layer.0.attention.attn.q.weight",
+      "maximum_absolute_change": 0.0010944157838821411
+    }
+  ],
+  "saved_reload_parity_checks": [
+    {
+      "model": "minilm",
+      "side": "ai",
+      "messages": 24,
+      "max_score_gap": 6.918804941191681e-07
+    },
+    {
+      "model": "minilm",
+      "side": "buyer",
+      "messages": 24,
+      "max_score_gap": 2.6553517695759865e-07
+    },
+    {
+      "model": "bge",
+      "side": "ai",
+      "messages": 24,
+      "max_score_gap": 9.481897546015361e-06
+    },
+    {
+      "model": "bge",
+      "side": "buyer",
+      "messages": 24,
+      "max_score_gap": 4.956431431391017e-07
+    },
+    {
+      "model": "mpnet",
+      "side": "ai",
+      "messages": 24,
+      "max_score_gap": 0.0
+    },
+    {
+      "model": "mpnet",
+      "side": "buyer",
+      "messages": 24,
+      "max_score_gap": 0.0
+    }
+  ],
+  "note": "This verifies calculations and files, not semantic correctness of the synthetic labels."
+}

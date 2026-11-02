@@ -1,0 +1,12 @@
+{
+  "ai": {
+    "legacy_train_plus_dev_messages": 1850,
+    "test_messages": 480,
+    "near_matches_at_0_8": []
+  },
+  "buyer": {
+    "legacy_train_plus_dev_messages": 954,
+    "test_messages": 480,
+    "near_matches_at_0_8": []
+  }
+}

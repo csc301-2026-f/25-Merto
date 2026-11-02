@@ -1,0 +1,1371 @@
+{
+  "config": {
+    "seed": 42,
+    "iterations": 5,
+    "encoder_epochs": 1,
+    "batch_size": 16,
+    "max_length": 128,
+    "body_learning_rate": 2e-05,
+    "precision": "FP32",
+    "head": "one-vs-rest logistic regression",
+    "threshold_grid": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "threshold_objective": "per-label dev F1; ties nearest 0.5"
+  },
+  "dataset_hashes": {
+    "train": "13416f7858e5900ae05c2382dc33796b9643b885b9e1976371a2b5ffa5627239",
+    "dev": "27290ed20e3e1adc6e85fdda8b93d31004be46e2d7b603c945da59b1c893ce87",
+    "test": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064"
+  },
+  "models": {
+    "minilm": {
+      "combined": {
+        "all": {
+          "messages": 960,
+          "whole_message_correct": 862,
+          "whole_message_accuracy": 0.8979166666666667,
+          "label_decisions": 2880,
+          "label_decisions_correct": 2777,
+          "per_signal_accuracy": 0.9642361111111111
+        },
+        "none": {
+          "messages": 320,
+          "whole_message_correct": 290,
+          "whole_message_accuracy": 0.90625,
+          "label_decisions": 960,
+          "label_decisions_correct": 929,
+          "per_signal_accuracy": 0.9677083333333333
+        },
+        "single": {
+          "messages": 320,
+          "whole_message_correct": 293,
+          "whole_message_accuracy": 0.915625,
+          "label_decisions": 960,
+          "label_decisions_correct": 931,
+          "per_signal_accuracy": 0.9697916666666667
+        },
+        "multi": {
+          "messages": 320,
+          "whole_message_correct": 279,
+          "whole_message_accuracy": 0.871875,
+          "label_decisions": 960,
+          "label_decisions_correct": 917,
+          "per_signal_accuracy": 0.9552083333333333
+        }
+      },
+      "by_side": {
+        "ai": {
+          "signals": [
+            "claims_booking",
+            "guarantees_availability",
+            "quotes_price",
+            "off_tone"
+          ],
+          "thresholds": [
+            0.55,
+            0.5,
+            0.5,
+            0.3
+          ],
+          "groups": {
+            "all": {
+              "messages": 480,
+              "whole_message_correct": 398,
+              "whole_message_accuracy": 0.8291666666666667,
+              "label_decisions": 1920,
+              "label_decisions_correct": 1833,
+              "per_signal_accuracy": 0.9546875,
+              "tp": [
+                133,
+                131,
+                132,
+                132
+              ],
+              "fp": [
+                9,
+                10,
+                3,
+                33
+              ],
+              "fn": [
+                7,
+                9,
+                8,
+                8
+              ],
+              "positives": [
+                140,
+                140,
+                140,
+                140
+              ],
+              "precision": [
+                0.9366197183098591,
+                0.9290780141843972,
+                0.9777777777777777,
+                0.8
+              ],
+              "recall": [
+                0.95,
+                0.9357142857142857,
+                0.9428571428571428,
+                0.9428571428571428
+              ],
+              "f1": [
+                0.9432624113475178,
+                0.9323843416370107,
+                0.96,
+                0.8655737704918033
+              ],
+              "macro_f1": 0.925305130869083,
+              "micro_f1": 0.9238845144356955
+            },
+            "none": {
+              "messages": 160,
+              "whole_message_correct": 137,
+              "whole_message_accuracy": 0.85625,
+              "label_decisions": 640,
+              "label_decisions_correct": 616,
+              "per_signal_accuracy": 0.9625,
+              "tp": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "fp": [
+                6,
+                2,
+                2,
+                14
+              ],
+              "fn": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "positives": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "precision": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recall": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "f1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "macro_f1": 0.0,
+              "micro_f1": 0.0
+            },
+            "single": {
+              "messages": 160,
+              "whole_message_correct": 139,
+              "whole_message_accuracy": 0.86875,
+              "label_decisions": 640,
+              "label_decisions_correct": 617,
+              "per_signal_accuracy": 0.9640625,
+              "tp": [
+                39,
+                39,
+                40,
+                37
+              ],
+              "fp": [
+                2,
+                5,
+                0,
+                11
+              ],
+              "fn": [
+                1,
+                1,
+                0,
+                3
+              ],
+              "positives": [
+                40,
+                40,
+                40,
+                40
+              ],
+              "precision": [
+                0.9512195121951219,
+                0.8863636363636364,
+                1.0,
+                0.7708333333333334
+              ],
+              "recall": [
+                0.975,
+                0.975,
+                1.0,
+                0.925
+              ],
+              "f1": [
+                0.9629629629629629,
+                0.9285714285714286,
+                1.0,
+                0.8409090909090909
+              ],
+              "macro_f1": 0.9331108706108706,
+              "micro_f1": 0.9309309309309309
+            },
+            "multi": {
+              "messages": 160,
+              "whole_message_correct": 122,
+              "whole_message_accuracy": 0.7625,
+              "label_decisions": 640,
+              "label_decisions_correct": 600,
+              "per_signal_accuracy": 0.9375,
+              "tp": [
+                94,
+                92,
+                92,
+                95
+              ],
+              "fp": [
+                1,
+                3,
+                1,
+                8
+              ],
+              "fn": [
+                6,
+                8,
+                8,
+                5
+              ],
+              "positives": [
+                100,
+                100,
+                100,
+                100
+              ],
+              "precision": [
+                0.9894736842105263,
+                0.968421052631579,
+                0.989247311827957,
+                0.9223300970873787
+              ],
+              "recall": [
+                0.94,
+                0.92,
+                0.92,
+                0.95
+              ],
+              "f1": [
+                0.9641025641025641,
+                0.9435897435897436,
+                0.9533678756476683,
+                0.9359605911330049
+              ],
+              "macro_f1": 0.9492551936182452,
+              "micro_f1": 0.9491094147582697
+            }
+          }
+        },
+        "buyer": {
+          "signals": [
+            "asks_for_person",
+            "asks_about_price"
+          ],
+          "thresholds": [
+            0.5,
+            0.55
+          ],
+          "groups": {
+            "all": {
+              "messages": 480,
+              "whole_message_correct": 464,
+              "whole_message_accuracy": 0.9666666666666667,
+              "label_decisions": 960,
+              "label_decisions_correct": 944,
+              "per_signal_accuracy": 0.9833333333333333,
+              "tp": [
+                240,
+                237
+              ],
+              "fp": [
+                8,
+                5
+              ],
+              "fn": [
+                0,
+                3
+              ],
+              "positives": [
+                240,
+                240
+              ],
+              "precision": [
+                0.967741935483871,
+                0.9793388429752066
+              ],
+              "recall": [
+                1.0,
+                0.9875
+              ],
+              "f1": [
+                0.9836065573770492,
+                0.983402489626556
+              ],
+              "macro_f1": 0.9835045235018025,
+              "micro_f1": 0.9835051546391752
+            },
+            "none": {
+              "messages": 160,
+              "whole_message_correct": 153,
+              "whole_message_accuracy": 0.95625,
+              "label_decisions": 320,
+              "label_decisions_correct": 313,
+              "per_signal_accuracy": 0.978125,
+              "tp": [
+                0,
+                0
+              ],
+              "fp": [
+                4,
+                3
+              ],
+              "fn": [
+                0,
+                0
+              ],
+              "positives": [
+                0,
+                0
+              ],
+              "precision": [
+                0.0,
+                0.0
+              ],
+              "recall": [
+                0.0,
+                0.0
+              ],
+              "f1": [
+                0.0,
+                0.0
+              ],
+              "macro_f1": 0.0,
+              "micro_f1": 0.0
+            },
+            "single": {
+              "messages": 160,
+              "whole_message_correct": 154,
+              "whole_message_accuracy": 0.9625,
+              "label_decisions": 320,
+              "label_decisions_correct": 314,
+              "per_signal_accuracy": 0.98125,
+              "tp": [
+                80,
+                80
+              ],
+              "fp": [
+                4,
+                2
+              ],
+              "fn": [
+                0,
+                0
+              ],
+              "positives": [
+                80,
+                80
+              ],
+              "precision": [
+                0.9523809523809523,
+                0.975609756097561
+              ],
+              "recall": [
+                1.0,
+                1.0
+              ],
+              "f1": [
+                0.975609756097561,
+                0.9876543209876543
+              ],
+              "macro_f1": 0.9816320385426076,
+              "micro_f1": 0.9815950920245399
+            },
+            "multi": {
+              "messages": 160,
+              "whole_message_correct": 157,
+              "whole_message_accuracy": 0.98125,
+              "label_decisions": 320,
+              "label_decisions_correct": 317,
+              "per_signal_accuracy": 0.990625,
+              "tp": [
+                160,
+                157
+              ],
+              "fp": [
+                0,
+                0
+              ],
+              "fn": [
+                0,
+                3
+              ],
+              "positives": [
+                160,
+                160
+              ],
+              "precision": [
+                1.0,
+                1.0
+              ],
+              "recall": [
+                1.0,
+                0.98125
+              ],
+              "f1": [
+                1.0,
+                0.9905362776025236
+              ],
+              "macro_f1": 0.9952681388012619,
+              "micro_f1": 0.9952904238618524
+            }
+          }
+        }
+      }
+    },
+    "bge": {
+      "combined": {
+        "all": {
+          "messages": 960,
+          "whole_message_correct": 917,
+          "whole_message_accuracy": 0.9552083333333333,
+          "label_decisions": 2880,
+          "label_decisions_correct": 2837,
+          "per_signal_accuracy": 0.9850694444444444
+        },
+        "none": {
+          "messages": 320,
+          "whole_message_correct": 292,
+          "whole_message_accuracy": 0.9125,
+          "label_decisions": 960,
+          "label_decisions_correct": 932,
+          "per_signal_accuracy": 0.9708333333333333
+        },
+        "single": {
+          "messages": 320,
+          "whole_message_correct": 315,
+          "whole_message_accuracy": 0.984375,
+          "label_decisions": 960,
+          "label_decisions_correct": 955,
+          "per_signal_accuracy": 0.9947916666666666
+        },
+        "multi": {
+          "messages": 320,
+          "whole_message_correct": 310,
+          "whole_message_accuracy": 0.96875,
+          "label_decisions": 960,
+          "label_decisions_correct": 950,
+          "per_signal_accuracy": 0.9895833333333334
+        }
+      },
+      "by_side": {
+        "ai": {
+          "signals": [
+            "claims_booking",
+            "guarantees_availability",
+            "quotes_price",
+            "off_tone"
+          ],
+          "thresholds": [
+            0.5,
+            0.5,
+            0.5,
+            0.45
+          ],
+          "groups": {
+            "all": {
+              "messages": 480,
+              "whole_message_correct": 451,
+              "whole_message_accuracy": 0.9395833333333333,
+              "label_decisions": 1920,
+              "label_decisions_correct": 1891,
+              "per_signal_accuracy": 0.9848958333333333,
+              "tp": [
+                140,
+                139,
+                140,
+                137
+              ],
+              "fp": [
+                8,
+                6,
+                0,
+                11
+              ],
+              "fn": [
+                0,
+                1,
+                0,
+                3
+              ],
+              "positives": [
+                140,
+                140,
+                140,
+                140
+              ],
+              "precision": [
+                0.9459459459459459,
+                0.9586206896551724,
+                1.0,
+                0.9256756756756757
+              ],
+              "recall": [
+                1.0,
+                0.9928571428571429,
+                1.0,
+                0.9785714285714285
+              ],
+              "f1": [
+                0.9722222222222222,
+                0.9754385964912281,
+                1.0,
+                0.9513888888888888
+              ],
+              "macro_f1": 0.9747624269005848,
+              "micro_f1": 0.9745836985100789
+            },
+            "none": {
+              "messages": 160,
+              "whole_message_correct": 137,
+              "whole_message_accuracy": 0.85625,
+              "label_decisions": 640,
+              "label_decisions_correct": 617,
+              "per_signal_accuracy": 0.9640625,
+              "tp": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "fp": [
+                7,
+                6,
+                0,
+                10
+              ],
+              "fn": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "positives": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "precision": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recall": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "f1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "macro_f1": 0.0,
+              "micro_f1": 0.0
+            },
+            "single": {
+              "messages": 160,
+              "whole_message_correct": 158,
+              "whole_message_accuracy": 0.9875,
+              "label_decisions": 640,
+              "label_decisions_correct": 638,
+              "per_signal_accuracy": 0.996875,
+              "tp": [
+                40,
+                40,
+                40,
+                40
+              ],
+              "fp": [
+                1,
+                0,
+                0,
+                1
+              ],
+              "fn": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "positives": [
+                40,
+                40,
+                40,
+                40
+              ],
+              "precision": [
+                0.975609756097561,
+                1.0,
+                1.0,
+                0.975609756097561
+              ],
+              "recall": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "f1": [
+                0.9876543209876543,
+                1.0,
+                1.0,
+                0.9876543209876543
+              ],
+              "macro_f1": 0.9938271604938271,
+              "micro_f1": 0.9937888198757764
+            },
+            "multi": {
+              "messages": 160,
+              "whole_message_correct": 156,
+              "whole_message_accuracy": 0.975,
+              "label_decisions": 640,
+              "label_decisions_correct": 636,
+              "per_signal_accuracy": 0.99375,
+              "tp": [
+                100,
+                99,
+                100,
+                97
+              ],
+              "fp": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "fn": [
+                0,
+                1,
+                0,
+                3
+              ],
+              "positives": [
+                100,
+                100,
+                100,
+                100
+              ],
+              "precision": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "recall": [
+                1.0,
+                0.99,
+                1.0,
+                0.97
+              ],
+              "f1": [
+                1.0,
+                0.9949748743718593,
+                1.0,
+                0.9847715736040609
+              ],
+              "macro_f1": 0.9949366119939801,
+              "micro_f1": 0.9949748743718593
+            }
+          }
+        },
+        "buyer": {
+          "signals": [
+            "asks_for_person",
+            "asks_about_price"
+          ],
+          "thresholds": [
+            0.5,
+            0.8
+          ],
+          "groups": {
+            "all": {
+              "messages": 480,
+              "whole_message_correct": 466,
+              "whole_message_accuracy": 0.9708333333333333,
+              "label_decisions": 960,
+              "label_decisions_correct": 946,
+              "per_signal_accuracy": 0.9854166666666667,
+              "tp": [
+                239,
+                235
+              ],
+              "fp": [
+                5,
+                3
+              ],
+              "fn": [
+                1,
+                5
+              ],
+              "positives": [
+                240,
+                240
+              ],
+              "precision": [
+                0.9795081967213115,
+                0.9873949579831933
+              ],
+              "recall": [
+                0.9958333333333333,
+                0.9791666666666666
+              ],
+              "f1": [
+                0.987603305785124,
+                0.9832635983263598
+              ],
+              "macro_f1": 0.985433452055742,
+              "micro_f1": 0.9854469854469855
+            },
+            "none": {
+              "messages": 160,
+              "whole_message_correct": 155,
+              "whole_message_accuracy": 0.96875,
+              "label_decisions": 320,
+              "label_decisions_correct": 315,
+              "per_signal_accuracy": 0.984375,
+              "tp": [
+                0,
+                0
+              ],
+              "fp": [
+                3,
+                2
+              ],
+              "fn": [
+                0,
+                0
+              ],
+              "positives": [
+                0,
+                0
+              ],
+              "precision": [
+                0.0,
+                0.0
+              ],
+              "recall": [
+                0.0,
+                0.0
+              ],
+              "f1": [
+                0.0,
+                0.0
+              ],
+              "macro_f1": 0.0,
+              "micro_f1": 0.0
+            },
+            "single": {
+              "messages": 160,
+              "whole_message_correct": 157,
+              "whole_message_accuracy": 0.98125,
+              "label_decisions": 320,
+              "label_decisions_correct": 317,
+              "per_signal_accuracy": 0.990625,
+              "tp": [
+                80,
+                80
+              ],
+              "fp": [
+                2,
+                1
+              ],
+              "fn": [
+                0,
+                0
+              ],
+              "positives": [
+                80,
+                80
+              ],
+              "precision": [
+                0.975609756097561,
+                0.9876543209876543
+              ],
+              "recall": [
+                1.0,
+                1.0
+              ],
+              "f1": [
+                0.9876543209876543,
+                0.9937888198757764
+              ],
+              "macro_f1": 0.9907215704317154,
+              "micro_f1": 0.9907120743034056
+            },
+            "multi": {
+              "messages": 160,
+              "whole_message_correct": 154,
+              "whole_message_accuracy": 0.9625,
+              "label_decisions": 320,
+              "label_decisions_correct": 314,
+              "per_signal_accuracy": 0.98125,
+              "tp": [
+                159,
+                155
+              ],
+              "fp": [
+                0,
+                0
+              ],
+              "fn": [
+                1,
+                5
+              ],
+              "positives": [
+                160,
+                160
+              ],
+              "precision": [
+                1.0,
+                1.0
+              ],
+              "recall": [
+                0.99375,
+                0.96875
+              ],
+              "f1": [
+                0.9968652037617555,
+                0.9841269841269841
+              ],
+              "macro_f1": 0.9904960939443698,
+              "micro_f1": 0.9905362776025236
+            }
+          }
+        }
+      }
+    },
+    "mpnet": {
+      "combined": {
+        "all": {
+          "messages": 960,
+          "whole_message_correct": 936,
+          "whole_message_accuracy": 0.975,
+          "label_decisions": 2880,
+          "label_decisions_correct": 2855,
+          "per_signal_accuracy": 0.9913194444444444
+        },
+        "none": {
+          "messages": 320,
+          "whole_message_correct": 304,
+          "whole_message_accuracy": 0.95,
+          "label_decisions": 960,
+          "label_decisions_correct": 943,
+          "per_signal_accuracy": 0.9822916666666667
+        },
+        "single": {
+          "messages": 320,
+          "whole_message_correct": 316,
+          "whole_message_accuracy": 0.9875,
+          "label_decisions": 960,
+          "label_decisions_correct": 956,
+          "per_signal_accuracy": 0.9958333333333333
+        },
+        "multi": {
+          "messages": 320,
+          "whole_message_correct": 316,
+          "whole_message_accuracy": 0.9875,
+          "label_decisions": 960,
+          "label_decisions_correct": 956,
+          "per_signal_accuracy": 0.9958333333333333
+        }
+      },
+      "by_side": {
+        "ai": {
+          "signals": [
+            "claims_booking",
+            "guarantees_availability",
+            "quotes_price",
+            "off_tone"
+          ],
+          "thresholds": [
+            0.5,
+            0.35,
+            0.5,
+            0.45
+          ],
+          "groups": {
+            "all": {
+              "messages": 480,
+              "whole_message_correct": 464,
+              "whole_message_accuracy": 0.9666666666666667,
+              "label_decisions": 1920,
+              "label_decisions_correct": 1903,
+              "per_signal_accuracy": 0.9911458333333333,
+              "tp": [
+                140,
+                139,
+                139,
+                140
+              ],
+              "fp": [
+                5,
+                4,
+                1,
+                5
+              ],
+              "fn": [
+                0,
+                1,
+                1,
+                0
+              ],
+              "positives": [
+                140,
+                140,
+                140,
+                140
+              ],
+              "precision": [
+                0.9655172413793104,
+                0.972027972027972,
+                0.9928571428571429,
+                0.9655172413793104
+              ],
+              "recall": [
+                1.0,
+                0.9928571428571429,
+                0.9928571428571429,
+                1.0
+              ],
+              "f1": [
+                0.9824561403508771,
+                0.9823321554770318,
+                0.9928571428571429,
+                0.9824561403508771
+              ],
+              "macro_f1": 0.9850253947589822,
+              "micro_f1": 0.9849955869373345
+            },
+            "none": {
+              "messages": 160,
+              "whole_message_correct": 150,
+              "whole_message_accuracy": 0.9375,
+              "label_decisions": 640,
+              "label_decisions_correct": 629,
+              "per_signal_accuracy": 0.9828125,
+              "tp": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "fp": [
+                4,
+                2,
+                1,
+                4
+              ],
+              "fn": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "positives": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "precision": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recall": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "f1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "macro_f1": 0.0,
+              "micro_f1": 0.0
+            },
+            "single": {
+              "messages": 160,
+              "whole_message_correct": 157,
+              "whole_message_accuracy": 0.98125,
+              "label_decisions": 640,
+              "label_decisions_correct": 637,
+              "per_signal_accuracy": 0.9953125,
+              "tp": [
+                40,
+                40,
+                40,
+                40
+              ],
+              "fp": [
+                1,
+                1,
+                0,
+                1
+              ],
+              "fn": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "positives": [
+                40,
+                40,
+                40,
+                40
+              ],
+              "precision": [
+                0.975609756097561,
+                0.975609756097561,
+                1.0,
+                0.975609756097561
+              ],
+              "recall": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "f1": [
+                0.9876543209876543,
+                0.9876543209876543,
+                1.0,
+                0.9876543209876543
+              ],
+              "macro_f1": 0.9907407407407407,
+              "micro_f1": 0.9907120743034056
+            },
+            "multi": {
+              "messages": 160,
+              "whole_message_correct": 157,
+              "whole_message_accuracy": 0.98125,
+              "label_decisions": 640,
+              "label_decisions_correct": 637,
+              "per_signal_accuracy": 0.9953125,
+              "tp": [
+                100,
+                99,
+                99,
+                100
+              ],
+              "fp": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "fn": [
+                0,
+                1,
+                1,
+                0
+              ],
+              "positives": [
+                100,
+                100,
+                100,
+                100
+              ],
+              "precision": [
+                1.0,
+                0.99,
+                1.0,
+                1.0
+              ],
+              "recall": [
+                1.0,
+                0.99,
+                0.99,
+                1.0
+              ],
+              "f1": [
+                1.0,
+                0.99,
+                0.9949748743718593,
+                1.0
+              ],
+              "macro_f1": 0.9962437185929648,
+              "micro_f1": 0.9962453066332916
+            }
+          }
+        },
+        "buyer": {
+          "signals": [
+            "asks_for_person",
+            "asks_about_price"
+          ],
+          "thresholds": [
+            0.5,
+            0.7
+          ],
+          "groups": {
+            "all": {
+              "messages": 480,
+              "whole_message_correct": 472,
+              "whole_message_accuracy": 0.9833333333333333,
+              "label_decisions": 960,
+              "label_decisions_correct": 952,
+              "per_signal_accuracy": 0.9916666666666667,
+              "tp": [
+                240,
+                239
+              ],
+              "fp": [
+                2,
+                5
+              ],
+              "fn": [
+                0,
+                1
+              ],
+              "positives": [
+                240,
+                240
+              ],
+              "precision": [
+                0.9917355371900827,
+                0.9795081967213115
+              ],
+              "recall": [
+                1.0,
+                0.9958333333333333
+              ],
+              "f1": [
+                0.995850622406639,
+                0.987603305785124
+              ],
+              "macro_f1": 0.9917269640958815,
+              "micro_f1": 0.9917184265010351
+            },
+            "none": {
+              "messages": 160,
+              "whole_message_correct": 154,
+              "whole_message_accuracy": 0.9625,
+              "label_decisions": 320,
+              "label_decisions_correct": 314,
+              "per_signal_accuracy": 0.98125,
+              "tp": [
+                0,
+                0
+              ],
+              "fp": [
+                2,
+                4
+              ],
+              "fn": [
+                0,
+                0
+              ],
+              "positives": [
+                0,
+                0
+              ],
+              "precision": [
+                0.0,
+                0.0
+              ],
+              "recall": [
+                0.0,
+                0.0
+              ],
+              "f1": [
+                0.0,
+                0.0
+              ],
+              "macro_f1": 0.0,
+              "micro_f1": 0.0
+            },
+            "single": {
+              "messages": 160,
+              "whole_message_correct": 159,
+              "whole_message_accuracy": 0.99375,
+              "label_decisions": 320,
+              "label_decisions_correct": 319,
+              "per_signal_accuracy": 0.996875,
+              "tp": [
+                80,
+                80
+              ],
+              "fp": [
+                0,
+                1
+              ],
+              "fn": [
+                0,
+                0
+              ],
+              "positives": [
+                80,
+                80
+              ],
+              "precision": [
+                1.0,
+                0.9876543209876543
+              ],
+              "recall": [
+                1.0,
+                1.0
+              ],
+              "f1": [
+                1.0,
+                0.9937888198757764
+              ],
+              "macro_f1": 0.9968944099378882,
+              "micro_f1": 0.9968847352024922
+            },
+            "multi": {
+              "messages": 160,
+              "whole_message_correct": 159,
+              "whole_message_accuracy": 0.99375,
+              "label_decisions": 320,
+              "label_decisions_correct": 319,
+              "per_signal_accuracy": 0.996875,
+              "tp": [
+                160,
+                159
+              ],
+              "fp": [
+                0,
+                0
+              ],
+              "fn": [
+                0,
+                1
+              ],
+              "positives": [
+                160,
+                160
+              ],
+              "precision": [
+                1.0,
+                1.0
+              ],
+              "recall": [
+                1.0,
+                0.99375
+              ],
+              "f1": [
+                1.0,
+                0.9968652037617555
+              ],
+              "macro_f1": 0.9984326018808778,
+              "micro_f1": 0.9984350547730829
+            }
+          }
+        }
+      }
+    }
+  },
+  "runtime_repair": {
+    "reason": "Original MPNet MPS jobs emitted silent Metal OOM errors; both excluded.",
+    "preserved": [
+      "minilm/ai",
+      "minilm/buyer",
+      "bge/ai",
+      "bge/buyer"
+    ],
+    "same_numerical_stack": true,
+    "config": {
+      "seed": 42,
+      "iterations": 5,
+      "encoder_epochs": 1,
+      "batch_size": 16,
+      "max_length": 128,
+      "body_learning_rate": 2e-05,
+      "precision": "FP32",
+      "head": "one-vs-rest logistic regression",
+      "threshold_grid": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3,
+        0.35,
+        0.4,
+        0.45,
+        0.5,
+        0.55,
+        0.6,
+        0.65,
+        0.7,
+        0.75,
+        0.8,
+        0.85,
+        0.9,
+        0.95
+      ],
+      "threshold_objective": "per-label dev F1; ties nearest 0.5"
+    },
+    "mpnet_mps_padding": "fixed masked length 128",
+    "isolated_role_processes": true,
+    "mps_driver_guard_gib": 8,
+    "evaluation_device": "cpu",
+    "cpu_fallback_if_mps_fails": true
+  },
+  "limits": [
+    "One fixed seed; synthetic assistant-reviewed data.",
+    "MPNet uses fixed masked padding to avoid MPS memory growth; see repair-plan.json.",
+    "No hard subset assigned."
+  ]
+}

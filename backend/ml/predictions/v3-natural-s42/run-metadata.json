@@ -1,0 +1,107 @@
+{
+  "config": {
+    "seed": 42,
+    "iterations": 5,
+    "encoder_epochs": 1,
+    "batch_size": 16,
+    "max_length": 128,
+    "body_learning_rate": 2e-05,
+    "precision": "FP32",
+    "head": "one-vs-rest logistic regression",
+    "threshold_grid": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "threshold_objective": "per-label dev F1; ties nearest 0.5"
+  },
+  "versions": {
+    "torch": "2.9.1",
+    "setfit": "1.1.3",
+    "sentence-transformers": "5.7.0",
+    "transformers": "4.57.6",
+    "numpy": "1.26.4",
+    "scipy": "1.11.4",
+    "scikit-learn": "1.7.2",
+    "datasets": "4.8.5"
+  },
+  "bases": {
+    "minilm": {
+      "repo": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "weight_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db"
+    },
+    "bge": {
+      "repo": "BAAI/bge-base-en-v1.5",
+      "revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+      "weight_sha256": "c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7"
+    },
+    "mpnet": {
+      "repo": "sentence-transformers/all-mpnet-base-v2",
+      "revision": "e8c3b32edf5434bc2275fc9bab85f82640a19130",
+      "weight_sha256": "78c0197b6159d92658e319bc1d72e4c73a9a03dd03815e70e555c5ef05615658"
+    }
+  },
+  "dataset_hashes": {
+    "train": "13416f7858e5900ae05c2382dc33796b9643b885b9e1976371a2b5ffa5627239",
+    "dev": "27290ed20e3e1adc6e85fdda8b93d31004be46e2d7b603c945da59b1c893ce87",
+    "test": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064"
+  },
+  "successful_roles": {
+    "bge-buyer": {
+      "training_seconds": 317.64022564888,
+      "trained_device": "mps:0",
+      "padding_policy": null
+    },
+    "minilm-ai": {
+      "training_seconds": 106.91808199882507,
+      "trained_device": "mps:0",
+      "padding_policy": null
+    },
+    "mpnet-ai": {
+      "training_seconds": 705.2169073750265,
+      "trained_device": "mps:0",
+      "padding_policy": "fixed_128_masked"
+    },
+    "bge-ai": {
+      "training_seconds": 452.9206290245056,
+      "trained_device": "mps:0",
+      "padding_policy": null
+    },
+    "mpnet-buyer": {
+      "training_seconds": 701.7744356249459,
+      "trained_device": "mps:0",
+      "padding_policy": "fixed_128_masked"
+    },
+    "minilm-buyer": {
+      "training_seconds": 83.968435049057,
+      "trained_device": "mps:0",
+      "padding_policy": null
+    }
+  },
+  "runtime_notes": [
+    "Four MiniLM/BGE role models used initial dynamic padding without Metal errors.",
+    "Both failed original MPNet roles were excluded. MPNet was retrained fresh in isolated processes with fixed masked padding to 128 and memory/progress watchdogs.",
+    "All accepted models trained on MPS; test inference and post-training verification used CPU.",
+    "These timings describe this local run and are not a controlled architecture speed benchmark."
+  ],
+  "weights_in_git": false,
+  "independent_human_annotation": false,
+  "single_seed_only": true
+}
