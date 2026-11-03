@@ -247,7 +247,11 @@ export function SearchBar(
 }
 
 function cleanQuery(query: string) {
-  return query.toLowerCase().replace(/[^a-z0-9 ]/g, "");
+  return query
+    .normalize("NFKD")
+    .toLocaleLowerCase()
+    .replace(/([\p{Script=Latin}])\p{M}+/gu, "$1")
+    .replace(/[^\p{L}\p{N}\p{M}\s]/gu, "");
 }
 
 export function filterDeals<K extends keyof Deal>(
