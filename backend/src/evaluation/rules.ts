@@ -15,7 +15,7 @@ export interface Rule {
   severity: Severity;
   explanation: string;
   // Wording to look for. ignored_opt_out has none: it comes from event history.
-  pattern?: RegExp;
+  pattern?: Pick<RegExp, 'test'>;
   // The message must also match this, e.g. look like a request rather than a remark.
   requires?: RegExp;
   // A match here cancels the rule, e.g. "let me check whether it's still available".

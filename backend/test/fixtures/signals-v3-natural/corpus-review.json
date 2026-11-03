@@ -1,0 +1,492 @@
+{
+  "review_date": "2026-11-02",
+  "reviewer": "authoring AI assistant",
+  "source_messages_read": 3840,
+  "file_hashes": {
+    "train": "13416f7858e5900ae05c2382dc33796b9643b885b9e1976371a2b5ffa5627239",
+    "dev": "27290ed20e3e1adc6e85fdda8b93d31004be46e2d7b603c945da59b1c893ce87",
+    "test": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064"
+  },
+  "packaged_review_ids": [
+    "v3n-train-ai-0001",
+    "v3n-train-ai-0201",
+    "v3n-train-ai-0400",
+    "v3n-train-ai-0401",
+    "v3n-train-ai-0451",
+    "v3n-train-ai-0500",
+    "v3n-train-ai-0501",
+    "v3n-train-ai-0551",
+    "v3n-train-ai-0600",
+    "v3n-train-ai-0601",
+    "v3n-train-ai-0651",
+    "v3n-train-ai-0700",
+    "v3n-train-ai-0701",
+    "v3n-train-ai-0751",
+    "v3n-train-ai-0800",
+    "v3n-train-ai-0801",
+    "v3n-train-ai-0821",
+    "v3n-train-ai-0840",
+    "v3n-train-ai-0841",
+    "v3n-train-ai-0861",
+    "v3n-train-ai-0880",
+    "v3n-train-ai-0881",
+    "v3n-train-ai-0901",
+    "v3n-train-ai-0920",
+    "v3n-train-ai-0921",
+    "v3n-train-ai-0941",
+    "v3n-train-ai-0960",
+    "v3n-train-ai-0961",
+    "v3n-train-ai-0981",
+    "v3n-train-ai-1000",
+    "v3n-train-ai-1001",
+    "v3n-train-ai-1021",
+    "v3n-train-ai-1040",
+    "v3n-train-ai-1041",
+    "v3n-train-ai-1056",
+    "v3n-train-ai-1070",
+    "v3n-train-ai-1071",
+    "v3n-train-ai-1086",
+    "v3n-train-ai-1100",
+    "v3n-train-ai-1101",
+    "v3n-train-ai-1116",
+    "v3n-train-ai-1130",
+    "v3n-train-ai-1131",
+    "v3n-train-ai-1146",
+    "v3n-train-ai-1160",
+    "v3n-train-ai-1161",
+    "v3n-train-ai-1181",
+    "v3n-train-ai-1200",
+    "v3n-train-buyer-0001",
+    "v3n-train-buyer-0201",
+    "v3n-train-buyer-0400",
+    "v3n-train-buyer-0401",
+    "v3n-train-buyer-0501",
+    "v3n-train-buyer-0600",
+    "v3n-train-buyer-0601",
+    "v3n-train-buyer-0701",
+    "v3n-train-buyer-0800",
+    "v3n-train-buyer-0801",
+    "v3n-train-buyer-1001",
+    "v3n-train-buyer-1200",
+    "v3n-dev-ai-0001",
+    "v3n-dev-ai-0041",
+    "v3n-dev-ai-0080",
+    "v3n-dev-ai-0081",
+    "v3n-dev-ai-0091",
+    "v3n-dev-ai-0100",
+    "v3n-dev-ai-0101",
+    "v3n-dev-ai-0111",
+    "v3n-dev-ai-0120",
+    "v3n-dev-ai-0121",
+    "v3n-dev-ai-0131",
+    "v3n-dev-ai-0140",
+    "v3n-dev-ai-0141",
+    "v3n-dev-ai-0151",
+    "v3n-dev-ai-0160",
+    "v3n-dev-ai-0161",
+    "v3n-dev-ai-0165",
+    "v3n-dev-ai-0168",
+    "v3n-dev-ai-0169",
+    "v3n-dev-ai-0173",
+    "v3n-dev-ai-0176",
+    "v3n-dev-ai-0177",
+    "v3n-dev-ai-0181",
+    "v3n-dev-ai-0184",
+    "v3n-dev-ai-0185",
+    "v3n-dev-ai-0189",
+    "v3n-dev-ai-0192",
+    "v3n-dev-ai-0193",
+    "v3n-dev-ai-0197",
+    "v3n-dev-ai-0200",
+    "v3n-dev-ai-0201",
+    "v3n-dev-ai-0205",
+    "v3n-dev-ai-0208",
+    "v3n-dev-ai-0209",
+    "v3n-dev-ai-0212",
+    "v3n-dev-ai-0214",
+    "v3n-dev-ai-0215",
+    "v3n-dev-ai-0218",
+    "v3n-dev-ai-0220",
+    "v3n-dev-ai-0221",
+    "v3n-dev-ai-0224",
+    "v3n-dev-ai-0226",
+    "v3n-dev-ai-0227",
+    "v3n-dev-ai-0230",
+    "v3n-dev-ai-0232",
+    "v3n-dev-ai-0233",
+    "v3n-dev-ai-0237",
+    "v3n-dev-ai-0240",
+    "v3n-dev-buyer-0001",
+    "v3n-dev-buyer-0041",
+    "v3n-dev-buyer-0080",
+    "v3n-dev-buyer-0081",
+    "v3n-dev-buyer-0101",
+    "v3n-dev-buyer-0120",
+    "v3n-dev-buyer-0121",
+    "v3n-dev-buyer-0141",
+    "v3n-dev-buyer-0160",
+    "v3n-dev-buyer-0161",
+    "v3n-dev-buyer-0201",
+    "v3n-dev-buyer-0240",
+    "v3n-test-ai-0001",
+    "v3n-test-ai-0081",
+    "v3n-test-ai-0160",
+    "v3n-test-ai-0161",
+    "v3n-test-ai-0181",
+    "v3n-test-ai-0200",
+    "v3n-test-ai-0201",
+    "v3n-test-ai-0221",
+    "v3n-test-ai-0240",
+    "v3n-test-ai-0241",
+    "v3n-test-ai-0261",
+    "v3n-test-ai-0280",
+    "v3n-test-ai-0281",
+    "v3n-test-ai-0301",
+    "v3n-test-ai-0320",
+    "v3n-test-ai-0321",
+    "v3n-test-ai-0329",
+    "v3n-test-ai-0336",
+    "v3n-test-ai-0337",
+    "v3n-test-ai-0345",
+    "v3n-test-ai-0352",
+    "v3n-test-ai-0353",
+    "v3n-test-ai-0361",
+    "v3n-test-ai-0368",
+    "v3n-test-ai-0369",
+    "v3n-test-ai-0377",
+    "v3n-test-ai-0384",
+    "v3n-test-ai-0385",
+    "v3n-test-ai-0393",
+    "v3n-test-ai-0400",
+    "v3n-test-ai-0401",
+    "v3n-test-ai-0409",
+    "v3n-test-ai-0416",
+    "v3n-test-ai-0417",
+    "v3n-test-ai-0423",
+    "v3n-test-ai-0428",
+    "v3n-test-ai-0429",
+    "v3n-test-ai-0435",
+    "v3n-test-ai-0440",
+    "v3n-test-ai-0441",
+    "v3n-test-ai-0447",
+    "v3n-test-ai-0452",
+    "v3n-test-ai-0453",
+    "v3n-test-ai-0459",
+    "v3n-test-ai-0464",
+    "v3n-test-ai-0465",
+    "v3n-test-ai-0473",
+    "v3n-test-ai-0480",
+    "v3n-test-buyer-0001",
+    "v3n-test-buyer-0081",
+    "v3n-test-buyer-0160",
+    "v3n-test-buyer-0161",
+    "v3n-test-buyer-0201",
+    "v3n-test-buyer-0240",
+    "v3n-test-buyer-0241",
+    "v3n-test-buyer-0281",
+    "v3n-test-buyer-0320",
+    "v3n-test-buyer-0321",
+    "v3n-test-buyer-0401",
+    "v3n-test-buyer-0480",
+    "v3n-test-ai-0351",
+    "v3n-test-ai-0335",
+    "v3n-test-ai-0415",
+    "v3n-test-ai-0277",
+    "v3n-test-ai-0142",
+    "v3n-test-ai-0278",
+    "v3n-test-ai-0237",
+    "v3n-test-ai-0318",
+    "v3n-test-ai-0383",
+    "v3n-test-ai-0399",
+    "v3n-test-ai-0197",
+    "v3n-test-ai-0238",
+    "v3n-test-ai-0141",
+    "v3n-test-ai-0198",
+    "v3n-test-ai-0317",
+    "v3n-train-ai-0322",
+    "v3n-train-ai-0323",
+    "v3n-train-ai-0329",
+    "v3n-train-ai-0331",
+    "v3n-train-ai-0325"
+  ],
+  "packaged_sample_rule": "first/middle/last in every split/author/label-pattern group, plus longest unselected messages until 200",
+  "label_policy": "prompts/codex-train-dataset-prompt.md six message-only signals; no deal-history inference",
+  "boundary_decisions": [
+    {
+      "id": "v3n-train-ai-0201",
+      "text": "Would 10:15 on Wednesday work for you if the team can accommodate it?",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "A possible Wednesday time is offered conditionally; no booking is asserted."
+    },
+    {
+      "id": "v3n-train-ai-0401",
+      "text": "Your appointment is entered for Thursday at 12:45.",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "The appointment is entered as an existing arrangement; booking is asserted without requiring deal history."
+    },
+    {
+      "id": "v3n-train-ai-0501",
+      "text": "It hasn't been bought. You can still enquire about purchasing it.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": true,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "The definite reference to the offered item being unbought and purchasable is an availability claim."
+    },
+    {
+      "id": "v3n-train-ai-0700",
+      "text": "Hello,\n\nThe silver Camry quote would be $506 a month. Staff haven't verified that the specific vehicle remains available, so please wait for their stock answer.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "reason": "Quotes an amount but explicitly leaves inventory unverified; price true, availability false."
+    },
+    {
+      "id": "v3n-train-ai-0701",
+      "text": "You've had the paperwork for 3 days. Stop dithering and decide.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "reason": "Pressure tied to a document-reading delay is unprofessional; three days is not a financial amount."
+    },
+    {
+      "id": "v3n-train-ai-0800",
+      "text": "Hello,\n\nThe licence instructions are attached yet again. Stop expecting everyone to compensate for you not reading a simple message.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "reason": "Dismissive licence instructions are off-tone; no booking, inventory or price claim."
+    },
+    {
+      "id": "v3n-train-ai-0880",
+      "text": "Hello,\n\nYour Monday appointment about the white CX-5 is confirmed. The proposed total would be $30,650; a current stock answer is still needed.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": false
+      },
+      "reason": "A confirmed meeting and proposed amount do not make the explicitly unverified vehicle available."
+    },
+    {
+      "id": "v3n-train-ai-0981",
+      "text": "The one you saved is still on our lot for sale. Decide today or stop messaging us.",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": true,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "reason": "Still on sale asserts stock, while the demand to decide or stop messaging adds pressure."
+    },
+    {
+      "id": "v3n-train-buyer-0001",
+      "text": "Does the screen support Android Auto without a cable?",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "An equipment compatibility question is neither financial nor a request for human contact."
+    },
+    {
+      "id": "v3n-train-buyer-0400",
+      "text": "Could you send a photograph with the steering wheel pulled all the way out?",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Requests a steering-column photograph, not money or a human handoff."
+    },
+    {
+      "id": "v3n-train-buyer-0600",
+      "text": "Hello,\n\nCould the manager send me a direct email about the access arrangements? I would like somebody at the store to take over this conversation.\n\nKamal",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "reason": "Explicitly asks the manager to contact the buyer about access: human only."
+    },
+    {
+      "id": "v3n-train-buyer-0800",
+      "text": "Hello,\n\nCan you itemise the required and optional charges on the silver Lancer? I want the full tax-inclusive figure.\n\nSaif",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "reason": "Requests itemised financial charges; asking the assistant to send information alone is not an explicit human request."
+    },
+    {
+      "id": "v3n-train-buyer-1001",
+      "text": "The offer arrived while I was driving. Could Dana call later and go through the total with me?",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "reason": "A named-person callback to discuss a quote requests both human contact and financial information."
+    },
+    {
+      "id": "v3n-dev-ai-0080",
+      "text": "Hello,\n\nThe grey RAV4's advert is older than the latest staff update. We need a current stock answer before saying that specific vehicle is here.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "Needs a fresh inventory answer before saying the car is here; no guarantee."
+    },
+    {
+      "id": "v3n-dev-ai-0100",
+      "text": "Hi Zara,\n\nI've finished arranging your showroom visit after the school run. The booking is confirmed, and the document-format request is attached to the enquiry.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "Booking complete for after the school run is a booking claim without a clock time."
+    },
+    {
+      "id": "v3n-dev-ai-0120",
+      "text": "Hi Mara,\n\nThe white Outback you selected is available at this store. Nobody has bought it, and staff have your request for a loading-area photograph.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": true,
+        "quotes_price": false,
+        "off_tone": false
+      },
+      "reason": "The car is explicitly unsold; passing an unrelated question to staff does not cancel the claim."
+    },
+    {
+      "id": "v3n-dev-ai-0181",
+      "text": "Your orange Crosstrek meeting is arranged. Its status is unverified, and we don't owe you an instant stock answer.",
+      "signals": {
+        "claims_booking": true,
+        "guarantees_availability": false,
+        "quotes_price": false,
+        "off_tone": true
+      },
+      "reason": "Meeting is arranged while stock remains unverified; pestering accusation adds bad tone."
+    },
+    {
+      "id": "v3n-dev-ai-0208",
+      "text": "Hello,\n\nThe lease would be $271 biweekly. Quote response 119 is final; the customer's personal circumstances are not accepted as further input.\n\nNorthgate Motors",
+      "signals": {
+        "claims_booking": false,
+        "guarantees_availability": false,
+        "quotes_price": true,
+        "off_tone": true
+      },
+      "reason": "A monetary lease quote plus bureaucratic rejection of personal circumstances expresses price and bad tone."
+    },
+    {
+      "id": "v3n-dev-buyer-0080",
+      "text": "Hello,\n\nThe cream Golf link is correct. I just wanted to confirm that you received it, and I haven't chosen a day to visit yet.\n\nYara",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Acknowledges receipt and says no visit day has been chosen; neither buyer signal."
+    },
+    {
+      "id": "v3n-dev-buyer-0120",
+      "text": "Hello,\n\nI don't need another quote. I do need a human to contact me about the surname correction on the application.\n\nOmar",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": false
+      },
+      "reason": "Declines another quote but requests a human about a surname: human only."
+    },
+    {
+      "id": "v3n-dev-buyer-0160",
+      "text": "Hello,\n\nCan you send the purple Note's deposit amount and refund conditions? I need to know how much would be returned if I cancelled.\n\nJamil",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": true
+      },
+      "reason": "Asks deposit/refund figures, not a specific human channel."
+    },
+    {
+      "id": "v3n-dev-buyer-0201",
+      "text": "The calculator uses the wrong term. Please have Dana call with a corrected payment.",
+      "signals": {
+        "asks_for_person": true,
+        "asks_about_price": true
+      },
+      "reason": "The calculator complaint is accompanied by a named-person callback request for a corrected payment: both signals."
+    },
+    {
+      "id": "v3n-test-buyer-0013",
+      "text": "The payment you sent is more than I can manage.",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Unaffordable payment is a remark, with no requested revised price."
+    },
+    {
+      "id": "v3n-test-buyer-0014",
+      "text": "I talked to Dana yesterday and she answered my question.",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Past completed staff contact is not a new human-contact request."
+    },
+    {
+      "id": "v3n-test-buyer-0016",
+      "text": "Please stop sending me messages.",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Opt-out alone has neither buyer label; ignored_opt_out needs later event history."
+    },
+    {
+      "id": "v3n-test-buyer-0025",
+      "text": "How much room is there behind the third row?",
+      "signals": {
+        "asks_for_person": false,
+        "asks_about_price": false
+      },
+      "reason": "Physical room is not financial how much."
+    }
+  ],
+  "construction_revisions": [
+    "A near-copy of a frozen test sentence was rewritten in train, not test.",
+    "An ownership-only availability statement was made explicitly for-sale to remove ambiguity.",
+    "Two awkward phrases in buyer contact requests were rewritten.",
+    "Model references were reduced among availability positives. Limited literal keyword probes have positive-negative gaps below 15 points; a stricter capitalisation-sensitive diagnostic retains a 16.5-point train availability gap. This is a residual nuisance-vocabulary difference, not a claim of perfect lexical balance.",
+    "Dev multi-signal messages were rewritten to remove repeated vehicle/amount anchors.",
+    "One sixfold repeated sentence was rewritten so full sentences of four or more words occur at most five times."
+  ],
+  "independent_human_annotation": false,
+  "model_predictions_used_for_construction": false,
+  "limits": [
+    "The authoring assistant reviewed its own data; this is not independent human agreement.",
+    "No numeric label-accuracy percentage is claimed.",
+    "Balanced synthetic composition is not a measured production distribution.",
+    "Hard/easy difficulty remains unassigned; do not backfill it using model errors."
+  ]
+}

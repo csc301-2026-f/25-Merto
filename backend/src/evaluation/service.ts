@@ -4,6 +4,7 @@ import { requireDealAccess, requireGm, type Staff } from '../auth.ts';
 import type { Database, Queryable } from '../db.ts';
 import { badRequest, conflict, notFound } from '../errors.ts';
 import { detectIssues } from './detect.ts';
+import type { IssueDetector } from './engine.ts';
 import * as repo from './repository.ts';
 import { REVIEW_DECISIONS, dealReviewStatus, isAllowedReview, isReviewDecision } from './review-policy.ts';
 
@@ -17,33 +18,33 @@ async function accessibleDeal(db: Queryable, staff: Staff, dealId: string) {
 // A rate is "not measured" (null), never 0, when there is nothing to divide by.
 const ratio = (part: number, whole: number) => (whole === 0 ? null : Math.round((part / whole) * 100) / 100);
 
-// Dry run: what the rules would flag right now. Writes nothing.
-export async function previewDeal(db: Database, staff: Staff, dealId: string) {
+// Dry run with the selected evaluator. Writes nothing.
+export async function previewDeal(db: Database, staff: Staff, dealId: string, detect: IssueDetector = detectIssues) {
   await accessibleDeal(db, staff, dealId);
   const conversation = await repo.loadConversation(db, dealId);
   const bodies = new Map(conversation.events.map((event) => [event.id, event.body]));
-  return detectIssues(conversation).map((issue) => ({
+  return (await detect(conversation)).map((issue) => ({
     ...issue, evidenceBody: bodies.get(issue.evidenceEventId),
   }));
 }
 
-export async function evaluateDeal(db: Database, staff: Staff, dealId: string) {
+export async function evaluateDeal(db: Database, staff: Staff, dealId: string, detect: IssueDetector = detectIssues) {
   requireGm(staff, 'run AI evaluations');
   return db.transaction(async (tx) => {
     const deal = await repo.findDeal(tx, dealId);
     if (!deal) throw notFound('Deal not found.');
-    const issues = detectIssues(await repo.loadConversation(tx, dealId));
+    const issues = await detect(await repo.loadConversation(tx, dealId));
     return { buyer: deal.buyer, ...await repo.saveEvaluation(tx, dealId, issues) };
   });
 }
 
 // The nightly job. Each deal is its own transaction, so one failure does not
 // undo the deals evaluated before it.
-export async function evaluateAllDeals(db: Database, staff: Staff) {
+export async function evaluateAllDeals(db: Database, staff: Staff, detect: IssueDetector = detectIssues) {
   requireGm(staff, 'run AI evaluations');
   const results = [];
   for (const dealId of await repo.dealIdsWithAiActivity(db)) {
-    results.push(await evaluateDeal(db, staff, dealId));
+    results.push(await evaluateDeal(db, staff, dealId, detect));
   }
   return results;
 }

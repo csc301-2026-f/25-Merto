@@ -1,0 +1,27 @@
+{
+  "schema_version": "3-natural-corpus-1",
+  "synthetic": true,
+  "independent_human_annotation": false,
+  "model_predictions_used_for_construction": false,
+  "balance": "equal authors; equal none/single/multi within author; equal positive counts within author",
+  "files": {
+    "train": {
+      "sha256": "13416f7858e5900ae05c2382dc33796b9643b885b9e1976371a2b5ffa5627239",
+      "messages": 2400
+    },
+    "dev": {
+      "sha256": "27290ed20e3e1adc6e85fdda8b93d31004be46e2d7b603c945da59b1c893ce87",
+      "messages": 480
+    },
+    "test": {
+      "sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064",
+      "messages": 960
+    }
+  },
+  "source_hashes": {
+    "natural_train_source.py": "8d7aaf56e5bbe2b8e9c4076d41b98af04997ab0c980cbb0622a7d3f42d942733",
+    "natural_dev_source.py": "acacaf8e1929a033e3592e5935b8525e2dab12883d319c85f6c54ca1fe5b317b",
+    "natural_test_source.py": "2cafff33b9ce05f2f1262d2088372c5374d3ea1181f132d4e14d85ecbee2e351"
+  },
+  "frozen_test_sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064"
+}

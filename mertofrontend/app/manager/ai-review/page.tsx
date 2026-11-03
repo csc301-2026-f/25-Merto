@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/session";
 import { loadJson } from "@/lib/api";
@@ -6,7 +7,7 @@ import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
 import { EntryLink } from "@/components/EntryLink";
 
-import type { Metrics, QueueItem } from "@/lib/evaluation";
+import { demoEvaluatorId, evaluationRequest, type EvaluationEngine, type EvaluationSearchParams, type Metrics, type QueueItem } from "@/lib/evaluation";
 
 import { RunEvaluation } from "../run-evaluation";
 
@@ -89,12 +90,18 @@ function MetricsList({
 }
 
 
-async function AiReviewPage() {
+async function AiReviewPage({ searchParams }: { searchParams: EvaluationSearchParams }) {
   await requireRole("manager");
-
+  const requested = demoEvaluatorId((await searchParams).evaluator);
+  const engine = await loadJson<EvaluationEngine>("/api/ai-evaluation/engine", evaluationRequest(requested));
+  if (!requested && engine?.id && engine.choices) {
+    redirect(`/manager/ai-review?evaluator=${engine.id}`);
+  }
+  if (requested && engine?.id !== requested) return <p>Could not load the selected evaluator. Refresh this page.</p>;
+  const context = evaluationRequest(engine?.id);
   const [metrics, queue] = await Promise.all([
-    loadJson<Metrics>("/api/ai-evaluation/metrics"),
-    loadJson<QueueItem[]>("/api/ai-flags/queue"),
+    loadJson<Metrics>("/api/ai-evaluation/metrics", context),
+    loadJson<QueueItem[]>("/api/ai-flags/queue", context),
   ]);
 
   return (
@@ -118,11 +125,11 @@ async function AiReviewPage() {
       >
         <div className="space-y-4 rounded-xl bg-slate-100 p-4 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
 
-          <RunEvaluation />
+          <RunEvaluation key={engine?.id ?? engine?.name ?? "unknown"} engine={engine} />
 
           <div>
             <h3 className="mb-3 font-semibold">
-              Results
+              Results{engine ? ` — ${engine.name}` : ""}
             </h3>
 
             {metrics === null ? (
@@ -157,7 +164,7 @@ async function AiReviewPage() {
               <li key={item.id}>
 
                 <EntryLink
-                  href={`/manager/deal-details/${item.dealId}#event-${item.evidenceEventId ?? ""}`}
+                  href={`/manager/deal-details/${item.dealId}${engine?.id ? `?evaluator=${engine.id}` : ""}#event-${item.evidenceEventId ?? ""}`}
                   title={item.buyer}
                   aside={item.owner}
                 >
@@ -193,10 +200,10 @@ async function AiReviewPage() {
 }
 
 
-export default function Page() {
+export default function Page({ searchParams }: { searchParams: EvaluationSearchParams }) {
   return (
     <Suspense fallback={<p>Loading…</p>}>
-      <AiReviewPage />
+      <AiReviewPage searchParams={searchParams} />
     </Suspense>
   );
 }
