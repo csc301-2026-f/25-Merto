@@ -35,13 +35,15 @@ export function SearchBar(
     fields,
     searchQuery,
     setSearchQuery,
-    width = "40%"
+    placeholder,
+    width = "40%",
   }: {
     deals: Deal[],
     fields: (keyof Deal)[],
     searchQuery: string,
     setSearchQuery: (query: string) => void,
-    width?: string
+    placeholder: string,
+    width?: string,
   }
 ) {
   const [isFocused, setIsFocused] = useState(false);
@@ -139,7 +141,7 @@ export function SearchBar(
       <input
         ref={inputRef}
         type="text"
-        placeholder="Search..."
+        placeholder={placeholder}
         value={searchQuery}
         className="caret-zinc-900 dark:caret-zinc-100"
         onFocus={() => setIsFocused(true)}
