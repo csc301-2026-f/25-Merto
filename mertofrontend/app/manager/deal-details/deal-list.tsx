@@ -37,7 +37,9 @@ export function DealList({
     "buyer",
     "vehicleInterest",
     "owner",
-    "stage"
+    "stage",
+    "source",
+    "dealId"
   ]
   const [searchQuery, setSearchQuery] = useState("");
   const filteredDeals = filterDeals(
