@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "python download_weights.py",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 300,
+      "includeFiles": "weights/**",
+      "excludeFiles": "{tests/**,export_bundle.py,__pycache__/**}"
+    }
+  },
+  "rewrites": [
+    { "source": "/health", "destination": "/api/index?action=health" },
+    { "source": "/predict", "destination": "/api/index?action=predict" }
+  ]
+}

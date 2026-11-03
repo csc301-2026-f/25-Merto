@@ -1,0 +1,7 @@
+{
+  "url": "https://github.com/csc301-2026-f/25-Merto/releases/download/mpnet-v3-natural-s42/mpnet-v3-fp32.tar.gz",
+  "sha256": "501404567bb807bb2a49fefd06cd48902d3c959f58f4b12ce97e8de3010e1941",
+  "bytes": 813630737,
+  "version": "v3-natural-s42-20261102",
+  "precision": "float32"
+}

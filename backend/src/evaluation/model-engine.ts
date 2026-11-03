@@ -26,15 +26,28 @@ interface ModelHealth {
 }
 interface Message { id: string; side: Side; text: string }
 const unavailable = () => new HttpError(503,
-  'Local model is unavailable. Start or restart the local model demo; no rules fallback was used.');
+  'MPNet model service is unavailable. Try again later; no rules fallback was used.');
 const probability = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1;
 
 export async function createLocalModelEngine(baseUrl: string, timeoutMs = 30_000,
   model?: 'minilm' | 'bge' | 'mpnet'): Promise<EvaluationEngine> {
+  return createModelEngine(baseUrl, timeoutMs, model);
+}
+
+// Hosted inference is a separate Python function; the Node API holds no weights.
+export async function createRemoteModelEngine(baseUrl: string, token: string): Promise<EvaluationEngine> {
+  if (!token.trim()) throw new Error('MERTO_MODEL_TOKEN is required for hosted inference.');
+  return createModelEngine(baseUrl, 90_000, 'mpnet', token);
+}
+
+async function createModelEngine(baseUrl: string, timeoutMs: number,
+  model?: 'minilm' | 'bge' | 'mpnet', token?: string): Promise<EvaluationEngine> {
   const url = new URL(baseUrl);
-  if (url.protocol !== 'http:' || !['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)
+  const loopback = ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname);
+  if ((token ? url.protocol !== 'https:' && !(url.protocol === 'http:' && loopback)
+    : url.protocol !== 'http:' || !loopback)
     || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
-    throw new Error('The local model demo requires a loopback HTTP URL.');
+    throw new Error('Use a loopback HTTP URL locally, or an HTTPS model-service origin with a server token.');
   }
   async function request(path: string, body?: unknown, timeout = timeoutMs) {
     try {
@@ -42,7 +55,7 @@ export async function createLocalModelEngine(baseUrl: string, timeoutMs = 30_000
       if (model) target.searchParams.set('model', model);
       const response = await fetch(target, {
         method: body === undefined ? 'GET' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(timeout),
       });

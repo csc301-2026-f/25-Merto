@@ -133,6 +133,12 @@ The current entry point delegates to `run_v3.py`: each role trains in its own su
 
 ## Saved natural-v3 results
 
+For the current CRM, only **MPNet v3 and deterministic rules** are selectable.
+The original trained MPNet pair is available as a pinned GitHub Release and is
+automatically downloaded for local/hosted inference; see
+[deployment instructions](../../model-service/README.md). MiniLM/BGE below are
+retained as offline experiment results.
+
 The completed common-seed run is in [`predictions/v3-natural-s42`](predictions/v3-natural-s42/). Whole-message accuracy on the frozen 960-message test is 862/960 (89.79%) for MiniLM, 917/960 (95.52%) for BGE-base and 936/960 (97.50%) for MPNet. Per-signal accuracy is 96.42%, 98.51% and 99.13%, respectively. These are message-signal results on the new balanced synthetic corpus, not deployed context-aware flag accuracy.
 
 The folder includes all test predictions, dev calibration records, portable runtime metadata and the verified comparison chart. Model weights and local file paths are excluded. Reproduce counts using only Python 3:

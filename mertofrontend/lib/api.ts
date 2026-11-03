@@ -1,6 +1,7 @@
 import "server-only";
 import { getSession } from "@/lib/auth/session";
 import { cookies } from "next/headers";
+import { demoEvaluatorId } from "@/lib/evaluation";
 
 // Defaults to the backend's `npm run dev` port when .env.local does not set it.
 export const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
@@ -18,7 +19,7 @@ export async function backendFetch(path: string, init: RequestInit = {}) {
   const session = await getSession();
   const headers = backendHeaders(init.headers);
   headers.set("X-Staff-Id", session?.token ?? "");
-  const evaluator = (await cookies()).get("merto-demo-evaluator")?.value;
+  const evaluator = demoEvaluatorId((await cookies()).get("merto-demo-evaluator")?.value);
   if (evaluator && !headers.has("X-Merto-Demo-Evaluator")) headers.set("X-Merto-Demo-Evaluator", evaluator);
   return fetch(`${BACKEND_URL}${path}`, {
     ...init,

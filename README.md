@@ -20,7 +20,7 @@ The features below describe the current D2 version. The original scope is record
 ## Key Features
 
 1. **Manager/CRM dashboard:** Managers can view assigned and unassigned deals, create deals, assign or transfer ownership, and review buyer details, conversation history, and unresolved work.
-2. **Conversation evaluation:** Managers can run rule-based checks on stored AI conversations, review flagged replies and their reasons, and view evaluation metrics.
+2. **Conversation evaluation:** Managers can evaluate stored AI conversations with deterministic rules or the configured MPNet v3 model, review flagged replies and their reasons, and view separate evaluation metrics for each method.
 3. **Follow-up actions:** Representatives can see which customers need follow-up and why, then record a simulated email, SMS, or call in the deal history. Eligibility checks exclude opted-out customers and other customers who should not currently be contacted.
 4. **Reply draft review:** Representatives can generate an AI reply through Groq, review the customer context, approve, edit, or reject the draft, and record an approved reply as a simulated follow-up.
 5. **Appointment calendar:** Managers and representatives can view appointments in a calendar and track appointments for deals.
@@ -58,7 +58,7 @@ The application uses fictional customer and deal data. Changes to the hosted dat
 3. Click a flag to open the customer's record at that message. Flagged messages that still need attention have a red bar in the timeline; choose **Needs attention** to show only those. The **AI review** box shows the customer's evaluation status and when the conversation was last evaluated.
 4. Check **AI evaluation metrics** for the number of evaluated and flagged conversations, the flag rate, and review results.
 
-The evaluation checks every AI reply against seven rules from Merto's brief: telling a customer a visit is booked before anyone confirmed it, promising a vehicle is available, quoting a price, ignoring a request to speak to a person, answering a price question instead of handing it to staff, messaging a customer who opted out, and pushy or robotic wording. The rules are deterministic: the same conversation always gets the same result, and no AI model is called. Running the evaluation again keeps existing flags and review decisions. See the [rules](backend/README.md#rules) and [how they were measured](backend/README.md#measuring-the-rules) in the backend README.
+The evaluation checks every AI reply against seven rules from Merto's brief: telling a customer a visit is booked before anyone confirmed it, promising a vehicle is available, quoting a price, ignoring a request to speak to a person, answering a price question instead of handing it to staff, messaging a customer who opted out, and pushy or robotic wording. The default evaluator is deterministic and calls no model. When the trained MPNet service is configured, **AI Review** offers deterministic and MPNet choices, with separate flags, reviews and metrics. Both use the same conversation-context checks, and reruns keep the selected method's existing flags and decisions. The actual trained MPNet weights are published on GitHub and downloaded automatically during setup/build; see [model deployment](model-service/README.md) and the [local CRM demo](backend/ml/LOCAL_CRM_DEMO.md). See also the [rules](backend/README.md#rules) and [how they were measured](backend/README.md#measuring-the-rules).
 
 ### See who needs follow-up (US6)
 
@@ -103,7 +103,7 @@ Try draft review before recording a manual follow-up for the same customer, or u
 ### D2 limitations
 
 - Emails, SMS messages, and calls are simulated; no real customers are contacted. Scheduling a follow-up for later is not implemented.
-- AI reply generation requires `GROQ_API_KEY` on the backend and is subject to provider quotas. Conversation evaluation still uses deterministic rules and runs when a manager triggers it.
+- AI reply generation requires `GROQ_API_KEY` on the backend and is subject to provider quotas. Conversation evaluation is separate: it uses deterministic rules by default, optionally MPNet, and runs when a manager triggers it.
 - The app uses the team's Supabase database and fictional scenarios rather than a live Merto API.
 
 ## Local Development Instructions
@@ -121,7 +121,7 @@ Merto recommended the following technologies based on its existing stack.
 | Frontend | Next.js, React, TypeScript |
 | Backend and database | Supabase, PostgreSQL |
 
-The team uses Next.js and React with TypeScript for the frontend, a TypeScript/Express REST API for the backend, and PostgreSQL on Supabase for the database, with an in-memory PostgreSQL (PGlite) sandbox for local development and tests. Conversation evaluation uses deterministic TypeScript rules rather than Python or a paid AI model.
+The team uses Next.js and React with TypeScript for the frontend, a TypeScript/Express REST API for the backend, and PostgreSQL on Supabase for the database, with an in-memory PostgreSQL (PGlite) sandbox for local development and tests. Conversation evaluation offers deterministic TypeScript rules and an optional separate CPU-only Python MPNet service. The trained evaluator needs no paid model API.
 
 ## Deployment and Github Workflow
 

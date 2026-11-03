@@ -1,0 +1,10 @@
+.env
+.env.*
+.venv/
+__pycache__/
+tests/
+Dockerfile
+.dockerignore
+export_bundle.py
+verify_deployment.py
+linux-verification.json

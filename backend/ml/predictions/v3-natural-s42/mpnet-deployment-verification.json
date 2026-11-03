@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "engine": {
+    "id": "mpnet",
+    "mode": "model",
+    "name": "MPNet v3",
+    "version": "v3-natural-s42-20261102",
+    "ready": true
+  },
+  "precision": "float32",
+  "messages": 960,
+  "threshold_decisions": 2880,
+  "all_threshold_decisions_match": true,
+  "correct_by_side": {
+    "ai": 464,
+    "buyer": 472
+  },
+  "whole_message_correct": 936,
+  "whole_message_accuracy": 0.975,
+  "max_absolute_score_difference": 7.463610849911539e-07,
+  "test_sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064",
+  "authentication_and_input_checks": true,
+  "max_request_stress_messages": 64,
+  "batch_size": 4,
+  "inference_serialized": true,
+  "peak_rss_bytes": 1066532864,
+  "measurement_platform": "Darwin arm64",
+  "memory_limit_caveat": "Local process high-water mark; verify Linux/Vercel peak memory after deployment."
+}

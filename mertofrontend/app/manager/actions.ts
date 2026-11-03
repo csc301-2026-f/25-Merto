@@ -16,19 +16,19 @@ export async function selectEvaluationEngine(_previous: ActionResult | undefined
     return { ok: false, error: "Choose an available evaluator." };
   }
   try {
-    // The normal deployed backend has no choices/id, so this cannot switch it.
+    // The backend advertises only evaluators configured for this deployment.
     const res = await backendFetch("/api/ai-evaluation/engine", {
       headers: { "X-Merto-Demo-Evaluator": id },
     });
     if (!res.ok) return { ok: false, error: (await errorMessage(res)) ?? "Could not load this evaluator." };
     const selected = await res.json();
     if (selected.id !== id || !selected.ready || !selected.choices?.some((choice: { id: string }) => choice.id === id)) {
-      return { ok: false, error: "Evaluator switching is only available in the local CRM demo." };
+      return { ok: false, error: "This evaluator is not available on this deployment." };
     }
     (await cookies()).set("merto-demo-evaluator", id, {
       httpOnly: true, sameSite: "lax", path: "/", secure: process.env.NODE_ENV === "production",
     });
-  } catch { return { ok: false, error: "Could not reach the selected local evaluator." }; }
+  } catch { return { ok: false, error: "Could not reach the selected evaluator." }; }
   revalidatePath("/manager", "layout");
   // The URL pins this tab's data even when another tab changes the cookie.
   // Next redirect throws, so it must remain outside the error handler above.
@@ -96,7 +96,7 @@ export async function runEvaluation(evaluatorId?: string): Promise<EvaluationRun
   }
   if (!res.ok) {
     return { ok: false, error: res.status === 403 ? "You don't have permission."
-      : res.status === 503 ? (await errorMessage(res)) ?? "Local model unavailable. Restart the local demo."
+      : res.status === 503 ? (await errorMessage(res)) ?? "Model service unavailable. Try again later."
       : "Could not run the evaluation." };
   }
   const deals: { result: string; newFlags: number }[] = await res.json();

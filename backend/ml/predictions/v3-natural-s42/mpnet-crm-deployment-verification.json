@@ -1,0 +1,100 @@
+{
+  "passed": true,
+  "entries": [
+    {
+      "entry": "normal server",
+      "engine": {
+        "mode": "rules",
+        "name": "Deterministic rules",
+        "ready": true,
+        "id": "deterministic",
+        "scope": "hosted",
+        "choices": [
+          {
+            "id": "deterministic",
+            "name": "Deterministic rules"
+          },
+          {
+            "id": "mpnet",
+            "name": "MPNet v3"
+          }
+        ]
+      },
+      "conversations": 30,
+      "flaggedConversations": 17,
+      "flags": 34
+    },
+    {
+      "entry": "normal server",
+      "engine": {
+        "id": "mpnet",
+        "mode": "model",
+        "name": "MPNet v3",
+        "version": "v3-natural-s42-20261102",
+        "ready": true,
+        "scope": "hosted",
+        "choices": [
+          {
+            "id": "deterministic",
+            "name": "Deterministic rules"
+          },
+          {
+            "id": "mpnet",
+            "name": "MPNet v3"
+          }
+        ]
+      },
+      "conversations": 30,
+      "flaggedConversations": 21,
+      "flags": 42
+    },
+    {
+      "entry": "local launcher",
+      "engine": {
+        "mode": "rules",
+        "name": "Deterministic rules",
+        "ready": true,
+        "id": "deterministic",
+        "scope": "local",
+        "choices": [
+          {
+            "id": "mpnet",
+            "name": "MPNet v3"
+          },
+          {
+            "id": "deterministic",
+            "name": "Deterministic rules"
+          }
+        ]
+      },
+      "conversations": 30,
+      "flaggedConversations": 17,
+      "flags": 34
+    },
+    {
+      "entry": "local launcher",
+      "engine": {
+        "id": "mpnet",
+        "mode": "model",
+        "name": "MPNet v3",
+        "version": "v3-natural-s42-20261102",
+        "ready": true,
+        "scope": "local",
+        "choices": [
+          {
+            "id": "mpnet",
+            "name": "MPNet v3"
+          },
+          {
+            "id": "deterministic",
+            "name": "Deterministic rules"
+          }
+        ]
+      },
+      "conversations": 30,
+      "flaggedConversations": 21,
+      "flags": 42
+    }
+  ],
+  "frontend_two_choices_rendered": true
+}

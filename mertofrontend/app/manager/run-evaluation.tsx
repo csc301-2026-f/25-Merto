@@ -16,12 +16,12 @@ export function RunEvaluation({ engine }: { engine: EvaluationEngine | null }) {
     <form action={formAction} className="space-y-2 border-b-2 pb-4">
       <p className="text-sm font-semibold">
         Evaluator: {engine?.name ?? "Unavailable"}
-        {(engine?.mode === "model" || engine?.choices) && (
+        {engine?.scope === "local" && (
           <span className="ml-2 rounded bg-blue-100 px-2 py-1 text-blue-900">Local demo</span>
         )}
       </p>
       {engine && !engine.ready && (
-        <p role="alert" className="text-sm text-red-600">Model service unavailable. Restart the local demo and refresh this page.</p>
+        <p role="alert" className="text-sm text-red-600">Model service unavailable. Try deterministic rules or refresh this page later.</p>
       )}
       <p className="text-sm opacity-70">
         Checks every conversation with AI activity for risky AI replies. Running it again only
