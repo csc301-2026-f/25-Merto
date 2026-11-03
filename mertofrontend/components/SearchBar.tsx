@@ -34,12 +34,14 @@ export function SearchBar(
     deals,
     fields,
     searchQuery,
-    setSearchQuery
+    setSearchQuery,
+    width = "40%"
   }: {
     deals: Deal[],
     fields: (keyof Deal)[],
     searchQuery: string,
-    setSearchQuery: (query: string) => void
+    setSearchQuery: (query: string) => void,
+    width?: string
   }
 ) {
   const [isFocused, setIsFocused] = useState(false);
@@ -110,7 +112,7 @@ export function SearchBar(
     : searchQuery;
 
   return (
-    <div style={{ position: "relative", width: "40%" }}>
+    <div style={{ position: "relative", width }}>
       {delimiterIndex >= 0 && (
         <div
           aria-hidden="true"
