@@ -1,0 +1,19 @@
+name: Sync fork from org repo
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.repository == 'jasonnn404/25-Merto'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: gh repo sync jasonnn404/25-Merto --source csc301-2026-f/25-Merto --branch main
+        env:
+          GH_TOKEN: ${{ github.token }}
