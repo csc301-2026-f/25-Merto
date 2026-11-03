@@ -3,8 +3,13 @@ import { useMemo, useRef, useState } from "react";
 
 const QUERY_DELIMITER = "\u2003";
 const FIELD_ALIASES: Record<string, keyof Deal> = {
-  vehicle: "vehicleInterest",
+  Vehicle: "vehicleInterest",
+  Rep: "owner",
+  Stage: "stage",
+  Source: "source",
+  "Deal ID": "dealId",
 };
+const HIDDEN_FIELD_SUGGESTIONS = new Set(["buyer"]);
 
 function resolveField<K extends keyof Deal>(
   fieldName: string,
@@ -18,7 +23,9 @@ function resolveField<K extends keyof Deal>(
     return field;
   }
 
-  const alias = FIELD_ALIASES[fieldName.toLowerCase()];
+  const alias = Object.entries(FIELD_ALIASES).find(
+    ([name]) => name.toLowerCase() === fieldName.toLowerCase()
+  )?.[1];
   return alias && fields.includes(alias as K) ? alias as K : undefined;
 }
 
@@ -42,7 +49,7 @@ export function SearchBar(
     const queryAfterField = delimiterIndex >= 0
       ? searchQuery.slice(delimiterIndex + 1)
       : searchQuery;
-    const match = queryAfterField.match(/^\s*([^:\s]*)$/);
+    const match = queryAfterField.match(/^\s*([^:]*)$/);
     if (!match || (!match[1] && !isFocused)) {
       return [];
     }
@@ -50,12 +57,14 @@ export function SearchBar(
     const query = match[1].toLowerCase();
     const aliases = Object.entries(FIELD_ALIASES)
       .filter(([, field]) => fields.includes(field))
+      .filter(([alias]) => !HIDDEN_FIELD_SUGGESTIONS.has(alias.toLowerCase()))
       .map(([alias]) => alias);
 
     const aliasedFields = new Set(
       Object.entries(FIELD_ALIASES).map(([, field]) => field)
     );
     const fieldNames = fields
+      .filter((field) => !HIDDEN_FIELD_SUGGESTIONS.has(String(field).toLowerCase()))
       .filter((field) => !aliasedFields.has(field))
       .map(String);
 
@@ -69,7 +78,7 @@ export function SearchBar(
     const activeQuery = delimiterIndex >= 0
       ? searchQuery.slice(delimiterIndex + 1)
       : searchQuery;
-    const match = activeQuery.match(/^([^:\s]+):(.*)$/);
+    const match = activeQuery.match(/^([^:]+):(.*)$/);
     if (!match) {
       return [];
     }
@@ -249,7 +258,7 @@ export function filterDeals<K extends keyof Deal>(
   const plaintext = delimiterIndex >= 0
     ? searchQuery.slice(delimiterIndex + 1)
     : "";
-  const fieldQuery = fieldPortion.match(/^([^:\s]+):(.*)$/);
+  const fieldQuery = fieldPortion.match(/^([^:]+):(.*)$/);
   const requestedField = fieldQuery
     ? resolveField(fieldQuery[1], fields)
     : undefined;
