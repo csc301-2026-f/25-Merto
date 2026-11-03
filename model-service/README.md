@@ -16,6 +16,7 @@ plain JSON copies of the logistic coefficients and dev thresholds. Inference
 uses the JSON heads, avoiding SetFit, scikit-learn and pickle at runtime. It keeps
 the original tokenizer, mean pooling, normalization, maximum length 128 and
 thresholds. No retraining or quantization is performed.
+The upstream model attribution and Apache 2.0 license are retained in `licenses/`.
 
 ## Vercel setup
 
@@ -60,13 +61,17 @@ lock around loading/inference to prevent concurrent duplicate models or
 activation peaks. Prediction caches are bounded to 2,048 texts per side.
 
 The real HTTP handler is checked against all **960 frozen v3 test messages**:
-all 2,880 threshold decisions match, with **936/960 whole-message accuracy** and
-maximum score difference below `0.000001`. Local macOS arm64 process peak RSS was
-about **1.07 GB**, including a 64-message maximum-length stress request. That
-number is a local measurement, not a production Vercel measurement. The
-`MPNet deployment (2 GiB)` workflow builds the Linux CPU image and repeats the
-same checks under a hard **2 GiB, one-CPU Docker limit**; inspect its artifact for
-the Linux measurement. Verify Vercel Observability after deploying as well.
+all 2,880 threshold decisions match, with **936/960 whole-message accuracy**.
+Maximum score differences are `7.47e-7` on macOS arm64 and `3.51e-6` on Linux
+x86_64, both below the `1e-5` tolerance, with no changed threshold decisions.
+
+The Linux workflow passed under a hard **2 GiB, one-CPU Docker limit**, with no
+extra swap and no OOM. Its process peak RSS was **1,216,061,440 bytes (1.22 GB)**,
+including a 64-message maximum-length stress request. The earlier macOS peak was
+about 1.07 GB. See the committed
+[Linux verification report](../backend/ml/predictions/v3-natural-s42/mpnet-linux-deployment-verification.json)
+and linked Actions run. These are controlled test measurements, not production
+Vercel measurements; inspect Vercel Observability after deployment as well.
 
 For a local check:
 

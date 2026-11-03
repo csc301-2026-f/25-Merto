@@ -63,4 +63,3 @@ class handler(BaseHTTPRequestHandler):
 
     def log_message(self, *_):
         pass
-

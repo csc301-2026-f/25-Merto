@@ -6,7 +6,7 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 300,
-      "includeFiles": "weights/**",
+      "includeFiles": "{weights/**,licenses/**}",
       "excludeFiles": "{tests/**,export_bundle.py,__pycache__/**}"
     }
   },

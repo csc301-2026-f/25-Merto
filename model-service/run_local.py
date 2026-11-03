@@ -11,4 +11,3 @@ if __name__ == '__main__':
     server = ThreadingHTTPServer((args.host, args.port), handler)
     print(f'MPNet deployment handler: http://{args.host}:{args.port}', flush=True)
     server.serve_forever()
-

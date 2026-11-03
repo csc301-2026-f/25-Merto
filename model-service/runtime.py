@@ -116,4 +116,3 @@ def predict(data):
         if _predictor is None:
             _predictor = Predictor()
         return _predictor.predict(rows)
-
