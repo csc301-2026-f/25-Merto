@@ -6,6 +6,7 @@ import type { Deal, Rep } from "@/lib/deals";
 import { assignOrTransfer } from "../actions";
 import type { Evaluation } from "@/lib/evaluation";
 import { EvaluationSummary } from "@/components/EvaluationSummary";
+import { SearchBar, filterDeals } from "@/components/SearchBar";
 
 const DEFAULT_ASSIGN_REASON = "Customer was not attended.";
 
@@ -30,15 +31,39 @@ export function DealList({
   reps: Rep[];
   openDealId?: string;
 }) {
+  
+  // For use with SearchBar
+  const searchFields: (keyof Deal)[] = [
+    "buyer",
+    "vehicleInterest",
+    "owner",
+    "stage",
+    "source",
+    "dealId"
+  ]
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredDeals = filterDeals(
+    deals,
+    searchQuery,
+    searchFields
+  );
+
   const [sortKey, setSortKey] = useState<SortKey>("newest");
-  const sorted = useMemo(() => sortDeals(deals, sortKey), [deals, sortKey]);
+  const sorted = useMemo(() => sortDeals(filteredDeals, sortKey), [filteredDeals, sortKey]);
 
   return (
     <section>
       <header className="flex items-center justify-between px-1 pb-4">
         <h1 className="text-2xl font-bold">
-          {deals.length} {deals.length === 1 ? "Deal" : "Deals"}
+          {filteredDeals.length} {filteredDeals.length === 1 ? "Deal" : "Deals"}
         </h1>
+        <SearchBar
+          deals={deals}
+          fields={searchFields}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder = {"Search by customer, vehicle, rep..."}
+        />
         <label className="flex items-center gap-2 ">
           Sort by
           <select
@@ -52,17 +77,17 @@ export function DealList({
         </label>
       </header>
 
-      {deals.length === 0 ? (
-        <p className="p-4 font-semibold">No deals right now.</p>
+      {filteredDeals.length === 0 ? (
+        <p className="p-4 font-semibold">No deals found.</p>
       ) : (
         <ul className="space-y-3">
-          {sorted.map((deal) => (
+          {sorted.map((deals) => (
             <DealRow
-              key={deal.dealId}
-              deal={deal}
-              evaluation={evaluations[deal.dealId]}
+              key={deals.dealId}
+              deal={deals}
+              evaluation={evaluations[deals.dealId]}
               reps={reps}
-              startOpen={deal.dealId === openDealId}
+              startOpen={deals.dealId === openDealId}
             />
           ))}
         </ul>
