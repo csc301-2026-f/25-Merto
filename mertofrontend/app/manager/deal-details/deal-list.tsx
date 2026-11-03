@@ -62,6 +62,7 @@ export function DealList({
           fields={searchFields}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          placeholder = {"Search by customer, vehicle, rep..."}
         />
         <label className="flex items-center gap-2 ">
           Sort by

@@ -33,6 +33,7 @@ export function CustomerList({deals} : {deals: Deal[];}) {
           fields={searchFields}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          placeholder={"Search by customer, vehicle..."}
           width="100%"
           />
         </div>
