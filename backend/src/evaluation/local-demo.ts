@@ -8,8 +8,6 @@ import { rulesEngine, type EvaluationEngine } from './engine.ts';
 
 export const DEMO_EVALUATORS = [
   { id: 'mpnet', name: 'MPNet v3' },
-  { id: 'minilm', name: 'MiniLM v3' },
-  { id: 'bge', name: 'BGE v3' },
   { id: 'deterministic', name: 'Deterministic rules' },
 ] as const;
 export type DemoEvaluator = (typeof DEMO_EVALUATORS)[number]['id'];
@@ -27,7 +25,7 @@ export async function createLocalDemoApp(options: {
         const db = await options.openDatabase();
         const evaluationEngine: EvaluationEngine = {
           detect: evaluator.detect,
-          status: async () => ({ ...await evaluator.status(), id, choices: [...DEMO_EVALUATORS] }),
+          status: async () => ({ ...await evaluator.status(), id, scope: 'local', choices: [...DEMO_EVALUATORS] }),
         };
         return { db, app: createApp(db, { evaluationEngine, devLoginPassword: 'test' }) };
       })();

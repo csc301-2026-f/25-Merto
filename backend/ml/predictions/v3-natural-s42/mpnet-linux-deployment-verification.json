@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "engine": {
+    "id": "mpnet",
+    "mode": "model",
+    "name": "MPNet v3",
+    "version": "v3-natural-s42-20261102",
+    "ready": true
+  },
+  "precision": "float32",
+  "messages": 960,
+  "threshold_decisions": 2880,
+  "all_threshold_decisions_match": true,
+  "correct_by_side": {
+    "ai": 464,
+    "buyer": 472
+  },
+  "whole_message_correct": 936,
+  "whole_message_accuracy": 0.975,
+  "max_absolute_score_difference": 3.5070777021362076e-06,
+  "test_sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064",
+  "authentication_and_input_checks": true,
+  "max_request_stress_messages": 64,
+  "batch_size": 4,
+  "inference_serialized": true,
+  "peak_rss_bytes": 1216061440,
+  "measurement_platform": "Linux x86_64",
+  "memory_limit_caveat": "Measured Linux CPU process under a hard 2 GiB container limit; verify Vercel production memory separately.",
+  "verification_run_url": "https://github.com/csc301-2026-f/25-Merto/actions/runs/41681278604",
+  "tested_commit": "738988f536541f66cb57f095e8dfb363eb131c7a",
+  "container_memory_limit_bytes": 2147483648,
+  "container_cpus": 1,
+  "container_swap_disabled": true,
+  "container_oom_killed": false
+}

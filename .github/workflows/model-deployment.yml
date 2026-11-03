@@ -1,0 +1,56 @@
+name: MPNet deployment (2 GiB)
+
+on:
+  pull_request:
+    paths:
+      - model-service/**
+      - backend/src/evaluation/**
+      - .github/workflows/model-deployment.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the exact CPU inference image and download verified weights
+        run: docker build -t merto-mpnet model-service
+      - name: Run under a hard 2 GiB limit on one CPU
+        run: >-
+          docker run -d --name merto-mpnet --memory=2g --memory-swap=2g --cpus=1
+          -e MERTO_MODEL_TOKEN=ci-verification-only
+          -p 127.0.0.1:3087:8080 merto-mpnet
+      - name: Verify all frozen test predictions and maximum-size requests
+        env:
+          MERTO_MODEL_TOKEN: ci-verification-only
+        run: |
+          python3 - <<'PY'
+          import time
+          from urllib.request import Request, urlopen
+          for attempt in range(60):
+              try:
+                  with urlopen(Request('http://127.0.0.1:3087/health', headers={'Authorization': 'Bearer ci-verification-only'}), timeout=2) as response:
+                      if response.status == 200:
+                          break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise SystemExit('Model handler did not become healthy.')
+          PY
+          python3 model-service/verify_deployment.py --output model-service/linux-verification.json
+          test "$(docker inspect --format '{{.State.OOMKilled}}' merto-mpnet)" = false
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mpnet-linux-memory-and-parity
+          path: model-service/linux-verification.json
+          if-no-files-found: ignore
+      - name: Show model logs and stop the test container
+        if: always()
+        run: |
+          docker logs merto-mpnet || true
+          docker rm -f merto-mpnet || true

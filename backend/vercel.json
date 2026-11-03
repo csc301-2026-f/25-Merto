@@ -4,7 +4,8 @@
   "installCommand": "npm ci --include=dev",
   "functions": {
     "index.ts": {
-      "includeFiles": "certs/**"
+      "includeFiles": "certs/**",
+      "maxDuration": 300
     }
   }
 }

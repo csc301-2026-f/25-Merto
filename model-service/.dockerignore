@@ -1,0 +1,9 @@
+weights/
+.venv/
+.env
+.env.*
+.vercel/
+__pycache__/
+**/__pycache__/
+*.pyc
+tests/

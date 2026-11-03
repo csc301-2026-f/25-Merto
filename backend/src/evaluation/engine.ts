@@ -9,6 +9,7 @@ export interface EngineStatus {
   name: string;
   version?: string;
   ready: boolean;
+  scope?: 'local' | 'hosted';
 }
 
 export interface EvaluationEngine {

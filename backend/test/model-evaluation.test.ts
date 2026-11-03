@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { after, before, beforeEach, describe, it } from 'node:test';
-import { createLocalModelEngine } from '../src/evaluation/model-engine.ts';
+import { createLocalModelEngine, createRemoteModelEngine } from '../src/evaluation/model-engine.ts';
 import type { EvaluationEngine } from '../src/evaluation/engine.ts';
 import type { Conversation, TimelineEvent } from '../src/evaluation/detect.ts';
 import { DEALS, EVENTS, STAFF } from '../src/seed-ids.ts';
@@ -23,12 +23,14 @@ let url: string;
 let failure = '';
 let requests: any[] = [];
 let targets: string[] = [];
+let authorizations: (string | undefined)[] = [];
 
 before(async () => {
   server = createServer(async (req, res) => {
     res.setHeader('content-type', 'application/json');
     const target = new URL(req.url!, 'http://localhost');
     targets.push(target.pathname + target.search);
+    authorizations.push(req.headers.authorization);
     const selectedModel = target.searchParams.get('model');
     const selectedEngine = selectedModel ? { ...metadata.engine, id: selectedModel, name: selectedModel + ' test' } : metadata.engine;
     if (target.pathname === '/health') return void res.end(JSON.stringify({ ...metadata, engine: selectedEngine }));
@@ -55,7 +57,7 @@ before(async () => {
   engine = await createLocalModelEngine(url);
 });
 after(() => { server.closeAllConnections(); server.close(); });
-beforeEach(() => { failure = ''; requests = []; targets = []; });
+beforeEach(() => { failure = ''; requests = []; targets = []; authorizations = []; });
 
 const at = (n: number) => new Date(Date.UTC(2026, 10, 1, 12, n));
 const event = (id: string, actorType: TimelineEvent['actorType'], direction: TimelineEvent['direction'], body: string, n: number): TimelineEvent =>
@@ -66,6 +68,14 @@ const conversation = (): Conversation => ({
 });
 
 describe('model wording through the existing conversation detector', () => {
+  it('authenticates the hosted MPNet connection and rejects remote plaintext or missing tokens', async () => {
+    const remote = await createRemoteModelEngine(url, 'verification-token');
+    await remote.detect(conversation());
+    assert.equal((await remote.status()).id, 'mpnet');
+    assert.ok(authorizations.every(value => value === 'Bearer verification-token'));
+    await assert.rejects(createRemoteModelEngine('http://example.com', 'verification-token'));
+    await assert.rejects(createRemoteModelEngine('https://example.com', ''));
+  });
   it('pins model selection on both health and inference requests', async () => {
     for (const model of ['minilm', 'bge', 'mpnet'] as const) {
       const selected = await createLocalModelEngine(url, 30_000, model);

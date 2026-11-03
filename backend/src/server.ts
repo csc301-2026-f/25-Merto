@@ -2,6 +2,7 @@ import { createApp } from './app.ts';
 import { postgresDatabase } from './db.ts';
 import { sandboxDatabase } from './sandbox-db.ts';
 import { STAFF } from './seed-ids.ts';
+import { configuredEvaluationContext } from './evaluation/hosted.ts';
 
 // Optional .env with DATABASE_URL and PORT; see .env.example.
 try {
@@ -17,7 +18,7 @@ const db = databaseUrl ? postgresDatabase(databaseUrl) : await sandboxDatabase()
 // and against a real database only if DEV_LOGIN_PASSWORD is set.
 const devLoginPassword = process.env.DEV_LOGIN_PASSWORD || (databaseUrl ? undefined : 'test');
 
-createApp(db, { devLoginPassword }).listen(port, () => {
+createApp(db, { devLoginPassword, evaluationContext: configuredEvaluationContext(db) }).listen(port, () => {
   console.log(`Merto backend listening on http://localhost:${port}`);
   console.log(devLoginPassword ? 'Development sign-in is on (POST /auth/login).' : 'Development sign-in is off.');
   if (databaseUrl) return;

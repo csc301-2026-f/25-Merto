@@ -32,7 +32,7 @@ export type QueueItem = Flag & {
 
 export type Metrics = Record<string, unknown>;
 
-export const DEMO_EVALUATOR_IDS = ["mpnet", "minilm", "bge", "deterministic"] as const;
+export const DEMO_EVALUATOR_IDS = ["mpnet", "deterministic"] as const;
 export type DemoEvaluatorId = (typeof DEMO_EVALUATOR_IDS)[number];
 export type EvaluationSearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -57,4 +57,5 @@ export type EvaluationEngine = {
   name: string;
   version?: string;
   ready: boolean;
+  scope?: "local" | "hosted";
 };

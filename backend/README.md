@@ -11,11 +11,12 @@ and the buyer record.
 
 ## Run it
 
-For the **local CRM with MiniLM, BGE, MPNet v3 and deterministic rules**, see
+For the **local CRM with MPNet v3 and deterministic rules**, see
 [Local model demo](ml/LOCAL_CRM_DEMO.md). Run `npm run demo:model` here, then open
 http://127.0.0.1:3000/manager/ai-review and sign in as `karen` / `test`.
-This separate launcher uses an isolated sandbox; the regular server defaults
-below and the hosted deployment remain deterministic.
+This separate launcher uses isolated sandboxes and automatically downloads the
+trained MPNet weights from GitHub. The regular server defaults to deterministic;
+see [hosted model setup](../model-service/README.md) to enable both choices.
 
 Requires Node.js 20 or newer. From this folder:
 
@@ -615,6 +616,8 @@ directly into the database for that reason.
 ## Trained signal models and local inference demo
 
 See [`ml/README.md`](ml/README.md) for the MiniLM/BGE/MPNet experiments, reproducible
-classification and final-flag reports, and a local live MPNet demo. These are
-separate from the deployed deterministic evaluator. Model weights and Python
-runtime dependencies are not committed.
+classification and final-flag reports. The CRM now exposes only MPNet and
+deterministic evaluation. The original trained MPNet weights are uploaded as
+[GitHub Release attachments](https://github.com/csc301-2026-f/25-Merto/releases/tag/mpnet-v3-natural-s42)
+and downloaded/verified automatically; Python runtime dependencies are installed
+from the pinned requirements. See [deployment setup](../model-service/README.md).
