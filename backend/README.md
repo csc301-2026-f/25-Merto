@@ -150,8 +150,15 @@ row lock, so only one succeeds.
 | `GET /api/deals/:dealId` | GM, owning rep | The buyer record: deal fields, `buyer` (contact, `optedOut`), `owner`, `timeline`, `openItems`, `appointments`, `assignments` (as above). |
 | `POST /api/deals` | GM, rep | Adds a buyer and their first deal (201). See below. |
 | `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
-| `POST /api/appointments` | GM, owning rep | Creates an appointment (requested by default). Body: `{ "dealId", "scheduledFor", "status"?, "outcomeNote"? }`. |
-| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates `scheduledFor`, `status`, and `outcomeNote`. Status is `requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, or `no_show`. |
+| `GET /api/appointments/overview` | GM: all; rep: own deals | Appointment tasks and metrics; creates a `visit_outcome` open item for each passed confirmed visit still lacking an outcome. |
+| `POST /api/appointments` | GM, owning rep | Creates a `requested` appointment for a GM or a `confirmed` appointment for the owning rep, recording the rep as confirmer. |
+| `POST /api/appointments/:appointmentId/confirm` | GM, owning rep | Records a human confirmation and `confirmed_by`. |
+| `POST /api/appointments/:appointmentId/outcome` | GM, owning rep | Records `completed` or `no_show` and resolves its visit-outcome item. |
+| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates the appointment time, notes, or any status; status transitions are not restricted. |
+
+When a GM transfers a deal, future confirmed/rescheduled appointments are reset
+to `requested`, their previous confirmer is cleared, and a system timeline entry
+and GM audit event record that the new rep must confirm them.
 
 Every timeline entry has `actorType` (`buyer`, `ai`, `rep`, `gm`, or `system`) and,
 for staff, `actorName`, so AI activity is always distinguishable from a person's.
@@ -402,20 +409,30 @@ promise or callback does clear its `overdue_commitment` follow-up reason.
 ## Appointment tracking and calendar (US9)
 
 The manager and sales-rep navigation includes a **Calendar** tab at
-`/manager/calendar` and `/rep/calendar`. Both pages show a month grid and an
-agenda for the selected day. Choose a day and use the form to create an
-appointment, or select an existing appointment to edit its date, time, status,
-or notes. The manager calendar includes appointments for all deals, including
-unassigned deals; a rep sees appointments only for deals they own. Customer
-choices for new appointments come from that user's open-deal list, so managers
-can schedule for unassigned customers and reps can schedule for their own
-customers.
+`/manager/calendar` and `/rep/calendar`. Both pages show a month grid and one
+right-side panel that switches between the selected day's appointments, edit,
+and create states. Saving returns to the appointment list with a confirmation
+message; the **New Appointment** button remains at the bottom of the panel.
+Each appointment shows its assigned rep and recorded attendance outcome. The
+GM can see store appointments, including unassigned deals, and filter the
+calendar by representative. The GM's requested-not-confirmed exception list
+shows the rep, customer, vehicle, request time, and requested appointment time;
+expanding a row offers appointment editing or a link to the full deal record.
+Reps see only appointments for their own deals.
+This view contains dealership appointment records only; personal reminders,
+calendar blocks, private notes, and private message threads are not included.
+Customer choices for new appointments come from that user's open-deal list, so
+managers can schedule for unassigned customers and reps can schedule for their
+own customers.
 
 | Method and path | Who | What it does |
 | --- | --- | --- |
 | `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
-| `POST /api/appointments` | GM, owning rep | Creates an appointment (requested by default). Body: `{ "dealId", "scheduledFor", "status"?, "outcomeNote"? }`. |
-| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates `scheduledFor`, `status`, and `outcomeNote`. Status is `requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, or `no_show`. |
+| `GET /api/appointments/overview` | GM: all; rep: own deals | Requested and passed-visit queues plus total requested/confirmed counts and scheduled-date show rate. |
+| `POST /api/appointments` | GM, owning rep | Creates a `requested` appointment for a GM and a `confirmed` appointment for the owning rep. |
+| `POST /api/appointments/:appointmentId/confirm` | GM, owning rep | Confirms a request as a person and records the confirmer. |
+| `POST /api/appointments/:appointmentId/outcome` | GM, owning rep | Records `completed` or `no_show` and resolves its visit-outcome item. |
+| `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates the appointment time, notes, or any status; status transitions are not restricted. |
 
 Calendar times are entered and displayed in the dealership's
 `America/Toronto` time zone. The API stores `scheduledFor` as a timestamp with
@@ -433,7 +450,8 @@ for an unknown deal returns 404.
 
 `GET /api/appointments` includes every appointment regardless of status, sorted
 by scheduled time, and returns `id`, `dealId`, `scheduledFor`, `status`,
-`outcomeNote`, `buyer`, `vehicleInterest`, `ownerId`, and `owner`. On an
+`outcomeNote`, requester and confirmer attribution, `buyer`, `vehicleInterest`,
+`ownerId`, and `owner`. On an
 unassigned deal, `ownerId` and `owner` are null. Create and update requests
 accept:
 
@@ -446,17 +464,34 @@ accept:
 }
 ```
 
-`POST /api/appointments` requires `dealId` and `scheduledFor`; `status`
-defaults to `requested`, and `outcomeNote` is optional.
-`PATCH /api/appointments/:appointmentId` requires `scheduledFor` and accepts
-the same status and note fields. Send the current status when changing only the
-date or note, since an omitted status defaults to `requested`. Status values are
-`requested`, `confirmed`, `rescheduled`, `cancelled`, `completed`, and
-`no_show`. Setting a status to `confirmed`, `completed`, or `no_show` records
-the acting staff member in `confirmed_by` and the current time in
-`confirmed_at`; changing to another status clears those confirmation fields.
-Appointment changes are kept on the deal in the `appointments` table and
-appear in the deal record returned by `GET /api/deals/:dealId`.
+`POST /api/appointments` requires `dealId` and `scheduledFor`. The server sets
+the status by staff role: a GM creates a `requested` visit with no confirmer;
+an owning rep creates a `confirmed` visit and is recorded as its confirmer.
+The rule-based AI can create requested appointments from customer requests.
+`PATCH` accepts any status for record correction, regardless of the previous
+status or scheduled time. Setting status to `requested` clears confirmation
+metadata; setting it to `confirmed`, `rescheduled`, `completed`, or `no_show`
+records a human confirmer if one is not already present. Every status change
+writes an `audit_events` row and an attributed timeline entry plus a short
+system timeline entry.
+
+When a GM transfers a deal, future confirmed/rescheduled appointments are reset
+to `requested`, their previous confirmer is cleared, and a system timeline entry
+and GM audit event record that the new rep must confirm them.
+
+The overview returns `requestedToConfirm`, `visitsToRecord`, and metrics.
+Loading it idempotently creates a `visit_outcome` open item for each passed
+confirmed/rescheduled appointment without an outcome; recording an outcome
+resolves that item in the same transaction. The rep dashboard shows both queues
+and the GM calendar shows these exceptions, requested/confirmed counts, show
+rate, and bottlenecks. Requested counts include appointments whose current
+status is `requested`; confirmed counts include rows with a human confirmer.
+Show rate is completed ÷ (completed + no-show), using
+the scheduled visit date in `America/Toronto`, not the time the appointment was
+requested. The rule-based AI can only create requested appointments; its reply
+must say a person will confirm and must not claim the visit is booked.
+Appointment changes appear on the deal record returned by
+`GET /api/deals/:dealId`.
 
 ## Scenario checks (US13)
 

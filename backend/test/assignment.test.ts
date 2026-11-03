@@ -118,14 +118,31 @@ describe('assignment API (US8)', () => {
       // Table names come only from the fixed list below.
       (await api.db.query(`select id from public.${table} where deal_id = $1`, [DEALS.hannah])).length;
     const tables = ['timeline_events', 'appointments', 'open_items'];
+    const [futureAppointment] = await api.db.query<{ id: string }>(`
+      insert into public.appointments
+        (deal_id, scheduled_for, status, confirmed_by, confirmed_at, requested_by_type, requested_by_id)
+      values ($1, now() + interval '3 days', 'confirmed', $2, now(), 'rep', $2)
+      returning id`, [DEALS.hannah, STAFF.dana]);
     const before = await Promise.all(tables.map(count));
     const { status, body } = await transfer(STAFF.karen, DEALS.hannah, STAFF.arjun, 'Arjun is back on shift');
     assert.equal(status, 200);
     assert.deepEqual(body.from, { id: STAFF.dana, name: 'Dana Kowalski' });
     assert.deepEqual(body.to, { id: STAFF.arjun, name: 'Arjun Mehta' });
     assert.deepEqual(await dealRow(DEALS.hannah), { owner_id: STAFF.arjun, stage: 'working' });
-    // Only the new transfer event is added; nothing is lost or duplicated.
-    assert.deepEqual(await Promise.all(tables.map(count)), [before[0] + 1, before[1], before[2]]);
+    // Transfer and appointment-reset timeline events are added; no records are lost.
+    assert.deepEqual(await Promise.all(tables.map(count)), [before[0] + 2, before[1], before[2]]);
+    const [resetAppointment] = await api.db.query<{
+      status: string; confirmed_by: string | null; confirmed_at: Date | null;
+    }>('select status, confirmed_by, confirmed_at from public.appointments where id = $1',
+    [futureAppointment.id]);
+    assert.deepEqual(resetAppointment, { status: 'requested', confirmed_by: null, confirmed_at: null });
+    const [resetAudit] = await api.db.query<{
+      actor_type: string; actor_id: string; old_value: string; new_value: string;
+    }>(`select actor_type, actor_id, old_value, new_value from public.audit_events
+        where entity_id = $1 and action = 'transfer_reset_appointment'`, [futureAppointment.id]);
+    assert.deepEqual(resetAudit, {
+      actor_type: 'gm', actor_id: STAFF.karen, old_value: 'confirmed', new_value: 'requested',
+    });
 
     // The seeded transfer (Arjun to Dana) and this one, both structured.
     const history = (await call(STAFF.karen, 'GET', `/api/deals/${DEALS.hannah}/assignments`)).body.history;

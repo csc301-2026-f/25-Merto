@@ -50,6 +50,20 @@ insert into public.appointments (id, deal_id, scheduled_for, status, confirmed_b
   ('50000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000005', now() - interval '5 days', 'requested', null, null)
 on conflict (id) do nothing;
 
+-- The appointment request is represented by Maya's inbound visit request.
+update public.appointments a
+set created_at = (
+  select e.created_at
+  from public.timeline_events e
+  where e.deal_id = a.deal_id
+    and e.actor_type = 'buyer'
+    and e.direction = 'inbound'
+    and e.body ~* '(come in|come by|visit|appointment|test[- ]?drive|see (the|a|this|that))'
+  order by e.created_at, e.id
+  limit 1
+)
+where a.id = '50000000-0000-0000-0000-000000000003';
+
 -- The to-do the AI created for Marcus's price question; Arjun sent the quote.
 insert into public.open_items (id, deal_id, owner_id, type, description, status, due_at, created_at, resolved_at) values
   ('60000000-0000-0000-0000-000000000005', '30000000-0000-0000-0000-000000000008', '10000000-0000-0000-0000-000000000003', 'unanswered_question', 'Email Marcus the out-the-door quote for the F-150.', 'resolved', now() - interval '1 day', now() - interval '2 days' + interval '3 minutes', now() - interval '2 days' + interval '2 hours')

@@ -2,15 +2,19 @@
 "use client";
 
 import {
+  useCallback,
   startTransition,
   useActionState,
+  useEffect,
   useMemo,
   useState,
   type FormEvent,
 } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { saveAppointment } from "@/app/appointments/actions";
-import { APPOINTMENT_STATUSES, type Appointment } from "@/lib/appointments";
-import type { Deal } from "@/lib/deals";
+import { APPOINTMENT_STATUSES, type Appointment, type AppointmentOverview } from "@/lib/appointments";
+import type { Deal, Rep } from "@/lib/deals";
 import {
   formatDateTime,
   label,
@@ -65,18 +69,26 @@ function AppointmentForm({
   deals,
   selectedDate,
   appointment,
+  role,
   onCancel,
+  onSaved,
 }: {
   deals: Deal[];
   selectedDate: string;
   appointment: Appointment | null;
+  role: "manager" | "rep";
   onCancel: () => void;
+  onSaved: (message: string) => void;
 }) {
   const [state, formAction, pending] = useActionState(
     saveAppointment,
     undefined
   );
   const [localError, setLocalError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (state?.success) onSaved(state.success);
+  }, [onSaved, state]);
 
   const defaultDate = appointment
     ? torontoDateTimeLocal(appointment.scheduledFor)
@@ -121,7 +133,6 @@ function AppointmentForm({
         name="appointmentId"
         value={appointment?.id ?? ""}
       />
-
       {appointment && (
         <input type="hidden" name="dealId" value={appointment.dealId} />
       )}
@@ -201,11 +212,14 @@ function AppointmentForm({
         <select
           id="appointmentStatus"
           name="status"
-          defaultValue={appointment?.status ?? "requested"}
+          defaultValue={appointment?.status ?? (role === "rep" ? "confirmed" : "requested")}
           disabled={pending}
           className={inputClass}
         >
-          {APPOINTMENT_STATUSES.map((status) => (
+          {(appointment
+            ? APPOINTMENT_STATUSES
+            : [role === "rep" ? "confirmed" : "requested"]
+          ).map((status) => (
             <option className="text-black bg-white" key={status} value={status}>
               {label(status)}
             </option>
@@ -234,12 +248,6 @@ function AppointmentForm({
         </p>
       )}
 
-      {state?.success && (
-        <p role="status" className="text-sm text-green-700 dark:text-green-400">
-          {state.success}
-        </p>
-      )}
-
       <div className="flex flex-wrap gap-3 pt-2">
         <button
           type="submit"
@@ -249,17 +257,17 @@ function AppointmentForm({
           {pending
             ? "Saving…"
             : appointment
-              ? "Save changes"
+              ? "Save change"
               : "Create appointment"}
         </button>
 
-        {appointment && (
+        {(
           <button
             type="button"
             onClick={onCancel}
             className={buttonClass}
           >
-            Cancel edit
+            {appointment ? "Cancel edit" : "Cancel"}
           </button>
         )}
       </div>
@@ -269,22 +277,60 @@ function AppointmentForm({
 
 export function AppointmentCalendar({
   role,
-  appointments,
+  overview,
   deals,
+  reps,
 }: {
   role: "manager" | "rep";
-  appointments: Appointment[];
+  overview: AppointmentOverview;
   deals: Deal[];
+  reps: Rep[];
 }) {
   const today = todayInToronto();
   const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedRepId, setSelectedRepId] = useState("");
+  const [panel, setPanel] = useState<"appointments" | "edit" | "create">("appointments");
+  const [editing, setEditing] = useState<Appointment | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
+  const router = useRouter();
 
   const [month, setMonth] = useState(() => {
     const [year, monthNumber] = today.split("-").map(Number);
     return new Date(year, monthNumber - 1, 1);
   });
 
-  const [editing, setEditing] = useState<Appointment | null>(null);
+  const appointments = useMemo(
+    () => selectedRepId
+      ? overview.appointments.filter((appointment) => appointment.ownerId === selectedRepId)
+      : overview.appointments,
+    [overview.appointments, selectedRepId],
+  );
+  const requestedToConfirm = selectedRepId
+    ? overview.requestedToConfirm.filter((appointment) => appointment.ownerId === selectedRepId)
+    : overview.requestedToConfirm;
+  const showAppointmentList = useCallback((message?: string) => {
+    setPanel("appointments");
+    setEditing(null);
+    setNotice(message ?? null);
+    if (message) router.refresh();
+  }, [router]);
+
+  const startCreate = () => {
+    setEditing(null);
+    setNotice(null);
+    setPanel("create");
+  };
+
+  const startEdit = (appointment: Appointment) => {
+    const appointmentDate = torontoDateTimeLocal(appointment.scheduledFor).slice(0, 10);
+    const [year, monthNumber] = appointmentDate.split("-").map(Number);
+    setSelectedDate(appointmentDate);
+    setMonth(new Date(year, monthNumber - 1, 1));
+    setEditing(appointment);
+    setNotice(null);
+    setPanel("edit");
+  };
 
   const appointmentsByDate = useMemo(() => {
     const grouped = new Map<string, Appointment[]>();
@@ -323,7 +369,9 @@ export function AppointmentCalendar({
 
   function chooseDate(date: Date) {
     setSelectedDate(dateKey(date));
+    setPanel("appointments");
     setEditing(null);
+    setNotice(null);
   }
 
   const dayAppointments = appointmentsByDate.get(selectedDate) ?? [];
@@ -332,21 +380,21 @@ export function AppointmentCalendar({
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Calendar</h1>
-          <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-            Create and manage customer appointments. Times are shown in Toronto
-            time.
-          </p>
+          <h1 className="text-3xl font-bold">Appointments</h1>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setEditing(null)}
-          className={primaryButtonClass}
-        >
-          New appointment
-        </button>
       </header>
+
+      {role === "manager" && (
+        <section aria-label="Appointments requested but not confirmed">
+          <AppointmentExceptionList
+            appointments={requestedToConfirm}
+            expandedId={expandedRequestId}
+            onToggle={(id) => setExpandedRequestId((current) => current === id ? null : id)}
+            onEdit={startEdit}
+          />
+        </section>
+      )}
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
         {/* Calendar */}
@@ -354,6 +402,22 @@ export function AppointmentCalendar({
           aria-label="Appointment calendar"
           className="rounded-xl bg-slate-100 p-4 shadow-sm dark:bg-zinc-900"
         >
+          {role === "manager" && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <label htmlFor="calendarRepFilter" className="font-semibold">Show appointments for</label>
+              <select
+                id="calendarRepFilter"
+                value={selectedRepId}
+                onChange={(event) => setSelectedRepId(event.target.value)}
+                className={`${inputClass} max-w-xs`}
+              >
+                <option value="">All representatives</option>
+                {reps.map((rep) => (
+                  <option key={rep.id} value={rep.id}>{rep.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="mb-4 flex items-center justify-between gap-3">
             <button
               type="button"
@@ -424,7 +488,7 @@ export function AppointmentCalendar({
                         type="button"
                         onClick={() => {
                           setSelectedDate(key);
-                          setEditing(appointment);
+                          startEdit(appointment);
                         }}
                         className="block w-full truncate rounded bg-amber-100 px-1 py-1 text-left text-[10px] text-[#594a2e] transition hover:bg-[#d5bd91] sm:text-xs dark:bg-[#d5bd91]/20 dark:text-amber-200 dark:hover:bg-[#d5bd91]/30"
                         title={`${appointment.buyer} · ${formatDateTime(appointment.scheduledFor)}`}
@@ -448,73 +512,154 @@ export function AppointmentCalendar({
           </div>
         </section>
 
-        {/* Daily appointments and form */}
-        <aside className="space-y-6">
-          <section className="overflow-hidden rounded-xl bg-slate-100 shadow-sm dark:bg-zinc-900">
+        {/* Single appointment panel: list, edit, or create. */}
+        <aside>
+          <section className="flex h-full flex-col overflow-hidden rounded-xl bg-slate-100 shadow-sm dark:bg-zinc-900">
             <header className="border-b border-zinc-300 p-4 dark:border-zinc-700">
-              <h2 className="font-semibold">{dayTitle(selectedDate)}</h2>
-              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                {dayAppointments.length} appointment
-                {dayAppointments.length === 1 ? "" : "s"}
-              </p>
+              <h2 className="font-semibold">
+                {panel === "appointments" ? "Appointments" : panel === "edit" ? "Edit Appointment" : "Create Appointment"}
+              </h2>
+              {panel === "appointments" && (
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                  {dayTitle(selectedDate)} · {dayAppointments.length} appointment{dayAppointments.length === 1 ? "" : "s"}
+                </p>
+              )}
             </header>
 
-            {dayAppointments.length === 0 ? (
-              <p className="p-4 text-sm text-zinc-500 dark:text-zinc-400">
-                No appointments scheduled.
+            {notice && panel === "appointments" && (
+              <p role="status" className="px-4 pt-3 font-semibold text-green-700 dark:text-green-400">
+                {notice}
               </p>
-            ) : (
-              <ul className="divide-y divide-zinc-300 dark:divide-zinc-700">
-                {dayAppointments.map((appointment) => (
-                  <li key={appointment.id} className="space-y-2 p-4">
-                    <p className="font-semibold">{appointment.buyer}</p>
-
-                    <p className="text-sm">
-                      {formatDateTime(appointment.scheduledFor)}
-                    </p>
-
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {appointment.vehicleInterest} ·{" "}
-                      {label(appointment.status)}
-                      {role === "manager" && appointment.owner
-                        ? ` · ${appointment.owner}`
-                        : ""}
-                    </p>
-
-                    {appointment.outcomeNote && (
-                      <p className="text-sm text-zinc-600 dark:text-zinc-300">
-                        {appointment.outcomeNote}
-                      </p>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => setEditing(appointment)}
-                      className="pt-1 text-sm font-semibold text-[#d5bd91] hover:underline dark:text-[#d5bd91]"
-                    >
-                      Edit appointment
-                    </button>
-                  </li>
-                ))}
-              </ul>
             )}
-          </section>
 
-          <section className="rounded-xl bg-slate-100 p-4 shadow-sm dark:bg-zinc-900">
-            <h2 className="mb-4 text-lg font-semibold">
-              {editing ? "Edit appointment" : "Create appointment"}
-            </h2>
+            <div className="flex-1 p-4">
+              {panel === "appointments" ? (
+                dayAppointments.length === 0 ? (
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">No appointments scheduled.</p>
+                ) : (
+                  <ul className="divide-y divide-zinc-300 dark:divide-zinc-700">
+                    {dayAppointments.map((appointment) => (
+                      <li key={appointment.id} className="space-y-2 py-4 first:pt-0">
+                        <p className="font-semibold">{appointment.buyer}</p>
+                        <p className="text-sm">{formatDateTime(appointment.scheduledFor)}</p>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                          {appointment.vehicleInterest} · {label(appointment.status)}
+                        </p>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                          Rep: {appointment.owner ?? "Unassigned"}
+                          {" · "}
+                          {appointment.status === "completed"
+                            ? "Showed up"
+                            : appointment.status === "no_show"
+                              ? "Did not show"
+                              : "Attendance not recorded"}
+                        </p>
+                        {appointment.outcomeNote && (
+                          <p className="text-sm text-zinc-600 dark:text-zinc-300">{appointment.outcomeNote}</p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => startEdit(appointment)}
+                          className="pt-1 text-sm font-semibold text-[#d5bd91] hover:underline"
+                        >
+                          Edit Appointment
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              ) : (
+                <AppointmentForm
+                  key={`${panel}-${editing?.id ?? "new"}-${selectedDate}`}
+                  deals={deals}
+                  selectedDate={selectedDate}
+                  appointment={panel === "edit" ? editing : null}
+                  role={role}
+                  onCancel={() => showAppointmentList()}
+                  onSaved={showAppointmentList}
+                />
+              )}
+            </div>
 
-            <AppointmentForm
-              key={`${editing?.id ?? "new"}-${selectedDate}`}
-              deals={deals}
-              selectedDate={selectedDate}
-              appointment={editing}
-              onCancel={() => setEditing(null)}
-            />
+            {panel === "appointments" && (
+              <footer className="border-t border-zinc-300 p-4 dark:border-zinc-700">
+                <button type="button" onClick={startCreate} className={primaryButtonClass}>
+                  New Appointment
+                </button>
+              </footer>
+            )}
           </section>
         </aside>
       </div>
     </div>
+  );
+}
+
+function AppointmentExceptionList({
+  appointments,
+  expandedId,
+  onToggle,
+  onEdit,
+}: {
+  appointments: Appointment[];
+  expandedId: string | null;
+  onToggle: (id: string) => void;
+  onEdit: (appointment: Appointment) => void;
+}) {
+  return (
+    <section className="rounded-xl bg-slate-100 p-4 shadow-sm dark:bg-zinc-900">
+      <h2 className="mb-3 font-semibold">Appointments requested but not confirmed ({appointments.length})</h2>
+      {appointments.length === 0 ? (
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">None right now.</p>
+      ) : (
+        <ul className="divide-y divide-zinc-300 dark:divide-zinc-700">
+          {appointments.map((appointment) => (
+            <li key={appointment.id} className="py-3">
+              <button
+                type="button"
+                aria-expanded={expandedId === appointment.id}
+                onClick={() => onToggle(appointment.id)}
+                className="grid w-full gap-1 text-left text-sm hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 sm:grid-cols-2"
+              >
+                <span><span className="font-semibold">Rep:</span> {appointment.owner ?? "Unassigned"}</span>
+                <span><span className="font-semibold">Customer:</span> {appointment.buyer}</span>
+                <span><span className="font-semibold">Model:</span> {appointment.vehicleInterest}</span>
+                <span><span className="font-semibold">Requested:</span> {appointment.createdAt
+                  ? formatDateTime(appointment.createdAt)
+                  : "Historical request time unavailable"}</span>
+                <span className="sm:col-span-2">
+                  <span className="font-semibold">Requested appointment:</span> {formatDateTime(appointment.scheduledFor)}
+                </span>
+              </button>
+              {expandedId === appointment.id && (
+                <div className="mt-3 space-y-3 rounded-lg bg-white p-3 text-sm dark:bg-zinc-800">
+                  <dl className="grid gap-1 sm:grid-cols-2">
+                    <div><dt className="font-semibold">Request source</dt><dd>
+                      {appointment.requestedBy ?? label(appointment.requestedByType)}
+                    </dd></div>
+                    <div><dt className="font-semibold">Status</dt><dd>{label(appointment.status)}</dd></div>
+                  </dl>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(appointment)}
+                      className={primaryButtonClass}
+                    >
+                      Edit Appointment
+                    </button>
+                    <Link
+                      href={`/manager/deal-details/${encodeURIComponent(appointment.dealId)}`}
+                      className={buttonClass}
+                    >
+                      View Full Record
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }

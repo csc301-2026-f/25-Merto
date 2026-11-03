@@ -1,11 +1,12 @@
 import { badRequest } from '../errors.ts';
 
 export const OPEN_ITEM_TYPES = ['promise', 'missing_doc', 'unanswered_question', 'callback'] as const;
+const FILTERABLE_TYPES = [...OPEN_ITEM_TYPES, 'visit_outcome'] as const;
 export const STATUS_FILTERS = ['open', 'resolved', 'cancelled', 'all'] as const;
 
 export interface OpenItemFilters {
   status: 'open' | 'resolved' | 'cancelled' | null; // null: every status
-  type: (typeof OPEN_ITEM_TYPES)[number] | null;
+  type: (typeof FILTERABLE_TYPES)[number] | null;
   owner: string | null; // an owner's staff ID, 'none' for items nobody owns, or null for anyone
 }
 
@@ -25,8 +26,8 @@ export function parseFilters(query: Record<string, unknown>): OpenItemFilters {
     throw badRequest(`status must be one of: ${STATUS_FILTERS.join(', ')}.`);
   }
   const type = one(query, 'type');
-  if (type !== undefined && !(OPEN_ITEM_TYPES as readonly string[]).includes(type)) {
-    throw badRequest(`type must be one of: ${OPEN_ITEM_TYPES.join(', ')}.`);
+  if (type !== undefined && !(FILTERABLE_TYPES as readonly string[]).includes(type)) {
+    throw badRequest(`type must be one of: ${FILTERABLE_TYPES.join(', ')}.`);
   }
   const owner = one(query, 'ownerId');
   if (owner !== undefined && owner !== 'none' && !uuidPattern.test(owner)) {

@@ -206,6 +206,10 @@ export function DealRecord({
 
                   {visit.confirmedBy &&
                     ` (confirmed by ${visit.confirmedBy})`}
+                  <p className="text-xs opacity-70">
+                    Requested by {visit.requestedBy ?? label(visit.requestedByType)}
+                  </p>
+                  {visit.outcomeNote && <p className="mt-1">{visit.outcomeNote}</p>}
                 </li>
               ))}
 

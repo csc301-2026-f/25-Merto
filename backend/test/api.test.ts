@@ -59,13 +59,14 @@ describe('evaluation API', () => {
   it('flags the seeded AI mistakes and passes clean conversations', async () => {
     const { status, body } = await runEvaluation();
     assert.equal(status, 200);
-    // Hannah and Nina have no AI activity, so the nightly job skips them. Ben's payment
-    // reply raises 3 flags: it quotes a number, ignores his request for a person, and
+    // Hannah has no AI activity, so the nightly job skips her. Nina's request
+    // exchange is clean. Ben's payment reply raises 3 flags: it quotes a number, ignores his request for a person, and
     // hands the price question to nobody; his first text raises a tone flag.
     assert.deepEqual(body.filter(isKnown).map((row: { buyer: string; result: string; newFlags: number }) =>
       [row.buyer, row.result, row.newFlags]).sort(), [
       ['Ben Okafor', 'flagged', 5], ['Chris Patel', 'flagged', 1], ['Jordan Lee', 'passed', 0],
-      ['Marcus Johnson', 'passed', 0], ['Maya Desai', 'flagged', 1], ['Rob Lindqvist', 'passed', 0],
+      ['Marcus Johnson', 'passed', 0], ['Maya Desai', 'flagged', 1], ['Nina Shah', 'passed', 0],
+      ['Rob Lindqvist', 'passed', 0],
     ]);
     const queue = (await call(STAFF.karen, 'GET', '/api/ai-flags/queue')).body;
     const rank = { high: 1, medium: 2, low: 3 } as Record<string, number>;

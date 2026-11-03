@@ -80,7 +80,10 @@ function TimelineItem({ entry, buyer, flags }: { entry: TimelineEntry; buyer: st
     // The id lets the flag queue link straight to this message.
     <li id={`event-${entry.id}`} className={`scroll-mt-4 py-3 ${attention ? "border-l-4 border-red-600 pl-3" : ""}`}>
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${actor.className}`}>{actor.name}</span>
+        <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${actor.className}`}>
+          {entry.eventType === "appointment" && entry.actorType === "ai" ? "✦ " : ""}
+          {actor.name}
+        </span>
         {who && <span className="font-semibold">{who}</span>}
         <span className="opacity-70">
           {label(entry.channel)} · {entry.direction}

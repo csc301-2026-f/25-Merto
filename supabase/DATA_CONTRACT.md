@@ -15,7 +15,8 @@ one fictional dealership; store membership and multiple stores are not modeled.
 - A nullable field means the information may be absent. `null` does not mean zero,
   false, or an empty string. An absent owner means unassigned.
 - `created_at` defaults to database `now()`; imported events can specify their
-  original time. There is no `updated_at` field or automatic audit trigger yet.
+  original time. There is no global `updated_at` field or automatic audit trigger;
+  appointment actions explicitly write audit rows.
 - Foreign keys use PostgreSQL's default deletion behavior: deleting referenced
   records fails while child records still reference them. There is no cascade.
 - Current tables have RLS enabled and grants revoked from `anon` and
@@ -31,8 +32,11 @@ erDiagram
   deals ||--o{ timeline_events : records
   staff_users o|--o{ timeline_events : authors
   deals ||--o{ appointments : schedules
-  staff_users o|--o{ appointments : confirms
+  staff_users o|--o{ appointments : requests/confirms
+  deals ||--o{ audit_events : audits
+  staff_users o|--o{ audit_events : acts
   deals ||--o{ open_items : tracks
+  appointments o|--o| open_items : "visit outcome task"
   staff_users o|--o{ open_items : handles
   deals ||--o| ai_evaluations : evaluates
   ai_evaluations ||--o{ ai_flags : flags
@@ -130,17 +134,36 @@ events: the application action must write an event explicitly when needed.
 | `deal_id` | UUID / no | References `deals.id`. |
 | `scheduled_for` | timestamptz / no | Planned visit time; not the creation/booking time. |
 | `status` | text / no | `requested` (default), `confirmed`, `rescheduled`, `cancelled`, `completed`, or `no_show`. |
+| `requested_by_type` | text / no | `ai`, `system`, `rep`, or `gm`; AI/system have no staff ID. |
+| `requested_by_id` | UUID / yes | Staff requester for a rep/GM request; null for AI/system. |
 | `confirmed_by` | UUID / yes | References the confirming employee in `staff_users`. |
 | `confirmed_at` | timestamptz / yes | Time a person confirmed the visit. |
 | `outcome_note` | text / yes | Free-text visit outcome. |
+| `created_at` | timestamptz / yes | Request creation time. Historical appointments are backfilled from request audit/timeline evidence where possible; null means the original request time could not be recovered. New requests default to database `now()`. |
 
 `confirmed_by` and `confirmed_at` must both be null or both present. `confirmed`,
 `completed`, and `no_show` require confirmation metadata. `requested` must have
-none. `rescheduled` and `cancelled` permit either pair. These are record checks,
-not a state-transition engine: a caller could directly insert a completed visit
-with confirmation metadata. Past outcomes are not automatically recorded in history.
+none. `requested_by_type` distinguishes the AI actor from staff. The API sets
+new appointment status by staff role: a GM creates a `requested` row; an owning
+rep creates a `confirmed` row and is recorded as confirmer. The AI action can
+only create a `requested` row. Appointment edits accept any status regardless
+of the previous status or scheduled time; returning a row to `requested` clears
+confirmation metadata, while setting it to a confirmed/outcome status records
+the editing human as confirmer if no confirmer is already recorded. Every
+status change writes an `audit_events` record and timeline entries. When a GM
+transfers a deal, future confirmed/rescheduled appointments become requested
+again and lose their previous confirmer so the new rep can confirm them.
 
-For a future show-rate metric, group by `scheduled_for`, not booking time.
+Show rate is completed ÷ (completed + no-show), grouped by the local
+`scheduled_for` date (`America/Toronto` in the single-store demo), never by
+request/booking time.
+
+### `audit_events`: attributed field history
+
+Appointment status and scheduled-time changes record the actor type/ID, action,
+entity and deal IDs, field name, old/new values, and timestamp. AI/system actors
+have no staff ID; rep/GM actors must reference `staff_users`. These application
+writes are transactional with the appointment and timeline changes.
 
 ### `open_items`: pending promises and tasks
 
@@ -149,7 +172,8 @@ For a future show-rate metric, group by `scheduled_for`, not booking time.
 | `id` | UUID / no | Task ID. |
 | `deal_id` | UUID / no | References `deals.id`. |
 | `owner_id` | UUID / yes | Responsible employee; references `staff_users.id`. |
-| `type` | text / no | `promise`, `missing_doc`, `unanswered_question`, or `callback`. |
+| `type` | text / no | `promise`, `missing_doc`, `unanswered_question`, `callback`, or `visit_outcome`. |
+| `appointment_id` | UUID / yes | Unique appointment associated with a generated visit-outcome task. |
 | `description` | text / no | Nonblank explanation of the work. |
 | `status` | text / no | `open` (default), `resolved`, or `cancelled`. |
 | `due_at` | timestamptz / yes | Deadline, if known. |
@@ -193,7 +217,7 @@ atomically. The following are proposed action boundaries, not existing endpoints
 | --- | --- | --- |
 | Create a buyer/deal | `buyers`, `deals`, initial `timeline_events` (and `deal_assignments` when a rep adds their own buyer) | `POST /api/deals` in `backend/src/deals/` matches an existing buyer by lowercase email or phone digits before inserting, and limits new `source` values to a fixed list. See the backend README. |
 | Assign/transfer a deal | Deal owner, open-item owners, assignment/transfer event, `deal_assignments` row | `backend/src/assignment/` implements GM-only actions and transactional writes using the development staff header. See below. |
-| Confirm an appointment | Appointment confirmation/status, timeline entry | Staff attribution and permission checks belong to the action layer. |
+| Confirm/record an appointment outcome | Appointment status, confirmer/outcome, audit and timeline entries; resolve visit task | Implemented in `backend/src/appointments/`; GM or owning rep only. |
 | Resolve a task | Item status/resolution time, timeline entry | No automatic timeline/audit trigger yet. |
 | Record an opt-out | Buyer boolean, structured `opt_out` event | Send-time suppression still needs implementation. |
 | Record an immediate simulated follow-up | One outbound `interaction` in `timeline_events` | `POST /api/deals/:dealId/follow-ups` checks eligibility, role/ownership, opt-out history, stage, and contact information, then returns the refreshed follow-up assessment. No real delivery or future scheduling. |

@@ -381,6 +381,23 @@ insert into public.appointments (id, deal_id, scheduled_for, status, confirmed_b
   ('50000000-0000-0000-0000-000000000117', '30000000-0000-0000-0000-000000000121', now() + interval '5 days', 'confirmed', '10000000-0000-0000-0000-000000000004', now() - interval '1 days' - interval '23 hours', 'Upcoming visit personally confirmed by Sofia.')
 on conflict (id) do nothing;
 
+-- Backfill seeded appointment request times from explicit buyer visit requests.
+-- Leave the time unknown when the historical conversation does not establish it.
+update public.appointments a
+set created_at = (
+  select e.created_at
+  from public.timeline_events e
+  where e.deal_id = a.deal_id
+    and e.actor_type = 'buyer'
+    and e.direction = 'inbound'
+    and e.created_at <= coalesce(a.confirmed_at, a.scheduled_for, now())
+    and e.body ~* '(come in|come by|visit|appointment|test[- ]?drive|see (the|a|this|that))'
+  order by e.created_at desc, e.id desc
+  limit 1
+)
+where a.id between '50000000-0000-0000-0000-000000000101'
+  and '50000000-0000-0000-0000-000000000117';
+
 insert into public.open_items (id, deal_id, owner_id, type, description, status, due_at, created_at, resolved_at) values
   ('60000000-0000-0000-0000-000000000101', '30000000-0000-0000-0000-000000000101', '10000000-0000-0000-0000-000000000002', 'missing_doc', 'Send Omar proof of insurance for the RAV4.', 'resolved', now() - interval '11 days', now() - interval '11 days' - interval '23 hours', now() - interval '11 days'),
   ('60000000-0000-0000-0000-000000000102', '30000000-0000-0000-0000-000000000102', '10000000-0000-0000-0000-000000000002', 'missing_doc', 'Miles to send proof of insurance to Omar.', 'open', now() - interval '2 days', now() - interval '2 days' - interval '23 hours', null),

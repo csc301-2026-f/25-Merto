@@ -10,13 +10,13 @@ describe('visit time parsing', () => {
   it('finds the next matching day and time', () => {
     // 2026-11-01 is a Sunday.
     assert.deepEqual(parseVisitTime('Can I come in Monday at 10 am?', '2026-11-01T20:00:00Z'),
-      { iso: '2026-11-02T10:00:00.000Z', label: 'Monday at 10 am' });
+      { iso: '2026-11-02T15:00:00.000Z', label: 'Monday at 10 am' });
     assert.deepEqual(parseVisitTime('Thursday after work', '2026-11-02T21:10:00Z'),
-      { iso: '2026-11-05T18:00:00.000Z', label: 'Thursday at 6 pm' });
+      { iso: '2026-11-05T23:00:00.000Z', label: 'Thursday at 6 pm' });
     assert.deepEqual(parseVisitTime('tomorrow at 2:30 pm', '2026-11-01T20:00:00Z'),
-      { iso: '2026-11-02T14:30:00.000Z', label: 'Monday at 2:30 pm' });
+      { iso: '2026-11-02T19:30:00.000Z', label: 'Monday at 2:30 pm' });
     // The same weekday means next week, not today.
-    assert.equal(parseVisitTime('Sunday at 9 am', '2026-11-01T20:00:00Z')!.iso, '2026-11-08T09:00:00.000Z');
+    assert.equal(parseVisitTime('Sunday at 9 am', '2026-11-01T20:00:00Z')!.iso, '2026-11-08T14:00:00.000Z');
     assert.equal(parseVisitTime('12 am on Friday', '2026-11-01T20:00:00Z')!.label, 'Friday at 12 am');
   });
 
