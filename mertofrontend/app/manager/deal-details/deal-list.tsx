@@ -31,12 +31,19 @@ export function DealList({
   reps: Rep[];
   openDealId?: string;
 }) {
+  
   // For use with SearchBar
+  const searchFields: (keyof Deal)[] = [
+    "buyer",
+    "vehicleInterest",
+    "owner",
+    "stage"
+  ]
   const [searchQuery, setSearchQuery] = useState("");
   const filteredDeals = filterDeals(
     deals,
     searchQuery,
-    ["buyer", "vehicleInterest", "owner"]
+    searchFields
   );
 
   const [sortKey, setSortKey] = useState<SortKey>("newest");
@@ -50,6 +57,7 @@ export function DealList({
         </h1>
         <SearchBar
           deals={deals}
+          fields={searchFields}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
