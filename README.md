@@ -15,7 +15,7 @@ The project is a standalone application that Merto plans to integrate into its p
 
 The target users are dealership sales managers, salespeople and Business Development Centre (BDC) representatives, and finance managers. Sales managers are the primary users. The application aims to reduce information lost during buyer handoffs and give managers visibility into AI conversations and missed follow-ups.
 
-The features below describe the current D2 version. The original scope is recorded in the [D1 project plan](deliverables/D1/planning.md).
+The features below describe the current D3 version. The original scope is recorded in the [D1 project plan](deliverables/D1/planning.md).
 
 ## Key Features
 
@@ -31,7 +31,7 @@ The planned data source is a scoped API provided by Merto. The application does 
 
 ## Deployed Application / Access Instructions
 
-Open [Merto](https://merto-frontend.vercel.app/login) in a browser. No local installation is required.
+Open [Merto](https://25-merto.vercel.app/login) in a browser. No local installation is required.
 
 Demo usernames are `karen` (manager) and `dana`, `arjun`, `sofia`, or `tom` (sales representatives). The demo password is `test`. Click **Sign out** to switch accounts.
 
@@ -86,7 +86,7 @@ A customer's message counts as answered only when a staff member responds with a
 
 ### Generate and review a reply (US14 / US11)
 
-1. Open a customer who currently needs follow-up and choose **Use a suggested draft** in the **Follow up** section.
+1. Sign in as `dana`, open a customer who currently needs follow-up, and choose **Use a suggested draft** in the **Follow up** section.
 2. Choose email or SMS and click **Generate reply** (requires a backend Groq API key; see [setup](backend/README.md#setup)). Review the customer context, recent messages, and suggested reply.
 3. Choose **Approve**, change the text and choose **Save edits and approve**, or choose **Reject**. Rejected drafts cannot be sent.
 4. For an approved draft, click **Record follow-up** to record a simulated send. Approval alone does not record customer contact.
@@ -94,13 +94,15 @@ A customer's message counts as answered only when a staff member responds with a
 
 Try draft review before recording a manual follow-up for the same customer, or use a different eligible customer: recording a follow-up can clear the reminder and make new drafts unavailable.
 
+Drafts now use the customer's recent messages, vehicle interest, appointments, and open tasks rather than a fixed template. If relevant deal information changes, generate and review a new draft before recording the follow-up. If generation fails or reaches the provider's usage limit, retry later or use **Write a message**.
+
 ### Manage appointments
 
 1. Open **Calendar** from either the manager or representative view. Dates and times are shown in Toronto time.
 2. Click **New appointment**, select a customer, and enter the date, time, status, and any notes. Click **Create appointment**.
 3. Select the appointment in the calendar or click **Edit appointment** in the day's list. Update its details and click **Save changes**.
 
-### D2 limitations
+### Current limitations
 
 - Emails, SMS messages, and calls are simulated; no real customers are contacted. Scheduling a follow-up for later is not implemented.
 - AI reply generation requires `GROQ_API_KEY` on the backend and is subject to provider quotas. Conversation evaluation is separate: it uses deterministic rules by default, optionally MPNet, and runs when a manager triggers it.
@@ -127,6 +129,16 @@ The team uses Next.js and React with TypeScript for the frontend, a TypeScript/E
 
 The frontend and Express backend are deployed on Vercel, with PostgreSQL hosted on Supabase. The frontend connects to the backend through server-side requests, and the backend connects to the hosted database. Users access the application through the frontend link above.
 
+Deployment uses Jason's fork, `jasonnn404/25-Merto`, of the team repository. The [fork sync workflow](.github/workflows/sync-fork.yml) is configured to sync the team's `main` branch into the fork's `main` branch on a 15-minute schedule or a manual run. It only runs in the fork, where scheduled workflows must be enabled. Vercel deploys changes from the connected fork branch; updates depend on a successful sync and deployment and may take longer than 15 minutes.
+
+To reproduce the deployment:
+
+1. Create two Vercel projects from the fork's `main` branch: a Next.js project with root directory `mertofrontend`, and an Express project with root directory `backend`. The backend entry point and configuration are in `backend/index.ts` and `backend/vercel.json`.
+2. Apply all migrations in `supabase/migrations` to the hosted Supabase database and load the fictional demo data for a fresh demo database. See [hosted database setup](supabase/HOSTED_INTEGRATION.md).
+3. Set backend environment variables using [backend/.env.example](backend/.env.example): `DATABASE_URL`, `DEV_LOGIN_PASSWORD` for demo sign-in, and `GROQ_API_KEY` for reply generation. `GROQ_MODEL` is optional. The entry point uses Supabase transaction pooling and supports the bundled CA certificate for verified TLS.
+4. Set `BACKEND_URL` in the frontend project's environment to the deployed backend origin. If the backend has Vercel deployment protection enabled, also set the server-only `BACKEND_PROTECTION_BYPASS` value. Keep credentials in deployment environment settings, outside the repository and browser code.
+5. Deploy both projects, then open the frontend URL and check sign-in, deal loading, and **Generate reply** on a customer due for follow-up. For optional MPNet evaluation, configure the separate model service using its [deployment instructions](model-service/README.md).
+
 The team plans to use Git and GitHub for code collaboration, GitHub Issues to track tasks, and Discord for daily communication and task updates. Each task will have an owner and an expected completion date, with outstanding work reviewed during weekly meetings.
 
 The general Github Workflow is outlined as follows:
@@ -145,6 +157,6 @@ Our coding guidelines will follow the clean coding principles introduced in CSC3
 
 We have agreed with Merto on Option 3 of the course IP options: the code will only be shared with Merto under an open-source license, and we will not distribute it to any other entity or individual. A specific license file will be added once confirmed with Merto.
 
-<!-- TODO (D3): uncomment and fill in this section.
 ## D3 Improvement Highlight
--->
+
+Suggested replies now use Groq to draft an email or SMS from the customer's conversation and deal context, replacing the D2 templates while keeping rep approval before a simulated send. To try it, sign in as `dana`, open a customer under **Needs follow-up**, and choose **Use a suggested draft**, then **Generate reply**. The app is available at the deployed URL above, with Vercel deployment configuration and a scheduled fork sync workflow in the team repository.
