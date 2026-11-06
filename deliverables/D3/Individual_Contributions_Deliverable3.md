@@ -21,5 +21,13 @@ Implementation: [Calendar PR #27](https://github.com/csc301-2026-f/25-Merto/pull
 
 > Reviewed and merged [PR #17](https://github.com/csc301-2026-f/25-Merto/pull/17) for the US5 model evaluation demo and [PR #27](https://github.com/csc301-2026-f/25-Merto/pull/27) for the calendar. Previously, during D2, built the backend for the General Manager to assign or transfer a buyer with a required reason (US8) in [commit 42276dc](https://github.com/csc301-2026-f/25-Merto/commit/42276dc), and the overview of unresolved work with its manager dashboard card (US4) in [commit 5f4470b](https://github.com/csc301-2026-f/25-Merto/commit/5f4470b). Also added the README walkthroughs for those stories and recorded the team meeting minutes.
 
-**[Name]**, [Role]
-> [Specific contributions]
+**Maiyue (Bobby)**, Backend / AI Evaluation Developer
+
+- Extended US5 evaluation with learned detection for the six existing AI/buyer message signals, while retaining the downstream deterministic business rules, database-history checks and flag-review workflow.
+- Built and validated a balanced synthetic corpus of 3,840 messages (2,400 train, 480 dev, 960 held-out test), covering AI/buyer and no-/single-/multi-signal cases. Added checks for label structure, duplicate and near-duplicate messages, split overlap and tokenizer length, with documented semantic-review limits.
+- Fine-tuned separate AI and buyer classifiers for MiniLM, BGE-base and MPNet using SetFit, calibrated signal thresholds on dev, and compared the original regex detector, previous checkpoints and retrained models on the same frozen test set. MPNet reached 936/960 whole-message signal matches (97.5%); this is a signal-detection result, not final CRM flag accuracy.
+- Integrated actual model inference into the local CRM frontend, with evaluator selection, separate results/reviews for each evaluator, message evidence and manager review actions. Prepared a resettable local demo for comparing deterministic evaluation with MPNet.
+- Prepared the MPNet Python service, published trained weights as a verified GitHub Release bundle, and added download/integrity checks, hosted-integration configuration and deployment documentation. Validated inference parity on the frozen test and measured about 1.22 GB peak process memory under a controlled Linux 2 GiB limit. Production rollout requires the team's hosting configuration and database migration.
+- Prepared the Demo Day evaluation slides, comparison charts and English speaker notes, explaining the module replacement, dataset composition, measured improvements and remaining false-positive limitations.
+
+Implementation: [US5 model evaluation and live inference demo PR #17](https://github.com/csc301-2026-f/25-Merto/pull/17) and [MPNet service and trained weights PR #21](https://github.com/csc301-2026-f/25-Merto/pull/21).
