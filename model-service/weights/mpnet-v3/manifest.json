@@ -1,0 +1,169 @@
+{
+  "format": 2,
+  "id": "mpnet",
+  "version": "v3-natural-s42-20261102",
+  "precision": "float32",
+  "max_length": 128,
+  "seed": 42,
+  "storage": "git-tracked-safetensors-shards",
+  "source_weights": {
+    "ai": "cafabd0bf04f61c9668498f58a661a53e96b8a9d48e6020c2971503a65ffad46",
+    "buyer": "bcec8bf8ec8ee8b137847b48740729c5bca903f807c6aac473d347120d20eb71"
+  },
+  "files": {
+    "ai/config.json": {
+      "size": 545,
+      "sha256": "29fcaa64f8e726882c9b3ceac659038ea4f7cb4f339fdaffbf102e2868b54005"
+    },
+    "ai/head.json": {
+      "size": 64809,
+      "sha256": "17e8c39ab0299a7c819c55abb83d3147b817d758b685d1671079d53a68d3c614"
+    },
+    "ai/model-00001-of-00009.safetensors": {
+      "size": 93779088,
+      "sha256": "4642feaa992d5a03683ce497d324288179fab3f8bb2d9573f14ad4cad9d9d382"
+    },
+    "ai/model-00002-of-00009.safetensors": {
+      "size": 48854584,
+      "sha256": "2d2bf1bda89a6020549f5346f2421504ae9c5ec1f63b82f4e803f4c357dcdce7"
+    },
+    "ai/model-00003-of-00009.safetensors": {
+      "size": 47259656,
+      "sha256": "53cbf72552c881950386fba56ada7cd94851aedfba706fe4607a708b3ca64f79"
+    },
+    "ai/model-00004-of-00009.safetensors": {
+      "size": 49609488,
+      "sha256": "3ad5af09a0371521bd77e8bc349a4972949827b35746ad266ba2044109729648"
+    },
+    "ai/model-00005-of-00009.safetensors": {
+      "size": 44897032,
+      "sha256": "38eaa3541fa0968342f98caa792bf23c5ce34f3e6f071ea6636aba9eae4d2d71"
+    },
+    "ai/model-00006-of-00009.safetensors": {
+      "size": 47259624,
+      "sha256": "dc2df3810295e63d95b1803b6d04c6aba26d3fe4bb8095ff5b9eb57866aaa2ad"
+    },
+    "ai/model-00007-of-00009.safetensors": {
+      "size": 49609480,
+      "sha256": "6dbaec07f52226f34ca23ca287485ce439120d140a2a20528a8268a5eba70337"
+    },
+    "ai/model-00008-of-00009.safetensors": {
+      "size": 44897032,
+      "sha256": "10700827f208deccaab060fa1b492345b5a8ec10acde7b1010b79116f9dedb28"
+    },
+    "ai/model-00009-of-00009.safetensors": {
+      "size": 11801512,
+      "sha256": "0bfaf4166ec61d4a153755779af6f7bd7f6ff2b2d2217ce04ba5b7365f303a30"
+    },
+    "ai/model.safetensors.index.json": {
+      "size": 16378,
+      "sha256": "4250ca2d2e4db28933863b00485df4b56803aae868da8b2a24fad5a648594b9e"
+    },
+    "ai/special_tokens_map.json": {
+      "size": 964,
+      "sha256": "ee4a0725232fc563c865a9a1014f7eae985a6efbe44c58a35f46cd5e878aeed4"
+    },
+    "ai/tokenizer.json": {
+      "size": 710932,
+      "sha256": "faaa392e91b132ea18a5c356477832565e05553acb30458841dd9710753a3dba"
+    },
+    "ai/tokenizer_config.json": {
+      "size": 1615,
+      "sha256": "fcfa0b69f2cc8ef0d4a3b5f10bab39f763e6a54952ad87b88dfd289c63bc51cc"
+    },
+    "ai/vocab.txt": {
+      "size": 231536,
+      "sha256": "dbd90cb94e2247bd4d4ccaecbf616d2290e66691d7d5e5bb81f063c2d0649ada"
+    },
+    "buyer/config.json": {
+      "size": 545,
+      "sha256": "29fcaa64f8e726882c9b3ceac659038ea4f7cb4f339fdaffbf102e2868b54005"
+    },
+    "buyer/head.json": {
+      "size": 32427,
+      "sha256": "7ec09c6ec38232b4361b25673fafd50e9403d7d24e92b130328d61bf5a7f235c"
+    },
+    "buyer/model-00001-of-00009.safetensors": {
+      "size": 93779088,
+      "sha256": "86cae1372bc871fc3c0869a95cb199c8bc50147ed4f366ca473e452858073155"
+    },
+    "buyer/model-00002-of-00009.safetensors": {
+      "size": 48854584,
+      "sha256": "89691eb50a245959cdd5cb332b96da55bfd55aeaf36a3f7f322ad8bc4ac3e780"
+    },
+    "buyer/model-00003-of-00009.safetensors": {
+      "size": 47259656,
+      "sha256": "e3e8b9f1e3b8294db00d92f057d7687296d832875abad9f0455a7b4951d956af"
+    },
+    "buyer/model-00004-of-00009.safetensors": {
+      "size": 49609488,
+      "sha256": "a95db2b5bc479b6892e383bcf3f88b9d75b5f2616465aad93f8ada66ae7fc4d5"
+    },
+    "buyer/model-00005-of-00009.safetensors": {
+      "size": 44897032,
+      "sha256": "8cfef0a97cb44cdca974b85bba2c95c8aa83421a1d546a121ab159f175c89dd7"
+    },
+    "buyer/model-00006-of-00009.safetensors": {
+      "size": 47259624,
+      "sha256": "32501c6cfba694311942968bc2ce205ba0f11bbb744314fb01fe1ed10047a993"
+    },
+    "buyer/model-00007-of-00009.safetensors": {
+      "size": 49609480,
+      "sha256": "ee9f11d06902c3aa648d5d3a5afc688db458e76bb49e781d41683b13fb15b840"
+    },
+    "buyer/model-00008-of-00009.safetensors": {
+      "size": 44897032,
+      "sha256": "40af283f18dd03661e751a5ee21b8d8188ae24d066ed0e56e6dcbe88f28c1f7b"
+    },
+    "buyer/model-00009-of-00009.safetensors": {
+      "size": 11801512,
+      "sha256": "c6600711b3a32c3f860010fc936efdb171173c882e4df5fcdac975330f2b61e6"
+    },
+    "buyer/model.safetensors.index.json": {
+      "size": 16378,
+      "sha256": "4250ca2d2e4db28933863b00485df4b56803aae868da8b2a24fad5a648594b9e"
+    },
+    "buyer/special_tokens_map.json": {
+      "size": 964,
+      "sha256": "ee4a0725232fc563c865a9a1014f7eae985a6efbe44c58a35f46cd5e878aeed4"
+    },
+    "buyer/tokenizer.json": {
+      "size": 710932,
+      "sha256": "faaa392e91b132ea18a5c356477832565e05553acb30458841dd9710753a3dba"
+    },
+    "buyer/tokenizer_config.json": {
+      "size": 1615,
+      "sha256": "fcfa0b69f2cc8ef0d4a3b5f10bab39f763e6a54952ad87b88dfd289c63bc51cc"
+    },
+    "buyer/vocab.txt": {
+      "size": 231536,
+      "sha256": "dbd90cb94e2247bd4d4ccaecbf616d2290e66691d7d5e5bb81f063c2d0649ada"
+    }
+  },
+  "roles": {
+    "ai": {
+      "signals": [
+        "claims_booking",
+        "guarantees_availability",
+        "quotes_price",
+        "off_tone"
+      ],
+      "thresholds": [
+        0.5,
+        0.35,
+        0.5,
+        0.45
+      ]
+    },
+    "buyer": {
+      "signals": [
+        "asks_for_person",
+        "asks_about_price"
+      ],
+      "thresholds": [
+        0.5,
+        0.7
+      ]
+    }
+  }
+}

@@ -8,6 +8,7 @@ import resource
 import sys
 import threading
 import time
+from verify_weights import validate_layout
 
 os.environ['HF_HUB_OFFLINE'] = '1'
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
@@ -25,14 +26,12 @@ def metadata(root=ROOT):
     value = json.loads((root / 'manifest.json').read_text())
     if value.get('id') != 'mpnet' or value.get('precision') != 'float32':
         raise ValueError('Unexpected model identity.')
+    validate_layout(root, value)
     for side, signals in SIGNALS.items():
         role = value['roles'][side]
         if role['signals'] != signals or len(role['thresholds']) != len(signals) or not all(
                 isinstance(t, (int, float)) and 0 <= t <= 1 for t in role['thresholds']):
             raise ValueError('Invalid saved thresholds.')
-        for name in ['model.safetensors', 'head.json', 'config.json', 'tokenizer.json']:
-            if not (root / side / name).is_file():
-                raise ValueError('Model files are missing. Run download_weights.py at build time.')
     return value
 
 

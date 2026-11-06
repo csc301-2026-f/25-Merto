@@ -1,10 +1,30 @@
-"""Package the trusted fine-tuned MPNet pair, without changing its precision."""
+"""Export trusted training checkpoints as Git-trackable, lossless FP32 shards."""
 import argparse
 import hashlib
 import json
 from pathlib import Path
 import shutil
-import tarfile
+
+
+def write_shards(source, target):
+    from huggingface_hub import split_torch_state_dict_into_shards
+    from safetensors import safe_open
+    from safetensors.torch import load_file, save_file
+    state = load_file(str(source), device='cpu')
+    split = split_torch_state_dict_into_shards(state, max_shard_size='50MB')
+    for name, keys in split.filename_to_tensors.items():
+        save_file({key: state[key] for key in keys}, str(target / name), metadata={'format': 'pt'})
+        if (target / name).stat().st_size >= 100 * 1024 ** 2:
+            raise ValueError('A tensor shard exceeds GitHub\'s 100 MiB limit.')
+        # Verify the serialization changed no tensor values, shapes or dtypes.
+        with safe_open(str(target / name), framework='pt', device='cpu') as saved:
+            assert set(saved.keys()) == set(keys)
+            for key in keys:
+                actual = saved.get_tensor(key)
+                assert actual.dtype == state[key].dtype and actual.shape == state[key].shape
+                assert actual.equal(state[key]), key
+    index = {'metadata': split.metadata, 'weight_map': split.tensor_to_filename}
+    (target / 'model.safetensors.index.json').write_text(json.dumps(index, indent=2, sort_keys=True) + '\n')
 
 
 def main():
@@ -19,16 +39,16 @@ def main():
     out = args.output_dir.resolve()
     out.mkdir(parents=True, exist_ok=False)
     bundle = out / 'mpnet-v3'
-    files = ['model.safetensors', 'model_head.pkl', 'config.json', 'tokenizer.json',
-             'tokenizer_config.json', 'special_tokens_map.json', 'vocab.txt',
-             'modules.json', 'config_setfit.json', 'sentence_bert_config.json',
-             'config_sentence_transformers.json', '1_Pooling/config.json']
-    manifest = {'format': 1, 'id': 'mpnet', 'version': 'v3-natural-s42-20261102',
-                'precision': 'float32', 'max_length': 128, 'seed': 42, 'files': {}, 'roles': {}}
+    files = ['config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json', 'vocab.txt']
+    manifest = {'format': 2, 'id': 'mpnet', 'version': 'v3-natural-s42-20261102',
+                'precision': 'float32', 'max_length': 128, 'seed': 42,
+                'storage': 'git-tracked-safetensors-shards', 'source_weights': {}, 'files': {}, 'roles': {}}
     for side in ['ai', 'buyer']:
         source = args.run_dir / 'models/mpnet' / side
         target = bundle / side
         target.mkdir(parents=True)
+        manifest['source_weights'][side] = hashlib.sha256((source / 'model.safetensors').read_bytes()).hexdigest()
+        write_shards(source / 'model.safetensors', target)
         for name in files:
             f = target / name
             f.parent.mkdir(parents=True, exist_ok=True)
@@ -46,14 +66,9 @@ def main():
                 manifest['files'][str(f.relative_to(bundle))] = {
                     'size': f.stat().st_size, 'sha256': hashlib.sha256(f.read_bytes()).hexdigest()}
     (bundle / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
-    archive = out / 'mpnet-v3-fp32.tar.gz'
-    with tarfile.open(archive, 'w:gz', compresslevel=1) as tar:
-        tar.add(bundle, arcname='mpnet-v3')
-    metadata = {'url': 'https://github.com/csc301-2026-f/25-Merto/releases/download/mpnet-v3-natural-s42/mpnet-v3-fp32.tar.gz',
-                'sha256': hashlib.sha256(archive.read_bytes()).hexdigest(), 'bytes': archive.stat().st_size,
-                'version': manifest['version'], 'precision': 'float32'}
-    (out / 'weights-release.json').write_text(json.dumps(metadata, indent=2) + '\n')
-    print(json.dumps(metadata, indent=2))
+    print(json.dumps({'path': str(bundle), 'files': len(manifest['files']),
+                      'bytes': sum(f['size'] for f in manifest['files'].values()),
+                      'precision': manifest['precision'], 'all_tensors_unchanged': True}, indent=2))
 
 
 if __name__ == '__main__':

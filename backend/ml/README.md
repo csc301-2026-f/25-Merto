@@ -134,8 +134,8 @@ The current entry point delegates to `run_v3.py`: each role trains in its own su
 ## Saved natural-v3 results
 
 For the current CRM, only **MPNet v3 and deterministic rules** are selectable.
-The original trained MPNet pair is available as a pinned GitHub Release and is
-automatically downloaded for local/hosted inference; see
+The trained MPNet pair is committed as lossless FP32 safetensors shards under
+`model-service/weights/mpnet-v3/` and verified locally for local/hosted inference; see
 [deployment instructions](../../model-service/README.md). MiniLM/BGE below are
 retained as offline experiment results.
 
