@@ -434,8 +434,8 @@ own customers.
 | `POST /api/appointments/:appointmentId/outcome` | GM, owning rep | Records `completed` or `no_show` and resolves its visit-outcome item. |
 | `PATCH /api/appointments/:appointmentId` | GM, owning rep | Updates the appointment time, notes, or any status; status transitions are not restricted. |
 
-Calendar times are entered and displayed in the dealership's
-`America/Toronto` time zone. The API stores `scheduledFor` as a timestamp with
+Calendar times are entered and displayed in the dealership's configured time
+zone (`DEALERSHIP_TIME_ZONE`, default `America/Toronto`). The API stores `scheduledFor` as a timestamp with
 time zone; send an ISO 8601 date-time with an explicit offset (for example,
 `2026-11-10T10:30:00-05:00`) to avoid ambiguity. Daylight-saving transitions
 can make a local time invalid or ambiguous; the calendar reports a nonexistent
@@ -487,7 +487,7 @@ and the GM calendar shows these exceptions, requested/confirmed counts, show
 rate, and bottlenecks. Requested counts include appointments whose current
 status is `requested`; confirmed counts include rows with a human confirmer.
 Show rate is completed ÷ (completed + no-show), using
-the scheduled visit date in `America/Toronto`, not the time the appointment was
+the scheduled visit date in the configured dealership time zone, not the time the appointment was
 requested. The rule-based AI can only create requested appointments; its reply
 must say a person will confirm and must not claim the visit is booked.
 Appointment changes appear on the deal record returned by

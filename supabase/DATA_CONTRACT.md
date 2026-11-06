@@ -154,8 +154,8 @@ status change writes an `audit_events` record and timeline entries. When a GM
 transfers a deal, future confirmed/rescheduled appointments become requested
 again and lose their previous confirmer so the new rep can confirm them.
 
-Show rate is completed ÷ (completed + no-show), grouped by the local
-`scheduled_for` date (`America/Toronto` in the single-store demo), never by
+Show rate is completed ÷ (completed + no-show), grouped by the dealership-local
+`scheduled_for` date (`DEALERSHIP_TIME_ZONE`, default `America/Toronto`), never by
 request/booking time.
 
 ### `audit_events`: attributed field history

@@ -1,4 +1,5 @@
 import type { Queryable } from '../db.ts';
+import { dealershipTimeZone } from '../time-zone.ts';
 import type { AppointmentInput, AppointmentStatus } from './policy.ts';
 
 export interface CalendarAppointment {
@@ -174,17 +175,17 @@ export async function appointmentOverview(db: Queryable, ownerId: string | null)
       count(*) filter (where a.status = 'requested')::int as requested,
       count(*) filter (where a.confirmed_by is not null)::int as confirmed,
       count(*) filter (where a.status = 'completed'
-        and (a.scheduled_for at time zone 'America/Toronto')::date
-          <= (now() at time zone 'America/Toronto')::date)::int as completed,
+        and (a.scheduled_for at time zone $2)::date
+          <= (now() at time zone $2)::date)::int as completed,
       count(*) filter (where a.status = 'no_show'
-        and (a.scheduled_for at time zone 'America/Toronto')::date
-          <= (now() at time zone 'America/Toronto')::date)::int as "noShow",
+        and (a.scheduled_for at time zone $2)::date
+          <= (now() at time zone $2)::date)::int as "noShow",
       count(*) filter (where a.status = 'requested')::int as "requestedUnconfirmed",
       count(*) filter (where a.status in ('confirmed', 'rescheduled') and a.scheduled_for <= now())::int
         as "visitsWithoutOutcome"
     from public.appointments a
     join public.deals d on d.id = a.deal_id
-    where ($1::uuid is null or d.owner_id = $1)`, [ownerId]);
+    where ($1::uuid is null or d.owner_id = $1)`, [ownerId, dealershipTimeZone]);
   const appointments = await listAppointments(db, ownerId);
   return {
     appointments,

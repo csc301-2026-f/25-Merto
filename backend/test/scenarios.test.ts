@@ -4,19 +4,55 @@ import { parseVisitTime } from '../src/scenarios/agents.ts';
 import { SCENARIOS } from '../src/scenarios/catalog.ts';
 import { CHECKS } from '../src/scenarios/checks.ts';
 import { STAFF } from '../src/seed-ids.ts';
+import { dealershipTimeZone } from '../src/time-zone.ts';
 import { useApi } from './harness.ts';
+
+function localDate(date: Date): string {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: dealershipTimeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(date).map(({ type, value }) => [type, value]));
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+function nextWeekday(now: string, weekday: number): string {
+  const [year, month, day] = localDate(new Date(now)).split('-').map(Number);
+  const currentWeekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const days = (weekday - currentWeekday + 7) % 7 || 7;
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+function dateAfterLocalDays(now: string, days: number): string {
+  const [year, month, day] = localDate(new Date(now)).split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+function assertVisitTime(actual: ReturnType<typeof parseVisitTime>, expected: string, label: string) {
+  assert.ok(actual);
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: dealershipTimeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(new Date(actual.iso)).map(({ type, value }) => [type, value]));
+  assert.equal(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`, expected);
+  assert.equal(actual.label, label);
+}
 
 describe('visit time parsing', () => {
   it('finds the next matching day and time', () => {
-    // 2026-11-01 is a Sunday.
-    assert.deepEqual(parseVisitTime('Can I come in Monday at 10 am?', '2026-11-01T20:00:00Z'),
-      { iso: '2026-11-02T15:00:00.000Z', label: 'Monday at 10 am' });
-    assert.deepEqual(parseVisitTime('Thursday after work', '2026-11-02T21:10:00Z'),
-      { iso: '2026-11-05T23:00:00.000Z', label: 'Thursday at 6 pm' });
-    assert.deepEqual(parseVisitTime('tomorrow at 2:30 pm', '2026-11-01T20:00:00Z'),
-      { iso: '2026-11-02T19:30:00.000Z', label: 'Monday at 2:30 pm' });
+    const mondayNow = '2026-11-01T20:00:00Z';
+    const thursdayNow = '2026-11-02T21:10:00Z';
+    assertVisitTime(parseVisitTime('Can I come in Monday at 10 am?', mondayNow),
+      `${nextWeekday(mondayNow, 1)}T10:00`, 'Monday at 10 am');
+    assertVisitTime(parseVisitTime('Thursday after work', thursdayNow),
+      `${nextWeekday(thursdayNow, 4)}T18:00`, 'Thursday at 6 pm');
+    const tomorrow = dateAfterLocalDays(mondayNow, 1);
+    const tomorrowName = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'UTC', weekday: 'long',
+    }).format(new Date(`${tomorrow}T12:00:00Z`));
+    assertVisitTime(parseVisitTime('tomorrow at 2:30 pm', mondayNow),
+      `${tomorrow}T14:30`, `${tomorrowName} at 2:30 pm`);
     // The same weekday means next week, not today.
-    assert.equal(parseVisitTime('Sunday at 9 am', '2026-11-01T20:00:00Z')!.iso, '2026-11-08T14:00:00.000Z');
+    assertVisitTime(parseVisitTime('Sunday at 9 am', mondayNow),
+      `${nextWeekday(mondayNow, 0)}T09:00`, 'Sunday at 9 am');
     assert.equal(parseVisitTime('12 am on Friday', '2026-11-01T20:00:00Z')!.label, 'Friday at 12 am');
   });
 

@@ -79,6 +79,7 @@ Copy `backend/.env.example` to `backend/.env` and fill in only what you need.
 | `DEV_LOGIN_PASSWORD` | `test` with the in-memory database; sign-in is off with a real database unless this is set | Shared password for the development sign-in. This is not real authentication. |
 | `GROQ_API_KEY` | unset | Server-only key for AI reply generation. Without it, **Generate reply** shows a setup error (503); the rest of the app works. Create one at [Groq Console](https://console.groq.com/keys). |
 | `GROQ_MODEL` | `openai/gpt-oss-20b` | Optional Groq model override. It must support chat completions with `reasoning_effort`. |
+| `DEALERSHIP_TIME_ZONE` | `America/Toronto` | IANA time zone used by backend appointment metrics and scenario scheduling. Set the same value as the frontend setting. |
 | `MERTO_MODEL_URL` | unset (deterministic rules only) | HTTPS origin of the MPNet model service, with no path. With this and `MERTO_MODEL_TOKEN` set, **AI Review** offers both Deterministic and MPNet. |
 | `MERTO_MODEL_TOKEN` | unset | Shared secret for the model service. It must match the model service's own `MERTO_MODEL_TOKEN`. |
 
@@ -94,6 +95,7 @@ Never put any of these in frontend code or in a `NEXT_PUBLIC_` variable.
 | --- | --- | --- |
 | `BACKEND_URL` | `http://localhost:3001` | Where the frontend sends its server-side requests to the backend. |
 | `BACKEND_PROTECTION_BYPASS` | unset | Only for deployments where the backend has Vercel Deployment Protection on. Sent as the `x-vercel-protection-bypass` header. |
+| `NEXT_PUBLIC_DEALERSHIP_TIME_ZONE` | `America/Toronto` | IANA time zone used to enter and display dealership dates. Keep it aligned with backend `DEALERSHIP_TIME_ZONE`. |
 
 Set them only if you need to, for example
 `BACKEND_URL=http://localhost:4000 npm run dev`, or put them in
@@ -119,9 +121,10 @@ The app runs as separate Vercel projects plus a hosted Supabase database:
 Each project's variables are set in its Vercel settings, not in files in the
 repository:
 
-- Backend: `DATABASE_URL`, `DEV_LOGIN_PASSWORD`, `GROQ_API_KEY`, and, when the
+- Backend: `DATABASE_URL`, `DEV_LOGIN_PASSWORD`, `DEALERSHIP_TIME_ZONE`, `GROQ_API_KEY`, and, when the
   model service is deployed, `MERTO_MODEL_URL` and `MERTO_MODEL_TOKEN`.
-- Frontend: `BACKEND_URL` (the deployed backend's address), and
+- Frontend: `BACKEND_URL` (the deployed backend's address),
+  `NEXT_PUBLIC_DEALERSHIP_TIME_ZONE` (matching backend setting), and
   `BACKEND_PROTECTION_BYPASS` if the backend has Deployment Protection on.
 - Model service: `MERTO_MODEL_TOKEN` and `VERCEL_SUPPORT_LARGE_FUNCTIONS=1`.
 

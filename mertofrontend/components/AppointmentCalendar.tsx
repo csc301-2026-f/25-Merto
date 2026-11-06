@@ -16,19 +16,20 @@ import { saveAppointment } from "@/app/appointments/actions";
 import { APPOINTMENT_STATUSES, type Appointment, type AppointmentOverview } from "@/lib/appointments";
 import type { Deal, Rep } from "@/lib/deals";
 import {
+  dealershipTimeZone,
   formatDateTime,
   label,
-  torontoDateTimeLocal,
-  torontoDateTimeToIso,
+  dealershipDateTimeLocal,
+  dealershipDateTimeToIso,
 } from "@/lib/format";
 
 function dateKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-function todayInToronto(): string {
+function todayInDealershipTimeZone(): string {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Toronto",
+    timeZone: dealershipTimeZone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -91,7 +92,7 @@ function AppointmentForm({
   }, [onSaved, state]);
 
   const defaultDate = appointment
-    ? torontoDateTimeLocal(appointment.scheduledFor)
+    ? dealershipDateTimeLocal(appointment.scheduledFor)
     : localDefault(selectedDate);
 
   const knownDeal =
@@ -109,7 +110,7 @@ function AppointmentForm({
 
     try {
       const data = new FormData(form);
-      data.set("scheduledFor", torontoDateTimeToIso(localDate.value));
+      data.set("scheduledFor", dealershipDateTimeToIso(localDate.value));
       setLocalError(null);
       startTransition(() => formAction(data));
     } catch (error) {
@@ -192,7 +193,7 @@ function AppointmentForm({
 
       <div className="flex flex-col gap-1">
         <label htmlFor="scheduledForLocal" className="font-semibold">
-          Date and time (Toronto)
+          Date and time ({dealershipTimeZone})
         </label>
         <input
           id="scheduledForLocal"
@@ -286,7 +287,7 @@ export function AppointmentCalendar({
   deals: Deal[];
   reps: Rep[];
 }) {
-  const today = todayInToronto();
+  const today = todayInDealershipTimeZone();
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedRepId, setSelectedRepId] = useState("");
   const [panel, setPanel] = useState<"appointments" | "edit" | "create">("appointments");
@@ -323,7 +324,7 @@ export function AppointmentCalendar({
   };
 
   const startEdit = (appointment: Appointment) => {
-    const appointmentDate = torontoDateTimeLocal(appointment.scheduledFor).slice(0, 10);
+    const appointmentDate = dealershipDateTimeLocal(appointment.scheduledFor).slice(0, 10);
     const [year, monthNumber] = appointmentDate.split("-").map(Number);
     setSelectedDate(appointmentDate);
     setMonth(new Date(year, monthNumber - 1, 1));
@@ -336,7 +337,7 @@ export function AppointmentCalendar({
     const grouped = new Map<string, Appointment[]>();
 
     for (const appointment of appointments) {
-      const key = torontoDateTimeLocal(appointment.scheduledFor).slice(0, 10);
+      const key = dealershipDateTimeLocal(appointment.scheduledFor).slice(0, 10);
       grouped.set(key, [...(grouped.get(key) ?? []), appointment]);
     }
 
@@ -493,7 +494,7 @@ export function AppointmentCalendar({
                         className="block w-full truncate rounded bg-amber-100 px-1 py-1 text-left text-[10px] text-[#594a2e] transition hover:bg-[#d5bd91] sm:text-xs dark:bg-[#d5bd91]/20 dark:text-amber-200 dark:hover:bg-[#d5bd91]/30"
                         title={`${appointment.buyer} · ${formatDateTime(appointment.scheduledFor)}`}
                       >
-                        {torontoDateTimeLocal(
+                        {dealershipDateTimeLocal(
                           appointment.scheduledFor
                         ).slice(11)}{" "}
                         {appointment.buyer}

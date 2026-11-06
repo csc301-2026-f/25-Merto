@@ -4,6 +4,7 @@
 // use rules only: no AI model is called, so runs are repeatable and free.
 import type { AiMode } from './catalog.ts';
 import type { ToolCall, ToolDescription } from './tools.ts';
+import { dealershipTimeZone } from '../time-zone.ts';
 
 export interface AgentContext {
   scenario: { id: string; title: string };
@@ -23,8 +24,6 @@ export interface Agent {
 }
 
 const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-const STORE_TIME_ZONE = 'America/Toronto';
-
 function timeParts(date: Date, options: Intl.DateTimeFormatOptions): Record<string, string> {
   const parts: Record<string, string> = {};
   for (const part of new Intl.DateTimeFormat('en-CA', options).formatToParts(date)) {
@@ -38,7 +37,7 @@ function timeParts(date: Date, options: Intl.DateTimeFormatOptions): Record<stri
 export function parseVisitTime(message: string, now: string): { iso: string; label: string } | null {
   const lower = message.toLowerCase();
   const localToday = timeParts(new Date(now), {
-    timeZone: STORE_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+    timeZone: dealershipTimeZone, year: 'numeric', month: '2-digit', day: '2-digit',
   });
   const year = Number(localToday.year);
   const month = Number(localToday.month);
@@ -79,7 +78,7 @@ export function parseVisitTime(message: string, now: string): { iso: string; lab
   const targetDay = localDate.getUTCDate();
   const localAsUtc = Date.UTC(targetYear, targetMonth - 1, targetDay, hour, minute);
   const representedLocalTime = timeParts(new Date(localAsUtc), {
-    timeZone: STORE_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+    timeZone: dealershipTimeZone, year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
   });
   const representedAsUtc = Date.UTC(
