@@ -59,7 +59,7 @@ export type AssignmentRecord = {
 // One item in the buyer record. resolvedAt is set only for resolved items.
 export type DealOpenItem = {
   id: string;
-  type: string; // promise | missing_doc | unanswered_question | callback
+  type: string; // promise | missing_doc | unanswered_question | callback | visit_outcome
   description: string;
   status: string; // open | resolved | cancelled
   owner: string | null;
@@ -77,6 +77,14 @@ export type DealRecord = {
   owner: { id: string; name: string } | null;
   timeline: TimelineEntry[];
   openItems: DealOpenItem[];
-  appointments: { id: string; scheduledFor: string; status: string; confirmedBy: string | null }[];
+  appointments: {
+    id: string;
+    scheduledFor: string;
+    status: string;
+    requestedByType: string;
+    requestedBy: string | null;
+    confirmedBy: string | null;
+    outcomeNote: string | null;
+  }[];
   assignments: AssignmentRecord[];
 };

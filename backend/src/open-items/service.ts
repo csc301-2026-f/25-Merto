@@ -46,6 +46,9 @@ export async function closeOpenItem(db: Database, staff: Staff, itemId: string, 
     if (!item) throw notFound('Open item not found.');
     requireDealAccess(staff, item.dealOwnerId);
     if (item.status !== 'open') throw conflict(`This item is already ${item.status}. Reload the page.`);
+    if (item.type === 'visit_outcome') {
+      throw conflict('Record the visit outcome on the appointment to close this item.');
+    }
     if ((CLOSED_STAGES as readonly string[]).includes(item.dealStage)) {
       throw conflict(`This deal is ${item.dealStage}; its work is already closed.`);
     }

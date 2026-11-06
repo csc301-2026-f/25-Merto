@@ -22,13 +22,15 @@ export async function saveAppointment(
   const status = String(formData.get("status") ?? "requested");
   const outcomeNote = String(formData.get("outcomeNote") ?? "");
   const isEdit = appointmentId.length > 0;
+  const method = isEdit ? "PATCH" : "POST";
+  const path = isEdit ? `/api/appointments/${appointmentId}` : "/api/appointments";
 
   let response: Response;
   try {
     response = await backendFetch(
-      isEdit ? `/api/appointments/${appointmentId}` : "/api/appointments",
+      path,
       {
-        method: isEdit ? "PATCH" : "POST",
+        method,
         body: JSON.stringify({ dealId, scheduledFor, status, outcomeNote }),
       },
     );
@@ -43,5 +45,5 @@ export async function saveAppointment(
   }
 
   revalidatePath(`/${session.role}`, "layout");
-  return { success: isEdit ? "Appointment updated." : "Appointment created." };
+  return { success: isEdit ? "Appointment Updated" : "Appointment Created" };
 }

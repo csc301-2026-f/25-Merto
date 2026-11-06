@@ -4,6 +4,7 @@
 // use rules only: no AI model is called, so runs are repeatable and free.
 import type { AiMode } from './catalog.ts';
 import type { ToolCall, ToolDescription } from './tools.ts';
+import { dealershipTimeZone } from '../time-zone.ts';
 
 export interface AgentContext {
   scenario: { id: string; title: string };
@@ -23,21 +24,34 @@ export interface Agent {
 }
 
 const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+function timeParts(date: Date, options: Intl.DateTimeFormatOptions): Record<string, string> {
+  const parts: Record<string, string> = {};
+  for (const part of new Intl.DateTimeFormat('en-CA', options).formatToParts(date)) {
+    parts[part.type] = part.value;
+  }
+  return parts;
+}
 
-// "Monday at 10 am", "Thursday after work", "tomorrow at 2:30 pm" -> the next such time,
-// read in UTC. Returns null when the message names no day or no time.
+// "Monday at 10 am", "Thursday after work", "tomorrow at 2:30 pm" -> the next store-local time.
+// Returns null when the message names no day or no time.
 export function parseVisitTime(message: string, now: string): { iso: string; label: string } | null {
   const lower = message.toLowerCase();
-  const base = new Date(now);
+  const localToday = timeParts(new Date(now), {
+    timeZone: dealershipTimeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+  });
+  const year = Number(localToday.year);
+  const month = Number(localToday.month);
+  const day = Number(localToday.day);
+  const localWeekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   let days: number;
   let dayName: string;
   const weekday = WEEKDAYS.findIndex((name) => lower.includes(name));
   if (weekday >= 0) {
-    days = (weekday - base.getUTCDay() + 7) % 7 || 7;
+    days = (weekday - localWeekday + 7) % 7 || 7;
     dayName = WEEKDAYS[weekday];
   } else if (/\btomorrow\b/.test(lower)) {
     days = 1;
-    dayName = WEEKDAYS[(base.getUTCDay() + 1) % 7];
+    dayName = WEEKDAYS[(localWeekday + 1) % 7];
   } else {
     return null;
   }
@@ -58,7 +72,20 @@ export function parseVisitTime(message: string, now: string): { iso: string; lab
     return null;
   }
 
-  const at = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate() + days, hour, minute));
+  const localDate = new Date(Date.UTC(year, month - 1, day + days));
+  const targetYear = localDate.getUTCFullYear();
+  const targetMonth = localDate.getUTCMonth() + 1;
+  const targetDay = localDate.getUTCDate();
+  const localAsUtc = Date.UTC(targetYear, targetMonth - 1, targetDay, hour, minute);
+  const representedLocalTime = timeParts(new Date(localAsUtc), {
+    timeZone: dealershipTimeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  });
+  const representedAsUtc = Date.UTC(
+    Number(representedLocalTime.year), Number(representedLocalTime.month) - 1,
+    Number(representedLocalTime.day), Number(representedLocalTime.hour), Number(representedLocalTime.minute),
+  );
+  const at = new Date(localAsUtc - (representedAsUtc - localAsUtc));
   const shown = `${hour % 12 || 12}${minute ? `:${String(minute).padStart(2, '0')}` : ''} ${hour < 12 ? 'am' : 'pm'}`;
   return { iso: at.toISOString(), label: `${dayName[0].toUpperCase()}${dayName.slice(1)} at ${shown}` };
 }

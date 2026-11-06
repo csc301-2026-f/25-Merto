@@ -51,6 +51,9 @@ async function change(db: Database, gm: Staff, dealId: string, input: ChangeInpu
     if (target.role !== 'rep') throw badRequest('Deals can only be assigned to a rep.');
     if (target.id === deal.ownerId) throw conflict(`This deal already belongs to ${target.name}.`);
 
+    if (kind === 'transfer') {
+      await repo.resetFutureAppointmentsForTransfer(tx, dealId, gm, target);
+    }
     await repo.setOwner(tx, dealId, target.id, kind === 'assignment');
     const openItemsMoved = await repo.moveOpenItems(tx, dealId, target.id);
     const event = await repo.addAssignmentEvent(tx, dealId, gm, kind,

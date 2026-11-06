@@ -106,6 +106,48 @@ export async function moveOpenItems(db: Queryable, dealId: string, ownerId: stri
   return moved.length;
 }
 
+export async function resetFutureAppointmentsForTransfer(
+  db: Queryable,
+  dealId: string,
+  actor: StaffMember,
+  newOwner: StaffMember,
+): Promise<number> {
+  const appointments = await db.query<{
+    id: string; oldStatus: string; scheduledFor: Date;
+  }>(`
+    with future_appointments as (
+      select id, status
+      from public.appointments
+      where deal_id = $1
+        and scheduled_for > now()
+        and status in ('confirmed', 'rescheduled')
+      for update
+    )
+    update public.appointments
+    set status = 'requested', confirmed_by = null, confirmed_at = null
+    from future_appointments f
+    where public.appointments.id = f.id
+    returning public.appointments.id, f.status as "oldStatus",
+      public.appointments.scheduled_for as "scheduledFor"`, [dealId]);
+
+  for (const appointment of appointments) {
+    await db.query(`
+      insert into public.audit_events
+        (actor_type, actor_id, action, entity_type, entity_id, deal_id,
+         field_name, old_value, new_value)
+      values ($1, $2, 'transfer_reset_appointment', 'appointment', $3, $4,
+        'status', $5, 'requested')`,
+    [actor.role, actor.id, appointment.id, dealId, appointment.oldStatus]);
+    await db.query(`
+      insert into public.timeline_events
+        (deal_id, event_type, actor_type, channel, direction, body)
+      values ($1, 'appointment', 'system', 'note', 'internal', $2)`,
+    [dealId,
+      `Future appointment for ${appointment.scheduledFor.toISOString()} now needs confirmation by ${newOwner.name} after the deal transfer.`]);
+  }
+  return appointments.length;
+}
+
 // Written by the GM, or by a rep who added a buyer and took it on themselves.
 export async function addAssignmentEvent(db: Queryable, dealId: string, actor: StaffMember,
   kind: AssignmentKind, body: string): Promise<{ id: string; createdAt: Date }> {

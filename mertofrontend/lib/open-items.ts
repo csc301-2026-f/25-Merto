@@ -2,7 +2,7 @@
 // longest-waiting first. The GM sees the whole store; a rep sees their own deals.
 export type OpenItem = {
   id: string;
-  type: string; // promise | missing_doc | unanswered_question | callback
+  type: string; // promise | missing_doc | unanswered_question | callback | visit_outcome
   description: string;
   status: string; // open | resolved | cancelled
   owner: { id: string; name: string } | null;

@@ -35,6 +35,46 @@ insert into public.timeline_events (id, deal_id, actor_type, actor_id, channel, 
   ('40000000-0000-0000-0000-000000000010', '30000000-0000-0000-0000-000000000004', 'system', null, 'note', 'internal', 'Buyer opted out. Follow-ups blocked; deal closed as lost.', now() - interval '2 days' + interval '1 minute')
 on conflict (id) do nothing;
 
+update public.timeline_events
+set body = 'Can I visit to see the Tucson?',
+    created_at = date_trunc('minute', now()) - interval '1 day' - interval '14 minutes'
+where id = '40000000-0000-0000-0000-000000000008';
+
+insert into public.timeline_events (id, deal_id, actor_type, channel, direction, body, created_at) values
+  ('40000000-0000-0000-0000-000000000029', '30000000-0000-0000-0000-000000000003', 'ai', 'email', 'outbound',
+    'Sure! What time works for you? A representative will confirm your visit.',
+    date_trunc('minute', now()) - interval '1 day' - interval '13 minutes'),
+  ('40000000-0000-0000-0000-000000000030', '30000000-0000-0000-0000-000000000003', 'buyer', 'email', 'inbound',
+    'Nov 5 at 12:00 p.m. is fine.',
+    date_trunc('minute', now()) - interval '1 day' - interval '12 minutes'),
+  ('40000000-0000-0000-0000-000000000031', '30000000-0000-0000-0000-000000000003', 'ai', 'email', 'outbound',
+    'I''ve recorded your visit request. A representative will confirm it.',
+    date_trunc('minute', now()) - interval '1 day' - interval '11 minutes')
+on conflict (id) do update set
+  deal_id = excluded.deal_id,
+  actor_type = excluded.actor_type,
+  actor_id = null,
+  channel = excluded.channel,
+  direction = excluded.direction,
+  body = excluded.body,
+  created_at = excluded.created_at;
+
+insert into public.timeline_events
+  (id, deal_id, actor_type, channel, direction, event_type, body, created_at) values
+  ('40000000-0000-0000-0000-000000000032', '30000000-0000-0000-0000-000000000003',
+    'system', 'note', 'internal', 'appointment',
+    'Visit request recorded and awaiting human confirmation.',
+    date_trunc('minute', now()) - interval '1 day' - interval '11 minutes')
+on conflict (id) do update set
+  deal_id = excluded.deal_id,
+  actor_type = excluded.actor_type,
+  actor_id = null,
+  channel = excluded.channel,
+  direction = excluded.direction,
+  event_type = excluded.event_type,
+  body = excluded.body,
+  created_at = excluded.created_at;
+
 -- Structured labels let queries identify actions without interpreting message text.
 update public.timeline_events set event_type = 'assignment'
 where id = '40000000-0000-0000-0000-000000000003';
@@ -47,6 +87,68 @@ insert into public.appointments (id, deal_id, scheduled_for, status, confirmed_b
   ('50000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', now() + interval '1 day', 'confirmed', '10000000-0000-0000-0000-000000000002', now() - interval '1 hour'),
   ('50000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000003', now() + interval '2 days', 'requested', null, null)
 on conflict (id) do nothing;
+
+-- These legacy appointments predate request timestamps. Use the related buyer
+-- request where present; otherwise the first inbound event is the best available
+-- request-time evidence for the original Jordan lead.
+update public.appointments a
+set created_at = coalesce(
+  (
+    select e.created_at
+    from public.timeline_events e
+    where e.deal_id = a.deal_id and e.actor_type = 'buyer' and e.direction = 'inbound'
+      and e.body ~* '(come in|come by|visit|appointment|test[- ]?drive|see (the|a|this|that))'
+      and e.created_at <= coalesce(a.confirmed_at, a.scheduled_for, now())
+    order by e.created_at desc, e.id desc limit 1
+  ),
+  (select min(e.created_at) from public.timeline_events e
+    where e.deal_id = a.deal_id and e.actor_type = 'buyer' and e.direction = 'inbound'),
+  (select min(e.created_at) from public.timeline_events e
+    where e.deal_id = a.deal_id and e.actor_type = 'ai' and e.direction = 'outbound'
+      and e.body ilike '%visit request%'),
+  null
+)
+where a.id in (
+  '50000000-0000-0000-0000-000000000001',
+  '50000000-0000-0000-0000-000000000002'
+);
+
+update public.appointments
+set scheduled_for = (
+      (((now() at time zone 'America/Toronto')::date + 2) + time '12:00')
+        at time zone 'America/Toronto'
+    ),
+    status = 'requested',
+    requested_by_type = 'ai',
+    requested_by_id = null,
+    confirmed_by = null,
+    confirmed_at = null,
+    created_at = (
+      select created_at from public.timeline_events
+      where id = '40000000-0000-0000-0000-000000000031'
+    )
+where id = '50000000-0000-0000-0000-000000000002';
+
+update public.timeline_events e
+set body = 'I''ve recorded your visit request for '
+  || to_char(a.scheduled_for at time zone 'America/Toronto', 'FMDay, FMMonth DD, YYYY at FM12:MI AM')
+  || '. A representative will confirm it.'
+from public.appointments a
+where e.id = '40000000-0000-0000-0000-000000000031'
+  and a.id = '50000000-0000-0000-0000-000000000002';
+
+insert into public.audit_events
+  (actor_type, action, entity_type, entity_id, deal_id, field_name, old_value, new_value, created_at)
+select 'ai', 'request_appointment', 'appointment', a.id, a.deal_id, 'status', null, 'requested', a.created_at
+from public.appointments a
+where a.id = '50000000-0000-0000-0000-000000000002'
+  and not exists (
+    select 1 from public.audit_events e
+    where e.entity_type = 'appointment'
+      and e.entity_id = a.id
+      and e.action = 'request_appointment'
+      and e.field_name = 'status'
+  );
 
 insert into public.open_items (id, deal_id, owner_id, type, description, status, due_at, created_at, resolved_at) values
   ('60000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 'promise', 'Send a trade-in estimate for the Civic.', 'open', now() + interval '2 hours', now() - interval '1 day', null),

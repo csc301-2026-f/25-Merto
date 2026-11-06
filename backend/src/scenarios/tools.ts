@@ -131,9 +131,31 @@ export async function executeTool(tx: Queryable, world: ToolWorld, call: ToolCal
         stateChange: 'open items +1 (open)', eventId: null };
     }
     case 'request_appointment': {
+      if (world.mode === 'off') {
+        return { status: 'blocked', detail: 'AI is off, so the visit request was not recorded.',
+          stateChange: 'none', eventId: null };
+      }
+      const [appointment] = await tx.query<{ id: string }>(`
+        insert into public.appointments
+          (deal_id, scheduled_for, status, requested_by_type, created_at)
+        values ($1, $2::timestamptz, 'requested', 'ai', $3::timestamptz)
+        returning id`, [world.dealId, call.scheduledFor, at.toISOString()]);
       await tx.query(`
-        insert into public.appointments (deal_id, scheduled_for, status)
-        values ($1, $2::timestamptz, 'requested')`, [world.dealId, call.scheduledFor]);
+        insert into public.audit_events
+          (actor_type, action, entity_type, entity_id, deal_id, field_name, old_value, new_value, created_at)
+        values ('ai', 'request_appointment', 'appointment', $1, $2, 'status', null, 'requested', $3::timestamptz)`,
+      [appointment.id, world.dealId, at.toISOString()]);
+      await tx.query(`
+        insert into public.timeline_events
+          (deal_id, event_type, actor_type, channel, direction, body, created_at)
+        values ($1, 'appointment', 'ai', 'note', 'internal', $2, $3::timestamptz)`,
+      [world.dealId, `AI recorded a visit request for ${call.scheduledFor}.`, at.toISOString()]);
+      await tx.query(`
+        insert into public.timeline_events
+          (deal_id, event_type, actor_type, channel, direction, body, created_at)
+        values ($1, 'appointment', 'system', 'note', 'internal', $2, $3::timestamptz)`,
+      [world.dealId, `Visit request recorded for ${call.scheduledFor}; awaiting human confirmation.`,
+        at.toISOString()]);
       return { status: 'created', detail: `Recorded a visit request for ${call.scheduledFor}.`,
         stateChange: 'appointments +1 (requested, not confirmed)', eventId: null };
     }

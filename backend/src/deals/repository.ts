@@ -63,6 +63,8 @@ export interface Appointment {
   id: string;
   scheduledFor: Date;
   status: string;
+  requestedByType: string;
+  requestedBy: string | null;
   confirmedBy: string | null;
   confirmedAt: Date | null;
   outcomeNote: string | null;
@@ -121,10 +123,13 @@ export function openItems(db: Queryable, dealId: string): Promise<OpenItem[]> {
 
 export function appointments(db: Queryable, dealId: string): Promise<Appointment[]> {
   return db.query<Appointment>(`
-    select a.id, a.scheduled_for as "scheduledFor", a.status, s.name as "confirmedBy",
+    select a.id, a.scheduled_for as "scheduledFor", a.status,
+      a.requested_by_type as "requestedByType", requester.name as "requestedBy",
+      s.name as "confirmedBy",
       a.confirmed_at as "confirmedAt", a.outcome_note as "outcomeNote"
     from public.appointments a
     left join public.staff_users s on s.id = a.confirmed_by
+    left join public.staff_users requester on requester.id = a.requested_by_id
     where a.deal_id = $1
     order by a.scheduled_for, a.id`, [dealId]);
 }
