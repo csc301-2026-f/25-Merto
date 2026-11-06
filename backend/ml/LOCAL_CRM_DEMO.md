@@ -17,11 +17,11 @@ cd backend
 npm run demo:model
 ```
 
-The launcher automatically downloads the **actual trained MPNet AI/buyer
-weights** from the pinned GitHub Release on first use and verifies their SHA-256.
+The **actual trained MPNet AI/buyer weights** are tracked in Git as lossless
+safetensors shards. The launcher verifies their SHA-256 locally without a model download.
 It uses the same lean FP32 runtime as the deployable Python service; SetFit and
 the original experiment folder are not needed. Later launches verify/reuse the
-downloaded files. A temporary server token is generated in memory and passed to
+tracked files. A temporary server token is generated in memory and passed to
 the two local processes; no `.env` file or hosted database is changed.
 
 Open **http://127.0.0.1:3000/manager/ai-review** and sign in as **karen / test**.

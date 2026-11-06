@@ -62,9 +62,9 @@ try {
   for (const port of Object.values(ports)) await available(port);
   const modelUrl = `http://127.0.0.1:${ports.model}`;
   await new Promise((resolve, reject) => {
-    const download = spawn(python, ['download_weights.py'], { cwd: modelService, stdio: 'inherit' });
-    download.once('error', reject);
-    download.once('exit', code => code === 0 ? resolve() : reject(Error('Could not obtain verified MPNet weights.')));
+    const verification = spawn(python, ['verify_weights.py'], { cwd: modelService, stdio: 'inherit' });
+    verification.once('error', reject);
+    verification.once('exit', code => code === 0 ? resolve() : reject(Error('Tracked MPNet weights failed verification.')));
   });
   start('Model', python, ['run_local.py', '--port', String(ports.model)], modelService, { MERTO_MODEL_TOKEN: modelToken });
   await ready(`${modelUrl}/health`, modelToken);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "python download_weights.py",
+  "buildCommand": "python verify_weights.py",
   "outputDirectory": "public",
   "functions": {
     "api/index.py": {

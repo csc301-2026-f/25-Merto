@@ -652,7 +652,7 @@ directly into the database for that reason.
 
 See [`ml/README.md`](ml/README.md) for the MiniLM/BGE/MPNet experiments, reproducible
 classification and final-flag reports. The CRM now exposes only MPNet and
-deterministic evaluation. The original trained MPNet weights are uploaded as
-[GitHub Release attachments](https://github.com/csc301-2026-f/25-Merto/releases/tag/mpnet-v3-natural-s42)
-and downloaded/verified automatically; Python runtime dependencies are installed
+deterministic evaluation. The trained MPNet weights are committed as lossless
+safetensors shards in [`model-service/weights/mpnet-v3`](../model-service/weights/mpnet-v3)
+and verified locally at build time; Python runtime dependencies are installed
 from the pinned requirements. See [deployment setup](../model-service/README.md).

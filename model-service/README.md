@@ -3,17 +3,21 @@
 The CRM offers **Deterministic rules** and **MPNet v3**. MiniLM and BGE remain in
 the offline experiment results but are not deployed or loaded by this service.
 
-The original trained MPNet AI and buyer encoders are published in the repository's
-[GitHub Release](https://github.com/csc301-2026-f/25-Merto/releases/tag/mpnet-v3-natural-s42).
-`weights-release.json` pins the asset URL, size and SHA-256. At build time,
-`download_weights.py` downloads it and verifies the archive and every extracted
-file. A fresh Git clone does not require a copy from the experiment owner's Mac.
-The 438 MB encoder files exceed ordinary Git's file limit; the **actual weights**
-are Release attachments, not placeholder files or prediction fixtures.
+The actual trained MPNet AI and buyer encoders are committed under
+`weights/mpnet-v3/`. A normal Git clone includes the weights: no Git LFS setup,
+Release download, model-hosting account or copy from the experiment owner's Mac
+is required. Each original encoder is about 438 MB. The unchanged tensors are
+stored as standard Hugging Face safetensors shards, all below GitHub's 100 MiB
+per-file limit; the two encoders total about 876 MB. `manifest.json` records the
+size and SHA-256 of every file and the original checkpoint hashes.
 
-The bundle contains the original FP32 weights and original sklearn heads, plus
-plain JSON copies of the logistic coefficients and dev thresholds. Inference
-uses the JSON heads, avoiding SetFit, scikit-learn and pickle at runtime. It keeps
+At build time, `verify_weights.py` checks the local files and shard indexes
+without accessing the network. Missing or corrupt files fail the build. The
+runtime reads the shards directly, so no merged copy or archive is needed.
+
+The bundle contains the original FP32 tensor values, with the trained logistic
+coefficients and dev thresholds stored as plain JSON. Inference avoids SetFit,
+scikit-learn and pickle at runtime. It keeps
 the original tokenizer, mean pooling, normalization, maximum length 128 and
 thresholds. No retraining or quantization is performed.
 The upstream model attribution and Apache 2.0 license are retained in `licenses/`.
@@ -25,7 +29,7 @@ and Next.js frontend. Do not try to load Python weights inside the Node function
 
 1. Create a Vercel project from this GitHub repository, with Root Directory
    **`model-service`**, Framework Preset **Other**, and Python **3.12**. The checked-in
-   `vercel.json` runs the weight downloader during the build.
+   `vercel.json` verifies the committed weights during the build.
 2. Set server-side `MERTO_MODEL_TOKEN` to a strong shared secret. Set
    `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` and enable Fluid compute. The FP32 pair plus
    PyTorch exceeds the standard 500 MB Python bundle limit, so the project's
@@ -50,8 +54,11 @@ while presenting the result as MPNet. Deterministic evaluation remains usable
 during a model outage. The selected evaluator is pinned by the page URL and API
 header, and each evaluator keeps separate flags, reviews and summary metrics.
 
-Repository code and weights are ready for these steps; pushing a PR does not
-configure Vercel projects, apply a hosted migration or change production secrets.
+Once that model project is connected to the deployed Git branch, later merges
+deploy its tracked weights together with its code. The existing frontend and
+Express projects do not become a Python model service just because weights are
+committed. Initial project setup, the hosted migration and server-side model
+URL/token configuration are still required.
 
 ## Memory and validation
 
@@ -78,7 +85,7 @@ For a local check:
 ```sh
 python3.12 -m venv model-service/.venv
 model-service/.venv/bin/pip install -r model-service/requirements.txt
-model-service/.venv/bin/python model-service/download_weights.py
+model-service/.venv/bin/python model-service/verify_weights.py
 # Set MERTO_MODEL_TOKEN in your shell, then:
 model-service/.venv/bin/python model-service/run_local.py
 model-service/.venv/bin/python model-service/verify_deployment.py --output /tmp/mpnet-verification.json
@@ -87,3 +94,14 @@ model-service/.venv/bin/python model-service/verify_deployment.py --output /tmp/
 The verifier is development-only and reads frozen labels; the running inference
 service does not. Synthetic message-label accuracy is different from CRM flag
 rate and does not establish production conversation-level accuracy.
+
+## Reproduce the tracked shards
+
+With the training dependencies installed, export trusted local checkpoints with
+`python model-service/export_bundle.py --run-dir <training-run> --output-dir <new-directory>`.
+The exporter produces `<new-directory>/mpnet-v3/`, checks every saved tensor for
+exact equality with its source, and records the source hashes. Commit the
+exported directory as `model-service/weights/mpnet-v3/` together with the code.
+The exporter reads trusted training pickles only to extract the heads; pickles
+are not shipped in the runtime bundle. Sharding changes storage, not precision,
+thresholds, learned values or the evaluation protocol.

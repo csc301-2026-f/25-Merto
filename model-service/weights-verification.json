@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "engine": {
+    "id": "mpnet",
+    "mode": "model",
+    "name": "MPNet v3",
+    "version": "v3-natural-s42-20261102",
+    "ready": true
+  },
+  "precision": "float32",
+  "messages": 960,
+  "threshold_decisions": 2880,
+  "all_threshold_decisions_match": true,
+  "correct_by_side": {
+    "ai": 464,
+    "buyer": 472
+  },
+  "whole_message_correct": 936,
+  "whole_message_accuracy": 0.975,
+  "max_absolute_score_difference": 7.463610849911539e-07,
+  "test_sha256": "ed1e394ef4ab70b0795589bf4c73e7e758291fbae1075774c40bd19e967c3064",
+  "authentication_and_input_checks": true,
+  "max_request_stress_messages": 64,
+  "batch_size": 4,
+  "inference_serialized": true,
+  "peak_rss_bytes": 1096630272,
+  "measurement_platform": "Darwin arm64",
+  "memory_limit_caveat": "Local process high-water mark; verify Linux/Vercel peak memory after deployment.",
+  "storage": "git-tracked-safetensors-shards",
+  "manifest_sha256": "1c5478794b00629c4f09f5111e6eeba9c2e649596a4c5d0fa11330ca68ba8529",
+  "source_weights": {
+    "ai": "cafabd0bf04f61c9668498f58a661a53e96b8a9d48e6020c2971503a65ffad46",
+    "buyer": "bcec8bf8ec8ee8b137847b48740729c5bca903f807c6aac473d347120d20eb71"
+  },
+  "all_exported_tensors_exactly_equal": true
+}
