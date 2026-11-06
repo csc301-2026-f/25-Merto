@@ -12,8 +12,9 @@
 
 > Reviewed and merged [PR #14](https://github.com/csc301-2026-f/25-Merto/pull/14) for US14 AI reply generation and [PR #23](https://github.com/csc301-2026-f/25-Merto/pull/23) for D3 contribution and deployment documentation. Previously, during D2, implemented open item resolution (US4) and the AI conversation view (US3) in [PR #8](https://github.com/csc301-2026-f/25-Merto/pull/8), and updated the README in [PR #10](https://github.com/csc301-2026-f/25-Merto/pull/10).
 
-**[Name]**, [Role]
-> [Specific contributions]
+**Rachel Pham**, calendar interface, appointment creation & tracking
+> Implemented the manager and rep calendar for viewing, creating, and editing appointments, including manager filters by rep and a queue for appointment requests awaiting confirmation (US9). Managers are able to see all appointments of all reps across the store. In addition, managers can see appointment that are requested (by customer or from other sources) but are not confirmed (by a representative). Representatives can see a list of appointments that they need to comfirm on their dashboard. Confirmed appointments are switched back to requested status when a deal is transferred from one rep to another. Also made the dealership time zone configurable for consistent calendar entry, display, and date-based metrics.  
+Implementation: [Calendar PR #27](https://github.com/csc301-2026-f/25-Merto/pull/27).
 
 **[Name]**, [Role]
 > [Specific contributions]
