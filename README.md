@@ -24,6 +24,7 @@ The features below describe the current D3 version. The original scope is record
 3. **Follow-up actions:** Representatives can see which customers need follow-up and why, then record a simulated email, SMS, or call in the deal history. Eligibility checks exclude opted-out customers and other customers who should not currently be contacted.
 4. **Reply draft review:** Representatives can generate an AI reply through Groq, review the customer context, approve, edit, or reject the draft, and record an approved reply as a simulated follow-up.
 5. **Appointment calendar:** Managers and representatives can view appointments in a calendar and track appointments for deals.
+6. **Scenario checks:** Managers can run predefined dealership scenarios against an agent and read a scorecard of which store rules it followed or broke. Each run is reset, so nothing is saved.
 
 [Dashboard prototype (Figma Make)](https://www.figma.com/make/h6Sdmrc6AsJxeOVEOwmGn5/Manager-Analytics-Dashboard--Copy-?fullscreen=1)
 
@@ -102,11 +103,21 @@ Drafts now use the customer's recent messages, vehicle interest, appointments, a
 2. Click **New appointment**, select a customer, and enter the date, time, status, and any notes. Click **Create appointment**.
 3. Select the appointment in the calendar or click **Edit appointment** in the day's list. Update its details and click **Save changes**.
 
+### Run scenario checks (US13)
+
+1. Sign in as `karen` and open **Scenarios** in the sidebar. The page lists seven scenarios from the Merto brief, each with the store's AI mode and a **What is checked** list.
+2. Open **A visit is requested, not booked (Deal J)** and click **Run with careful**. The scorecard shows **Passed** with 7 of 7 checks: the agent tells the buyer a person will confirm the visit, and the run log shows the visit recorded as a request, never as booked.
+3. Choose `eager` in the **Agent** menu at the top and click **Run with eager** on the same scenario. The scorecard shows **Failed** with 4 of 7 checks: the agent told the buyer "You're all set for Monday at 10 am!", and the rule flags that exact message as appointment certainty.
+4. Click **Compare all agents** to run all seven scenarios for both agents. A table lines up the results: `careful` passes all seven scenarios and `eager` passes none.
+
+Every run is reset afterwards, so nothing is saved and no customer is contacted. The two agents are rule-based stand-ins, so no AI model is called, and the scores come from fixed rules: the same scenario always gives the same result. Only the General Manager can use this page. Scenario times are set in UTC, so the run log shows the requested visit shifted into Toronto time.
+
 ### Current limitations
 
 - Emails, SMS messages, and calls are simulated; no real customers are contacted. Scheduling a follow-up for later is not implemented.
 - AI reply generation requires `GROQ_API_KEY` on the backend and is subject to provider quotas. Conversation evaluation is separate: it uses deterministic rules by default, optionally MPNet, and runs when a manager triggers it.
 - The app uses the team's Supabase database and fictional scenarios rather than a live Merto API.
+- Scenario checks use fixed rules and two rule-based sample agents. They judge wording and behavior only, do not measure reply speed, and do not call an AI model.
 
 ## Local Development Instructions
 
@@ -149,6 +160,51 @@ The general Github Workflow is outlined as follows:
 5. Discuss the changes made. If there are no issues, merge
 6. Re-build application
 
+## Non-Functional Requirements
+
+### Accessibility
+
+We ran Lighthouse (Chrome DevTools, Navigation mode, Desktop, Accessibility category) on the deployed app on 2026-11-06, signed in as the manager for the pages behind sign-in:
+
+| Page | Accessibility score | Screenshot |
+| --- | --- | --- |
+| Sign-in (`/login`) | 100 | [lighthouse-login.png](deliverables/D3/nfr/lighthouse-login.png) |
+| Manager home (`/manager`) | 100 | [lighthouse-manager-home.png](deliverables/D3/nfr/lighthouse-manager-home.png) |
+| Deal page (`/manager/deal-details/<deal ID>`) | 100 | [lighthouse-deal-page.png](deliverables/D3/nfr/lighthouse-deal-page.png) |
+| Scenario checks (`/manager/scenarios`) | 98 | [lighthouse-scenarios.png](deliverables/D3/nfr/lighthouse-scenarios.png) |
+
+Lighthouse notes that automatic checks detect only a subset of accessibility issues, so these scores are evidence of intentional effort, not a guarantee. What the interface does:
+
+- Form fields use real `<label>` elements linked with `htmlFor`, and the sign-in form sets `autocomplete` on both fields. The page language is set to English.
+- Errors from forms and actions are announced with `role="alert"`.
+- Interactive elements are native buttons, links, inputs, and selects (there are no clickable `div` or `span` elements), so they can be reached with Tab and activated with Enter or Space.
+- The app has a light mode and a dark mode.
+
+### Security
+
+- **Input validation.** The backend validates every request on the server: IDs must be valid UUIDs, required fields must be present, values must come from fixed lists where that applies, and free-text fields have length limits. Bad input returns a 400 with a clear message.
+- **Parameterized queries.** Values from users are always passed to the database as bound parameters (`$1`, `$2`, …). The only text built into SQL is fixed column and table names from our own code.
+- **Permissions on the server.** Each request is matched to a staff member and their role is looked up in the database. Only a General Manager can assign or transfer a deal or run scenario checks, and a sales representative can only see and change their own deals. This is checked in the service layer and covered by automated tests, so it does not depend on what the interface shows.
+- **Secrets.** API keys and the database connection string are server-side environment variables set in the deployment settings, never in `NEXT_PUBLIC_` variables or browser code. The repository contains only [`.env.example`](backend/.env.example) templates with empty placeholders. The session cookie is `httpOnly`, `sameSite=lax`, and `secure` in production.
+
+### Error handling
+
+Expected errors return a short, readable message and a matching status code. Unexpected errors return a generic `{"error":"Internal server error."}` and the details are logged on the server, so stack traces never reach the client. These are real responses from the backend:
+
+| Situation | Request | Status | Response |
+| --- | --- | --- | --- |
+| Not signed in | `GET /api/deals` | 401 | `{"error":"Send X-Staff-Id with a staff member ID."}` |
+| A sales representative tries a manager action | `POST /api/deals/<deal ID>/assign` | 403 | `{"error":"Only a GM can assign a buyer."}` |
+| Required field missing | `POST /api/deals/<deal ID>/assign` without a reason | 400 | `{"error":"reason is required."}` |
+| Malformed ID | `GET /api/deals/not-a-uuid` | 400 | `{"error":"dealId must be a UUID."}` |
+| Deal already assigned | `POST /api/deals/<deal ID>/assign` on an owned deal | 409 | `{"error":"This deal is already assigned to Dana Kowalski. Use transfer instead."}` |
+| Unknown route | `GET /api/nope` | 404 | `{"error":"Route not found."}` |
+
+### Known limitations
+
+- Sign-in is a development stand-in: the demo accounts share one password, and the backend trusts the staff ID sent with each request. Real authentication (Supabase Auth) is planned.
+- The backend does not yet rate-limit sign-in attempts or set extra security headers.
+
 ## Coding Standards and Guidelines
 
 Our coding guidelines will follow the clean coding principles introduced in CSC301: descriptive naming, short and focused functions, avoiding magic numbers and duplicated logic, and clear module boundaries and interfaces. Team-specific formatting conventions will be agreed upon before implementation.
@@ -159,4 +215,13 @@ We have agreed with Merto on Option 3 of the course IP options: the code will on
 
 ## D3 Improvement Highlight
 
-Suggested replies now use Groq to draft an email or SMS from the customer's conversation and deal context, replacing the D2 templates while keeping rep approval before a simulated send. To try it, sign in as `dana`, open a customer under **Needs follow-up**, and choose **Use a suggested draft**, then **Generate reply**. The app is available at the deployed URL above, with Vercel deployment configuration and a scheduled fork sync workflow in the team repository.
+The conversation evaluator now uses a trained MPNet model alongside the original rules: on our held-out test set it matched 936 of 960 messages (97.5%), compared with 559 (58.2%) for the D2 keyword rules. To try it, sign in as `karen`, open **AI review**, choose MPNet, and click **Run AI evaluation**; flagged replies appear under **Flags awaiting review** with the message that triggered them. We also replaced the fixed reply templates with Groq-generated drafts: sign in as `dana`, open a customer under **Needs follow-up**, choose **Use a suggested draft**, then **Generate reply**. The app is available at the deployed URL above, with Vercel deployment configuration and a scheduled fork sync workflow in the team repository.
+
+## D2 Feedback and How We Addressed It
+
+At the D2 demo, our partner accepted the features and the direction of the product, and asked for an interface that is more user-friendly and matches Merto's brand. Our own D2 retrospective ([iteration-02-review.md](deliverables/D2/iteration-02-review.md)) added lessons about how we work. This is what changed in D3:
+
+- **Interface and brand.** The frontend was redesigned to match Merto's brand: new colors, a light and dark mode, hover states that make buttons obvious, and information moved to separate pages so each screen has one purpose. We also added a search bar to the deal lists.
+- **Introducing features before demos.** We learned to introduce each feature before showing it, so for D3 we prepared short slides that walk through features first, such as the evaluation work and the scenario checks.
+- **Work organized by user story.** In D2 we split work by technical layer and teams waited on each other. In D3 most work was organized as user stories, each on its own branch and pull request (for example `us13-scenario-checks`, `us11-draft-review`, and `calendar_gm`).
+- **Structured assignment history.** Following D2 feedback, ownership changes are now stored as structured records (who, when, from whom, to whom, and why) instead of free text, and every change appears on the buyer's timeline.
