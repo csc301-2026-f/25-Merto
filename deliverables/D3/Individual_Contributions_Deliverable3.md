@@ -31,3 +31,8 @@ Implementation: [Calendar PR #27](https://github.com/csc301-2026-f/25-Merto/pull
 - Prepared the Demo Day evaluation slides, comparison charts and English speaker notes, explaining the module replacement, dataset composition, measured improvements and remaining false-positive limitations.
 
 Implementation: [US5 model evaluation and live inference demo PR #17](https://github.com/csc301-2026-f/25-Merto/pull/17) and [MPNet service and trained weights PR #21](https://github.com/csc301-2026-f/25-Merto/pull/21).
+
+**Luis Angel Martinez**, Frontend
+> Updated the UI/UX experience for all pages of the webapp from D2. Updated visuals and colors of site to match the partner's brand. Improved clarity of site by adding a hover color to buttons on site and making buttons more obvious to users. Moved information to new pages to keep each screen's purpose more clear and easier to use. Added the ability to toggle between dark and light mode through a button that the user has access to from all pages. Implementation: [ PR #16](https://github.com/csc301-2026-f/25-Merto/pull/16).
+
+> Reviewed and merged [PR #22](https://github.com/csc301-2026-f/25-Merto/pull/22) for search functionality. 
