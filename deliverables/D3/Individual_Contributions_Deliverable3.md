@@ -31,3 +31,9 @@ Implementation: [Calendar PR #27](https://github.com/csc301-2026-f/25-Merto/pull
 - Prepared the Demo Day evaluation slides, comparison charts and English speaker notes, explaining the module replacement, dataset composition, measured improvements and remaining false-positive limitations.
 
 Implementation: [US5 model evaluation and live inference demo PR #17](https://github.com/csc301-2026-f/25-Merto/pull/17) and [MPNet service and trained weights PR #21](https://github.com/csc301-2026-f/25-Merto/pull/21).
+
+**Mike**, Search Bar
+Added a search bar to the dealership rep view's home page and the manager view deals list page. Allows for filtering by specific fields, and supports search in different language scripts.
+> Implementation: [Search Bar PR #22](https://github.com/csc301-2026-f/25-Merto/pull/22)
+
+> Reviewed and merged [PR #16](https://github.com/csc301-2026-f/25-Merto/pull/16) for the frontend overhaul and lightmode functionality.
