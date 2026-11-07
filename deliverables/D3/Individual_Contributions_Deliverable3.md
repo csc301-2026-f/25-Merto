@@ -37,3 +37,7 @@ Added a search bar to the dealership rep view's home page and the manager view d
 > Implementation: [Search Bar PR #22](https://github.com/csc301-2026-f/25-Merto/pull/22)
 
 > Reviewed and merged [PR #16](https://github.com/csc301-2026-f/25-Merto/pull/16) for the frontend overhaul and lightmode functionality.
+**Luis Angel Martinez**, Frontend
+> Updated the UI/UX experience for all pages of the webapp from D2. Updated visuals and colors of site to match the partner's brand. Improved clarity of site by adding a hover color to buttons on site and making buttons more obvious to users. Moved information to new pages to keep each screen's purpose more clear and easier to use. Added the ability to toggle between dark and light mode through a button that the user has access to from all pages. Implementation: [ PR #16](https://github.com/csc301-2026-f/25-Merto/pull/16).
+
+> Reviewed and merged [PR #22](https://github.com/csc301-2026-f/25-Merto/pull/22) for search functionality. 
