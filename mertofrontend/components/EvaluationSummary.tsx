@@ -1,5 +1,6 @@
-import type { Evaluation } from "@/lib/evaluation";
+import { REVIEW_REASONS, type Evaluation } from "@/lib/evaluation";
 import { FlagReview } from "./FlagReview";
+import { ManualFlag } from "./ManualFlag";
 
 const STATUS_LABELS: Record<string, string> = {
   not_evaluated: "Not evaluated yet",
@@ -66,7 +67,7 @@ export function EvaluationSummary({
 
               <ul className="space-y-3">
 
-                {evaluation.flags.map((flag) => (
+                {evaluation.flags.map((flag, index, flags) => (
                   <li
                     key={flag.id}
                     className="rounded-lg bg-slate-200 p-4 dark:bg-zinc-800"
@@ -82,6 +83,12 @@ export function EvaluationSummary({
                       <span className="ml-2 opacity-70">
                         [{flag.reviewStatus}]
                       </span>
+
+                      {flag.source === "manual" && (
+                        <span className="ml-2 rounded bg-amber-200 px-2 py-0.5 text-xs text-amber-950">
+                          Added by GM
+                        </span>
+                      )}
                     </p>
 
                     <p className="mt-2">
@@ -94,13 +101,48 @@ export function EvaluationSummary({
                       </blockquote>
                     )}
 
+                    {flag.reviewReason && <p className="mt-2 text-sm">False positive because: {REVIEW_REASONS[flag.reviewReason]}</p>}
                     {flag.reviewNote && <p className="mt-2 text-sm">Review note: {flag.reviewNote}</p>}
                     {canReview && <FlagReview flag={flag} evaluatorId={evaluatorId} />}
+
+                    {/* Under the last flag on a reply: add a problem of another type the evaluator missed.
+                        Opt-out flags alone can sit on a staff message, which cannot be flagged by hand. */}
+                    {canReview && evaluation.dealId && flag.evidenceEventId
+                      && flags.findLastIndex((other) => other.evidenceEventId === flag.evidenceEventId) === index
+                      && flags.some((other) => other.evidenceEventId === flag.evidenceEventId && other.flagType !== "ignored_opt_out") && (
+                      <ManualFlag dealId={evaluation.dealId} evaluatorId={evaluatorId} buttonLabel="Add another flag"
+                        reply={{ id: flag.evidenceEventId, channel: flag.evidenceChannel ?? "", body: flag.evidenceBody ?? "", createdAt: flag.evidenceAt ?? "" }}
+                        existingTypes={flags.filter((other) => other.evidenceEventId === flag.evidenceEventId).map((other) => other.flagType)} />
+                    )}
 
                   </li>
                 ))}
 
               </ul>
+
+            )}
+
+          {canReview && evaluation.dealId && evaluation.evaluatedAt && evaluation.unflaggedReplies &&
+            evaluation.unflaggedReplies.length > 0 && (
+
+              <div className="space-y-3 border-t border-zinc-400/40 pt-3">
+                <h4 className="font-semibold">AI replies with no flag</h4>
+                <p className="opacity-80">
+                  If the evaluator missed a problem in one of these replies, flag it. It becomes a confirmed issue to resolve.
+                </p>
+
+                <ul className="space-y-3">
+                  {evaluation.unflaggedReplies.map((reply) => (
+                    <li key={reply.id} className="rounded-lg border border-zinc-300 p-4 dark:border-zinc-700">
+                      <p className="text-xs opacity-70">
+                        {reply.channel} · {reply.createdAt.slice(0, 16).replace("T", " ")}
+                      </p>
+                      <blockquote className="mt-1 whitespace-pre-line">{reply.body}</blockquote>
+                      <ManualFlag dealId={evaluation.dealId!} reply={reply} evaluatorId={evaluatorId} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
             )}
 

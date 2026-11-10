@@ -90,11 +90,12 @@ from the flag's current status).
 | --- | --- | --- |
 | `POST /api/evaluations/run` | GM | Nightly job: evaluates every deal with AI activity. Returns `buyer`, `dealId`, `result`, `evaluatedAt`, `newFlags` per deal. Safe to rerun. The manager dashboard's **Run AI evaluation** button calls it. |
 | `POST /api/deals/:dealId/evaluation` | GM | Evaluates one deal. |
-| `GET /api/deals/:dealId/evaluation` | GM, owning rep | The buyer record's AI review: `status` (`not_evaluated`, `passed`, `flagged`, `confirmed_issue`, `resolved`, `false_positive`), `evaluatedAt`, and every flag with its evidence message. |
+| `GET /api/deals/:dealId/evaluation` | GM, owning rep | The buyer record's AI review: `status` (`not_evaluated`, `passed`, `flagged`, `confirmed_issue`, `resolved`, `false_positive`), `evaluatedAt`, every flag with its evidence message (`source` is `evaluator` or `manual`; `reviewReason` is set on a false positive), and `unflaggedReplies`: the deal's AI replies with no flag. |
 | `GET /api/deals/:dealId/evaluation/preview` | GM, owning rep | Dry run: what the rules would flag now. Writes nothing. |
+| `POST /api/deals/:dealId/flags` | GM | Adds a problem the evaluator missed. Body `{ "evidenceEventId": uuid, "flagType": string, "note"?: string }`. The event must be an AI reply on this deal and the deal must have been evaluated; `ignored_opt_out` cannot be added by hand. Saved with `source: "manual"` as a confirmed issue, so it is not in the pending queue but still needs resolving. 409 if the reply already has that flag. |
 | `GET /api/ai-flags/queue` | GM: all; rep: own deals | Pending flags, highest severity and oldest evidence first, each with `evidenceBody`. |
-| `POST /api/ai-flags/:flagId/review` | GM | Body `{ "decision": "confirmed_issue" \| "false_positive" \| "resolved", "note"?: string }`. Also writes the decision to the deal's timeline. |
-| `GET /api/ai-evaluation/metrics` | GM | `evaluatedConversations`, `flaggedConversations`, `flagRate`, counts by review status, and `reviewedPrecision`. Rates are `null` ("not measured") when there is nothing to divide by. |
+| `POST /api/ai-flags/:flagId/review` | GM | Body `{ "decision": "confirmed_issue" \| "false_positive" \| "resolved", "note"?: string, "reason"?: string }`. A false positive needs a `reason`: `misread_wording` (the wording check was wrong), `already_handled`, `visit_confirmed`, `not_a_problem`, or `other` (which also needs a note). The reason is cleared if the flag is later confirmed. Also writes the decision to the deal's timeline. |
+| `GET /api/ai-evaluation/metrics` | GM | `evaluatedConversations`, `flaggedConversations`, `flagRate`, counts by review status, `reviewedPrecision`, `falsePositiveReasons`, and `missedFlagsAddedByManager`. Review counts and precision cover evaluator flags only; GM-added flags count as misses. Rates are `null` ("not measured") when there is nothing to divide by. |
 
 ```sh
 curl -X POST -H "X-Staff-Id: 10000000-0000-0000-0000-000000000001" \

@@ -49,9 +49,16 @@ export function evaluationRoutes(db: Database, engine: EvaluationEngine = rulesE
 
   router.post('/ai-flags/:flagId/review', async (req, res) => {
     const { db } = context(res);
-    const { decision, note } = req.body ?? {};
+    const { decision, note, reason } = req.body ?? {};
     res.json(await evaluation.reviewFlag(db, currentStaff(res),
-      requireUuid(req.params.flagId, 'flagId'), decision, note));
+      requireUuid(req.params.flagId, 'flagId'), decision, note, reason));
+  });
+
+  router.post('/deals/:dealId/flags', async (req, res) => {
+    const { db } = context(res);
+    const { evidenceEventId, flagType, note } = req.body ?? {};
+    res.status(201).json(await evaluation.addManualFlag(db, currentStaff(res),
+      requireUuid(req.params.dealId, 'dealId'), evidenceEventId, flagType, note));
   });
 
   router.get('/ai-evaluation/metrics', async (_req, res) => {

@@ -4,7 +4,7 @@
 import type { Queryable } from '../db.ts';
 import type { Conversation, Issue, TimelineEvent } from './detect.ts';
 import type { FlagType, Severity } from './rules.ts';
-import type { ReviewDecision, ReviewStatus } from './review-policy.ts';
+import type { ReviewDecision, ReviewReason, ReviewStatus } from './review-policy.ts';
 import { evaluationTables } from './store.ts';
 
 export interface DealSummary {
@@ -30,6 +30,10 @@ export interface Flag {
   reviewedBy: string | null;
   reviewedAt: Date | null;
   reviewNote: string | null;
+  reviewReason: ReviewReason | null;
+  // 'manual' when a GM added the flag to a reply the evaluator did not flag.
+  source: 'evaluator' | 'manual';
+  createdBy: string | null;
   createdAt: Date;
 }
 
@@ -49,7 +53,8 @@ export interface QueueItem extends FlagWithEvidence {
 
 const flagColumns = `f.id, f.deal_id as "dealId", f.flag_type as "flagType", f.severity,
   f.explanation, f.review_status as "reviewStatus", f.reviewed_by as "reviewedBy",
-  f.reviewed_at as "reviewedAt", f.review_note as "reviewNote", f.created_at as "createdAt"`;
+  f.reviewed_at as "reviewedAt", f.review_note as "reviewNote", f.review_reason as "reviewReason",
+  f.source, f.created_by as "createdBy", f.created_at as "createdAt"`;
 const evidenceColumns = `e.id as "evidenceEventId", e.channel as "evidenceChannel",
   e.body as "evidenceBody", e.created_at as "evidenceAt"`;
 const severityOrder = `case f.severity when 'high' then 1 when 'medium' then 2 else 3 end`;
@@ -167,36 +172,93 @@ export async function lockFlag(tx: Queryable, flagId: string): Promise<Flag | un
   return flag;
 }
 
+const label = (value: string) => value.replaceAll('_', ' ');
+
 // Records the decision and puts it on the deal's timeline in the same transaction.
+// The reason is kept only for a false positive.
 export async function saveReview(tx: Queryable, flag: Flag, reviewerId: string,
-  decision: ReviewDecision, note: string | null): Promise<Flag> {
+  decision: ReviewDecision, note: string | null, reason: ReviewReason | null): Promise<Flag> {
   const [reviewed] = await tx.query<Flag>(`
     update ${evaluationTables(tx).flags} f
-    set review_status = $2, reviewed_by = $3, reviewed_at = now(), review_note = $4
+    set review_status = $2, reviewed_by = $3, reviewed_at = now(), review_note = $4, review_reason = $5
     where f.id = $1
-    returning ${flagColumns}`, [flag.id, decision, reviewerId, note]);
+    returning ${flagColumns}`, [flag.id, decision, reviewerId, note, reason]);
 
-  const label = (value: string) => value.replaceAll('_', ' ');
   await tx.query(`
     insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
     values ($1, 'ai_review', 'gm', $2, 'note', 'internal', $3)`,
     [flag.dealId, reviewerId, `GM review of ${evaluationTables(tx).label} AI flag (${label(flag.flagType)}): ${label(decision)}.`
-      + (note ? ` Note: ${note}` : '')]);
+      + (reason ? ` Reason: ${label(reason)}.` : '') + (note ? ` Note: ${note}` : '')]);
   return reviewed;
 }
 
+export interface AiReply {
+  id: string;
+  channel: string;
+  body: string;
+  createdAt: Date;
+}
+
+// The deal's AI-sent replies that have no flag yet, oldest first: where a GM
+// can add a problem the evaluator missed.
+export function unflaggedAiReplies(db: Queryable, dealId: string): Promise<AiReply[]> {
+  return db.query<AiReply>(`
+    select e.id, e.channel, e.body, e.created_at as "createdAt"
+    from public.timeline_events e
+    where e.deal_id = $1 and e.actor_type = 'ai' and e.direction = 'outbound'
+      and not exists (select 1 from ${evaluationTables(db).flags} f where f.evidence_event_id = e.id)
+    order by e.created_at, e.id`, [dealId]);
+}
+
+export async function findAiReply(db: Queryable, dealId: string, eventId: string): Promise<AiReply | undefined> {
+  const [reply] = await db.query<AiReply>(`
+    select id, channel, body, created_at as "createdAt" from public.timeline_events
+    where id = $1 and deal_id = $2 and actor_type = 'ai' and direction = 'outbound'`, [eventId, dealId]);
+  return reply;
+}
+
+// A GM-added flag is already judged, so it starts as a confirmed issue that
+// still needs resolving. Returns undefined if the reply already has this flag.
+export async function saveManualFlag(tx: Queryable, dealId: string, eventId: string, flagType: FlagType,
+  severity: Severity, explanation: string, gmId: string, note: string | null): Promise<Flag | undefined> {
+  const [flag] = await tx.query<Flag>(`
+    insert into ${evaluationTables(tx).flags} as f (deal_id, evidence_event_id, flag_type, severity, explanation,
+      review_status, reviewed_by, reviewed_at, review_note, source, created_by)
+    values ($1, $2, $3, $4, $5, 'confirmed_issue', $6, now(), $7, 'manual', $6)
+    on conflict (evidence_event_id, flag_type) do nothing
+    returning ${flagColumns}`, [dealId, eventId, flagType, severity, explanation, gmId, note]);
+  if (!flag) return undefined;
+
+  await tx.query(`update ${evaluationTables(tx).evaluations} set result = 'flagged' where deal_id = $1`, [dealId]);
+  await tx.query(`
+    insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
+    values ($1, 'ai_review', 'gm', $2, 'note', 'internal', $3)`,
+    [dealId, gmId, `GM flagged an AI reply the ${evaluationTables(tx).label} evaluation missed (${label(flagType)}).`
+      + (note ? ` Note: ${note}` : '')]);
+  return flag;
+}
+
 export async function evaluationCounts(db: Queryable) {
+  // Review counts cover evaluator flags only: GM-added flags are not the
+  // evaluator's output, so they count as misses instead.
   const [counts] = await db.query<{
     evaluated: number; flagged: number; pending: number;
-    confirmedIssue: number; falsePositive: number; resolved: number;
+    confirmedIssue: number; falsePositive: number; resolved: number; manual: number;
+    misreadWording: number; alreadyHandled: number; visitConfirmed: number; notAProblem: number; other: number;
   }>(`
     select
       (select count(*)::int from ${evaluationTables(db).evaluations}) as evaluated,
       (select count(*)::int from ${evaluationTables(db).evaluations} where result = 'flagged') as flagged,
-      count(*) filter (where review_status = 'pending')::int as pending,
-      count(*) filter (where review_status = 'confirmed_issue')::int as "confirmedIssue",
-      count(*) filter (where review_status = 'false_positive')::int as "falsePositive",
-      count(*) filter (where review_status = 'resolved')::int as resolved
+      count(*) filter (where source = 'evaluator' and review_status = 'pending')::int as pending,
+      count(*) filter (where source = 'evaluator' and review_status = 'confirmed_issue')::int as "confirmedIssue",
+      count(*) filter (where source = 'evaluator' and review_status = 'false_positive')::int as "falsePositive",
+      count(*) filter (where source = 'evaluator' and review_status = 'resolved')::int as resolved,
+      count(*) filter (where source = 'manual')::int as manual,
+      count(*) filter (where source = 'evaluator' and review_reason = 'misread_wording')::int as "misreadWording",
+      count(*) filter (where source = 'evaluator' and review_reason = 'already_handled')::int as "alreadyHandled",
+      count(*) filter (where source = 'evaluator' and review_reason = 'visit_confirmed')::int as "visitConfirmed",
+      count(*) filter (where source = 'evaluator' and review_reason = 'not_a_problem')::int as "notAProblem",
+      count(*) filter (where source = 'evaluator' and review_reason = 'other')::int as other
     from ${evaluationTables(db).flags}`);
   return counts;
 }

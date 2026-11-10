@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/session";
 import { backendFetch, errorMessage } from "@/lib/api";
-import { demoEvaluatorId, evaluationRequest, type EvaluationEngine } from "@/lib/evaluation";
+import { demoEvaluatorId, evaluationRequest, type EvaluationEngine, type ManualFlagType, type ReviewReason } from "@/lib/evaluation";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -114,7 +114,8 @@ export async function reviewFlag(
   flagId: string,
   decision: "confirmed_issue" | "false_positive" | "resolved",
   note?: string,
-  evaluatorId?: string
+  evaluatorId?: string,
+  reason?: ReviewReason
 ): Promise<ActionResult> {
   await requireRole("manager");
   let res: Response;
@@ -122,12 +123,37 @@ export async function reviewFlag(
     res = await backendFetch(`/api/ai-flags/${flagId}/review`, {
       ...evaluationRequest(evaluatorId),
       method: "POST",
-      body: JSON.stringify({ decision, note }),
+      body: JSON.stringify({ decision, note, reason }),
     });
   } catch {
     return { ok: false, error: "Could not reach the server." };
   }
   const result = await toResult(res, "Could not save the review.");
+  if (result.ok) revalidatePath("/manager", "layout");
+  return result;
+}
+
+// Adds a problem the evaluator missed to one AI reply. It is saved as a confirmed
+// issue in the evaluator's results shown on the page.
+export async function addManualFlag(
+  dealId: string,
+  evidenceEventId: string,
+  flagType: ManualFlagType,
+  note?: string,
+  evaluatorId?: string
+): Promise<ActionResult> {
+  await requireRole("manager");
+  let res: Response;
+  try {
+    res = await backendFetch(`/api/deals/${dealId}/flags`, {
+      ...evaluationRequest(evaluatorId),
+      method: "POST",
+      body: JSON.stringify({ evidenceEventId, flagType, note }),
+    });
+  } catch {
+    return { ok: false, error: "Could not reach the server." };
+  }
+  const result = await toResult(res, "Could not add the flag.");
   if (result.ok) revalidatePath("/manager", "layout");
   return result;
 }
