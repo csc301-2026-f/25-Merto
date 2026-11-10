@@ -7,6 +7,14 @@ export type DealReviewStatus = 'not_evaluated' | 'passed' | 'flagged' | ReviewDe
 export const isReviewDecision = (value: unknown): value is ReviewDecision =>
   REVIEW_DECISIONS.includes(value as ReviewDecision);
 
+// Why a flag was a false positive. Only misread_wording says the wording check
+// was wrong; the others say the deal's situation made the flag unnecessary.
+export const REVIEW_REASONS = ['misread_wording', 'already_handled', 'visit_confirmed', 'not_a_problem', 'other'] as const;
+export type ReviewReason = (typeof REVIEW_REASONS)[number];
+
+export const isReviewReason = (value: unknown): value is ReviewReason =>
+  REVIEW_REASONS.includes(value as ReviewReason);
+
 // Decisions a GM may record from each status. A GM can correct an earlier call
 // (confirmed issue <-> false positive); a resolved flag is final.
 const ALLOWED_REVIEWS: Record<ReviewStatus, readonly ReviewDecision[]> = {

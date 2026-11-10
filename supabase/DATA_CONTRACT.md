@@ -245,7 +245,12 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
   `missed_price_handoff`, `ignored_opt_out`, `tone`), `severity` (`low`, `medium`, `high`), `explanation`,
   `review_status` (`pending` default, `confirmed_issue`, `false_positive`,
   `resolved`), `reviewed_by` (references `staff_users`), `reviewed_at`,
-  `review_note`, `created_at`.
+  `review_note`, `created_at`, `source` (`evaluator` default, or `manual` for a
+  problem a GM added to a reply the evaluator missed), `created_by` (references
+  `staff_users`; set exactly when `source` is `manual`), and `review_reason`
+  (`misread_wording`, `already_handled`, `visit_confirmed`, `not_a_problem`,
+  `other`; only while `review_status` is `false_positive`). `mpnet_flags` has
+  the same columns.
 - `(evidence_event_id, deal_id)` references `timeline_events(id, deal_id)`, so a
   flag's evidence is always a message on the same deal.
 - `(evidence_event_id, flag_type)` is unique, so re-evaluating never duplicates a flag.

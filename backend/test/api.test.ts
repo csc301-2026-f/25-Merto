@@ -40,8 +40,12 @@ describe('evaluation API', () => {
   }
 
   const runEvaluation = () => call(STAFF.karen, 'POST', '/api/evaluations/run');
-  const review = (as: string, flagId: string, decision: string, note?: string) =>
-    call(as, 'POST', `/api/ai-flags/${flagId}/review`, { decision, note });
+  // A false positive needs a reason; tests that do not care pass a common one.
+  const review = (as: string, flagId: string, decision: string, note?: string,
+    reason = decision === 'false_positive' ? 'not_a_problem' : undefined) =>
+    call(as, 'POST', `/api/ai-flags/${flagId}/review`, { decision, note, reason });
+  const addFlag = (as: string, dealId: string, evidenceEventId: string, flagType: string, note?: string) =>
+    call(as, 'POST', `/api/deals/${dealId}/flags`, { evidenceEventId, flagType, note });
   async function flagId(eventId: string, flagType: string): Promise<string> {
     const [row] = await db.query<{ id: string }>(
       'select id from public.ai_flags where evidence_event_id = $1 and flag_type = $2', [eventId, flagType]);
@@ -187,6 +191,8 @@ describe('evaluation API', () => {
     assert.deepEqual(await metrics(), {
       evaluatedConversations: 0, flaggedConversations: 0, flagRate: null,
       flags: { pending: 0, confirmedIssue: 0, falsePositive: 0, resolved: 0 }, reviewedPrecision: null,
+      falsePositiveReasons: { misreadWording: 0, alreadyHandled: 0, visitConfirmed: 0, notAProblem: 0, other: 0 },
+      missedFlagsAddedByManager: 0,
     });
     await runEvaluation();
     const [{ withAi }] = await db.query<{ withAi: number }>(
@@ -203,6 +209,64 @@ describe('evaluation API', () => {
       pending: before.flags.pending - 2, confirmedIssue: 1, falsePositive: 1, resolved: 0,
     });
     assert.equal(after.reviewedPrecision, 0.5);
+  });
+
+  it('asks why a flag is a false positive and keeps the reason only while it is one', async () => {
+    await runEvaluation();
+    const id = await flagId(EVENTS.benDoubleExclamation, 'tone');
+    assert.equal((await review(STAFF.karen, id, 'false_positive', undefined, '')).status, 400);
+    assert.equal((await review(STAFF.karen, id, 'false_positive', undefined, 'bad_mood')).status, 400);
+    assert.equal((await review(STAFF.karen, id, 'false_positive', '  ', 'other')).status, 400, "'other' needs a note");
+
+    const reviewed = await review(STAFF.karen, id, 'false_positive', undefined, 'misread_wording');
+    assert.equal(reviewed.status, 200);
+    assert.equal(reviewed.body.reviewReason, 'misread_wording');
+    const [entry] = await db.query<{ body: string }>(
+      "select body from public.timeline_events where deal_id = $1 and event_type = 'ai_review'", [DEALS.ben]);
+    assert.match(entry.body, /false positive\. Reason: misread wording\./);
+    const metrics = (await call(STAFF.karen, 'GET', '/api/ai-evaluation/metrics')).body;
+    assert.equal(metrics.falsePositiveReasons.misreadWording, 1);
+
+    // Correcting the call clears the reason, and a reason sent with another decision is ignored.
+    const corrected = await review(STAFF.karen, id, 'confirmed_issue', undefined, 'misread_wording');
+    assert.deepEqual([corrected.status, corrected.body.reviewReason], [200, null]);
+  });
+
+  it('lets the GM flag an AI reply the evaluator missed', async () => {
+    assert.equal((await addFlag(STAFF.karen, DEALS.jordan, EVENTS.jordanAiReply, 'tone')).status, 409,
+      'The deal must be evaluated first');
+    await runEvaluation();
+    const before = (await call(STAFF.karen, 'GET', `/api/deals/${DEALS.jordan}/evaluation`)).body;
+    assert.equal(before.status, 'passed');
+    assert.ok(before.unflaggedReplies.some((reply: { id: string }) => reply.id === EVENTS.jordanAiReply));
+
+    assert.equal((await addFlag(STAFF.dana, DEALS.jordan, EVENTS.jordanAiReply, 'tone')).status, 403);
+    assert.equal((await addFlag(STAFF.karen, DEALS.jordan, EVENTS.jordanAiReply, 'ignored_opt_out')).status, 400);
+    assert.equal((await addFlag(STAFF.karen, DEALS.jordan, 'not-a-uuid', 'tone')).status, 400);
+    assert.equal((await addFlag(STAFF.karen, DEALS.jordan, EVENTS.jordanAssigned, 'tone')).status, 400,
+      'Only AI replies can be flagged');
+    assert.equal((await addFlag(STAFF.karen, DEALS.jordan, EVENTS.mayaAllSet, 'tone')).status, 400,
+      "Another deal's message cannot be flagged here");
+
+    const added = await addFlag(STAFF.karen, DEALS.jordan, EVENTS.jordanAiReply, 'tone', 'Too pushy for a first reply.');
+    assert.equal(added.status, 201);
+    assert.deepEqual([added.body.source, added.body.reviewStatus, added.body.createdBy, added.body.reviewNote],
+      ['manual', 'confirmed_issue', STAFF.karen, 'Too pushy for a first reply.']);
+    assert.equal((await addFlag(STAFF.karen, DEALS.jordan, EVENTS.jordanAiReply, 'tone')).status, 409);
+    // A reply the evaluator already flagged can take a problem of another type.
+    assert.equal((await addFlag(STAFF.karen, DEALS.ben, EVENTS.benPaymentQuote, 'appointment_certainty')).status, 201);
+
+    const after = (await call(STAFF.karen, 'GET', `/api/deals/${DEALS.jordan}/evaluation`)).body;
+    assert.equal(after.status, 'confirmed_issue', 'The deal now has a problem to resolve');
+    assert.ok(!after.unflaggedReplies.some((reply: { id: string }) => reply.id === EVENTS.jordanAiReply));
+    const queue = (await call(STAFF.karen, 'GET', '/api/ai-flags/queue')).body;
+    assert.ok(!queue.some((item: { id: string }) => item.id === added.body.id), 'Already judged, so not pending');
+
+    // A rerun keeps it, it can be resolved, and it counts as a miss, not as evaluator precision.
+    await runEvaluation();
+    assert.equal((await review(STAFF.karen, added.body.id, 'resolved')).status, 200);
+    const metrics = (await call(STAFF.karen, 'GET', '/api/ai-evaluation/metrics')).body;
+    assert.deepEqual([metrics.missedFlagsAddedByManager, metrics.flags.resolved, metrics.reviewedPrecision], [2, 0, null]);
   });
 
   it('flags a message sent after the buyer opted out, on any of their deals', async () => {
