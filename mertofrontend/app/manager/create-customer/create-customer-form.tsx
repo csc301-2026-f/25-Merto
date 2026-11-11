@@ -88,6 +88,15 @@ export function CreateCustomerForm({ reps }: { reps?: Rep[] }) {
         </p>
       )}
 
+      {state?.warning && (
+        <p
+          role="status"
+          className="mt-5 rounded-lg bg-yellow-100 p-3 text-sm text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300"
+        >
+          {state.warning}
+        </p>
+      )}
+
       <p className="mt-5 text-sm opacity-70">
         Enter an email, a phone, or both.
       </p>
