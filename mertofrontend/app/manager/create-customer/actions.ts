@@ -12,7 +12,7 @@ const CREATE_PATH = "/api/deals";
 const ASSIGN_REASON = "Assigned when the customer was created.";
 
 export type CreateState =
-  | { error?: string; success?: string; values?: Record<string, string> }
+  | { error?: string; success?: string; warning?: string; values?: Record<string, string> }
   | undefined;
 
 export async function createCustomer(
@@ -60,11 +60,17 @@ export async function createCustomer(
   }
   if (!res.ok) return { error: "Could not create the customer.", values };
 
-  const created: { dealId: string; buyer: { existing: boolean; optedOut: boolean } } = await res.json();
-  const notes = [
-    created.buyer.existing && "This customer was already on file; the new deal joins their record.",
-    created.buyer.optedOut && "They opted out of contact: do not message them.",
-  ].filter(Boolean).join(" ");
+  const created: { dealId: string; buyer: { name: string; existing: boolean; optedOut: boolean } } = await res.json();
+  // A matching email or phone reuses the buyer on file, and the backend keeps
+  // that buyer's name, so report the stored name rather than the typed one.
+  const stored = created.buyer.name;
+  const renamed = created.buyer.existing && stored.trim().toLowerCase() !== values.buyer.toLowerCase();
+  const optedOut = created.buyer.optedOut ? " They opted out of contact: do not message them." : "";
+  const message = !created.buyer.existing
+    ? `Created ${stored}.${optedOut}`
+    : renamed
+      ? `Added a new deal for ${stored} (matched by email or phone). The name you entered, "${values.buyer}", was not saved. Check that this is the same person.${optedOut}`
+      : `Added a new deal for ${stored}, who was already on file.${optedOut}`;
 
   if (repId) {
     const assign = await backendFetch(`/api/deals/${created.dealId}/assign`, {
@@ -74,10 +80,10 @@ export async function createCustomer(
     if (!assign?.ok) {
       revalidatePath("/", "layout");
       const why = assign ? await errorMessage(assign) : "Could not reach the server.";
-      return { error: `Created ${values.buyer}, but could not assign the rep: ${why ?? "unknown error"}` };
+      return { error: `${created.buyer.existing ? `Added a new deal for ${stored}` : `Created ${stored}`}, but could not assign the rep: ${why ?? "unknown error"}` };
     }
   }
 
   revalidatePath("/", "layout"); // refresh both dashboards and Customer details
-  return { success: `Created ${values.buyer}.${notes ? ` ${notes}` : ""}` };
+  return renamed ? { warning: message } : { success: message };
 }
