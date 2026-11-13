@@ -64,15 +64,15 @@ export function DealList({
           setSearchQuery={setSearchQuery}
           placeholder = {"Search by customer, vehicle, rep..."}
         />
-        <label className="flex items-center gap-2 ">
+        <label className="flex items-center gap-3 ">
           Sort by
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="rounded border-2 px-2 py-1 dark:text-white"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-black focus:border-[#d5bd91] focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
           >
-            <option value="newest" className="text-black">Deal age (newest first)</option>
-            <option value="oldest" className="text-black">Deal age (oldest first)</option>
+            <option value="newest">Deal age (newest first)</option>
+            <option value="oldest">Deal age (oldest first)</option>
           </select>
         </label>
       </header>
@@ -195,11 +195,10 @@ function DealRow({
                 onChange={(e) => setRepId(e.target.value)}
                 required
                 disabled={pending}
-                className="rounded border-2 px-2 py-1"
-              >
-                <option className="text-black" value="" disabled>Select rep…</option>
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-black focus:border-[#d5bd91] focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white">
+                <option value="" disabled>Select rep…</option>
                 {reps.map((rep) => (
-                  <option className="text-black" key={rep.id} value={rep.id} disabled={rep.id === owner?.id}>
+                  <option key={rep.id} value={rep.id} disabled={rep.id === owner?.id}>
                     {rep.name}
                   </option>
                 ))}
@@ -228,7 +227,7 @@ function DealRow({
                 <button
                   type="submit"
                   disabled={pending}
-                  className="rounded border-2 px-3 py-1 font-semibold disabled:opacity-50"
+                  className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-600 dark:hover:bg-zinc-700"
                 >
                   {isAssigned ? "Transfer" : "Assign"}
                 </button>
