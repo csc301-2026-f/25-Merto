@@ -50,7 +50,11 @@ async function RepDashboard() {
           <ul className="space-y-2">
             {appointments.requestedToConfirm.map((appointment) => (
               <li key={appointment.id}>
-                <EntryLink href="/rep/calendar" title={appointment.buyer} aside="">
+                <EntryLink
+                  href={`/rep/calendar?appointmentId=${encodeURIComponent(appointment.id)}`}
+                  title={appointment.buyer}
+                  aside=""
+                >
                   <p>{appointment.vehicleInterest} · confirm {formatDateTime(appointment.scheduledFor)}</p>
                 </EntryLink>
               </li>
