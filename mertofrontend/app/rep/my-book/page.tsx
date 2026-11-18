@@ -6,6 +6,7 @@ import { Card } from "@/components/Card";
 import { EntryLink } from "@/components/EntryLink";
 import type { Deal } from "@/lib/deals";
 import { label } from "@/lib/format";
+import { CustomerList } from "./customer-list";
 
 async function RepDashboard() {
   await requireRole("rep");
@@ -16,40 +17,7 @@ async function RepDashboard() {
 
   ]);
 
-  return (
-    <div className="space-y-8">
-      <Card title="Customers" count={deals?.length}>
-        {deals === null ? (
-          <p>Couldn&apos;t load your customers.</p>
-        ) : deals.length === 0 ? (
-          <p className="font-semibold">None right now</p>
-        ) : (
-          <ul className="space-y-3">
-            {deals.map((deal) => (
-              <li key={deal.dealId}>
-                <EntryLink
-                  href={`/rep/deals/${deal.dealId}`}
-                  title={
-                    <>
-                      {deal.buyer}{" "}
-                      <span className="font-normal opacity-70">
-                        ({deal.vehicleInterest})
-                      </span>
-                    </>
-                  }
-                  aside=""
-                >
-                  <p className="opacity-70">
-                    {label(deal.stage)} · from {label(deal.source)}
-                  </p>
-                </EntryLink>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
-    </div>
-  );
+  return <CustomerList deals={deals ?? []} />;
 }
 
 export default function Page() {

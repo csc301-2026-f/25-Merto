@@ -23,48 +23,52 @@ export function CustomerList({deals} : {deals: Deal[];}) {
   );
 
   return(
-    <Card
-      title="My customers"
-      count={deals?.length}
-      aside={
-        <div className="w-2xl">
-          <SearchBar
-          deals={deals}
-          fields={searchFields}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          placeholder={"Search by customer, vehicle..."}
-          width="100%"
-          />
-        </div>
-      }
-    >
-      {filteredDeals.length === 0 ? (
-        <p className="font-semibold">None right now</p>
-      ) : (
-        <ul className="space-y-3">
-          {filteredDeals.map((deal) => (
-            <li key={deal.dealId}>
-              <EntryLink
-                href={`/rep/deals/${deal.dealId}`}
-                title={
-                  <>
-                    {deal.buyer}{" "}
-                    <span className="font-normal opacity-70">
-                      ({deal.vehicleInterest})
-                    </span>
-                  </>
-                }
-                aside=""
-              >
-                <p className="opacity-70">
-                  {label(deal.stage)} · from {label(deal.source)}
-                </p>
-              </EntryLink>
-            </li>
-          ))}
-        </ul>
-      )}
-    </Card>
+    <div className="space-y-8">
+      <Card 
+        title="Customers"
+        count={deals?.length}
+        aside={
+          <div className="w-2xl">
+            <SearchBar
+            deals={deals}
+            fields={searchFields}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            placeholder={"Search by customer, vehicle..."}
+            width="100%"
+            />
+          </div>
+        }
+      >
+        {filteredDeals === null ? (
+          <p>Couldn&apos;t load your customers.</p>
+        ) : filteredDeals.length === 0 ? (
+          <p className="font-semibold">None right now</p>
+        ) : (
+          <ul className="space-y-3">
+            {filteredDeals.map((deal) => (
+              <li key={deal.dealId}>
+                <EntryLink
+                  href={`/rep/deals/${deal.dealId}`}
+                  title={
+                    <>
+                      {deal.buyer}{" "}
+                      <span className="font-normal opacity-70">
+                        ({deal.vehicleInterest})
+                      </span>
+                    </>
+                  }
+                  aside=""
+                >
+                  <p className="opacity-70">
+                    {label(deal.stage)} · from {label(deal.source)}
+                  </p>
+                </EntryLink>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
   )
 }
