@@ -149,6 +149,7 @@ row lock, so only one succeeds.
 | --- | --- | --- |
 | `GET /api/deals` | GM: all; rep: own | Open deals (not delivered or lost), most recent activity first: `dealId`, `buyer`, `vehicleInterest`, `stage`, `source`, `ownerId`, `owner`, `optedOut`, `openItems`, `lastActivityAt`, `createdAt`. |
 | `GET /api/deals/stats` | GM: all; rep: own | All-time `sold` (delivered), `lost`, `closed`, and `saleRate` (sold divided by closed, or null if there are no closed deals). |
+| `GET /api/deals/stats/reps` | GM only | Every sales rep's name, ID, sold, lost, closed, and sale rate. Includes reps with no closed deals. Counts use current deal ownership. |
 | `GET /api/deals/stats/outcomes` | GM: all; rep: own | Closed deal records for `outcome=all\|sold\|lost`, 20 per `page` (defaults to 1), with `hasNextPage`. Ordered by deal creation, newest first. |
 | `GET /api/deals/:dealId` | GM, owning rep | The buyer record: deal fields, `buyer` (contact, `optedOut`), `owner`, `timeline`, `openItems`, `appointments`, `assignments` (as above). |
 | `POST /api/deals` | GM, rep | Adds a buyer and their first deal (201). See below. |

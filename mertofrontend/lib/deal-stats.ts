@@ -10,6 +10,12 @@ export type DealStats = {
   saleRate: number | null;
 };
 
+export type RepStatistics = DealStats & { repId: string; name: string };
+
+export function loadRepStatistics() {
+  return loadJson<RepStatistics[]>("/api/deals/stats/reps");
+}
+
 type DealOutcomes = {
   deals: {
     dealId: string;

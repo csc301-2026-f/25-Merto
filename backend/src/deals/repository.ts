@@ -106,6 +106,19 @@ type ClosedDeal = {
   lostReason: string | null;
 };
 
+export function repOutcomeCounts(db: Queryable) {
+  return db.query<{ repId: string; name: string; sold: number; lost: number }>(`
+    select s.id as "repId", s.name,
+      count(d.id) filter (where d.stage = 'delivered')::int as sold,
+      count(d.id) filter (where d.stage = 'lost')::int as lost
+    from public.staff_users s
+    left join public.deals d on d.owner_id = s.id
+    where s.role = 'rep'
+    group by s.id, s.name
+    order by s.name, s.id
+  `);
+}
+
 export function closedDeals(db: Queryable, ownerId: string | null,
   stage: ClosedDeal['stage'] | null, limit: number, offset: number) {
   return db.query<ClosedDeal>(`

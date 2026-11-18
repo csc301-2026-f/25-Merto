@@ -76,6 +76,28 @@ describe('sales outcomes', () => {
   const api = useApi();
   const { call } = api;
 
+  it('lets only the manager compare every rep, including reps without closed deals', async () => {
+    const [empty] = await api.db.query<{ id: string }>(
+      "insert into public.staff_users (name, email, role) values ('New Rep', 'new-rep@example.test', 'rep') returning id");
+    const response = await call(STAFF.karen, 'GET', '/api/deals/stats/reps');
+    assert.equal(response.status, 200);
+    const reps = await api.db.query<{ id: string }>("select id from public.staff_users where role = 'rep'");
+    assert.equal(response.body.length, reps.length);
+    for (const rep of reps) {
+      const personal = await call(rep.id, 'GET', '/api/deals/stats');
+      const row = response.body.find((entry: { repId: string }) => entry.repId === rep.id);
+      const { repId, name, ...totals } = row;
+      assert.equal(repId, rep.id);
+      assert.ok(name);
+      assert.deepEqual(totals, personal.body);
+    }
+    assert.deepEqual(response.body.find((entry: { repId: string }) => entry.repId === empty.id), {
+      repId: empty.id, name: 'New Rep', sold: 0, lost: 0, closed: 0, saleRate: null,
+    });
+    assert.equal((await call(STAFF.dana, 'GET', '/api/deals/stats/reps')).status, 403);
+    assert.equal((await call(null, 'GET', '/api/deals/stats/reps')).status, 401);
+  });
+
   it('counts only closed deals in scope and leaves the rate empty without closed deals', async () => {
     const path = '/api/deals/stats';
     assert.deepEqual(await call(STAFF.dana, 'GET', path), {

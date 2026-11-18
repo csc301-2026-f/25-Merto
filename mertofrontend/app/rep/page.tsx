@@ -120,7 +120,7 @@ async function RepDashboard() {
       </Card>
 
       <Card title="Sales outcomes" hideCount>
-        <EntryLink href="/rep/stats" title="View stats" aside="">
+        <EntryLink href="/rep/stats" title="View statistics" aside="">
           <DealOutcomeSummary stats={stats} />
         </EntryLink>
       </Card>

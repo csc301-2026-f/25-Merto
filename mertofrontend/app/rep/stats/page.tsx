@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import { DealOutcomeSummary } from "@/components/DealOutcomeSummary";
+import { DealOutcomeChart } from "@/components/DealOutcomeChart";
 import { EntryLink } from "@/components/EntryLink";
 import { requireRole } from "@/lib/auth/session";
 import { DEAL_OUTCOME_FILTERS, loadDealOutcomes, loadDealStats, type DealOutcomeFilter } from "@/lib/deal-stats";
@@ -35,12 +36,7 @@ async function RepStats({ searchParams }: { searchParams: SearchParams }) {
       <Card title="Closed deals" count={stats?.closed}>
         <div className="max-w-xl space-y-4 rounded-lg bg-current/5 p-4">
           <DealOutcomeSummary stats={stats} />
-          {stats && stats.closed > 0 && (
-            <div aria-hidden="true" className="flex h-3 overflow-hidden rounded-full">
-              <div className="bg-emerald-600 dark:bg-emerald-400" style={{ flexGrow: stats.sold }} />
-              <div className="bg-slate-400 dark:bg-slate-500" style={{ flexGrow: stats.lost }} />
-            </div>
-          )}
+          {stats && <DealOutcomeChart stats={stats} />}
         </div>
         <p className="mt-3 text-sm opacity-70">
           Delivered deals count as sold. The sale rate is the share of closed deals that sold.
@@ -98,10 +94,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-bold">Stats</h1>
+        <h1 className="text-2xl font-bold">Statistics</h1>
         <p className="text-sm opacity-70">All-time sales outcomes for your deals.</p>
       </header>
-      <Suspense fallback={<p>Loading stats…</p>}>
+      <Suspense fallback={<p>Loading statistics…</p>}>
         <RepStats searchParams={searchParams} />
       </Suspense>
     </div>
