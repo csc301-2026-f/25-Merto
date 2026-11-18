@@ -10,6 +10,8 @@ import { FollowUpForm } from "./follow-up-form";
 import { ReplyDrafts } from "./reply-drafts";
 import { FollowUpPanel } from "./follow-up-panel";
 import type { ReplyDraft } from "@/lib/reply-drafts";
+import type { Task } from "@/lib/tasks";
+import { DealTasks } from "@/components/DealTasks";
 
 type Params = Promise<{ dealId: string }>;
 
@@ -17,13 +19,15 @@ async function RepRecord({ params }: { params: Params }) {
   await requireRole("rep");
   const { dealId } = await params;
   // The backend refuses (403) a customer this rep does not own.
-  const [deal, assessment, drafts] = await Promise.all([
+  const [deal, assessment, drafts, tasks] = await Promise.all([
     loadJson<DealRecordData>(`/api/deals/${encodeURIComponent(dealId)}`),
     loadJson<FollowUpAssessment>(`/api/deals/${encodeURIComponent(dealId)}/follow-up`),
     loadJson<ReplyDraft[]>(`/api/deals/${encodeURIComponent(dealId)}/reply-drafts`),
+    loadJson<Task[]>(`/api/deals/${encodeURIComponent(dealId)}/tasks`),
   ]);
   if (!deal) return <p>Couldn&apos;t load this customer. They may belong to another rep.</p>;
-  return <DealRecord deal={deal} followUp={<FollowUpPanel
+  const canAddTasks = !["delivered", "lost"].includes(deal.stage);
+  return <DealRecord deal={deal} tasks={<DealTasks dealId={dealId} tasks={tasks} canAdd={canAddTasks} />} followUp={<FollowUpPanel
     drafts={<ReplyDrafts dealId={dealId} initialRequestId={randomUUID()} drafts={drafts} eligible={assessment?.status === "due"}
       email={deal.buyer.email} phone={deal.buyer.phone} preferredChannel={deal.buyer.preferredChannel} />}
     manual={<FollowUpForm dealId={dealId} initialRequestId={randomUUID()} assessment={assessment}

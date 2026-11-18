@@ -10,19 +10,55 @@ import type { DueFollowUp } from "@/lib/follow-ups";
 import type { AppointmentOverview } from "@/lib/appointments";
 import { formatDateTime } from "@/lib/format";
 import { label } from "@/lib/format";
+import Link from "next/link";
+import { TaskList } from "@/components/TaskList";
+import type { TasksOverview } from "@/lib/tasks";
+
+const HOME_TASK_LIMIT = 5;
 
 async function RepDashboard() {
   await requireRole("rep");
 
   // The backend returns only this rep's deals and follow-ups.
-  const [followUps, deals, appointments] = await Promise.all([
+  const [followUps, deals, appointments, tasks] = await Promise.all([
     loadJson<DueFollowUp[]>("/api/follow-ups/due"),
     loadJson<Deal[]>("/api/deals"),
     loadJson<AppointmentOverview>("/api/appointments/overview"),
+    loadJson<TasksOverview>("/api/tasks"),
   ]);
 
   return (
     <div className="space-y-8">
+      <Card
+        title="My tasks"
+        count={tasks?.summary.open}
+        aside={<Link href="/rep/tasks" className="underline">View all tasks</Link>}
+      >
+        {tasks === null ? (
+          <p>Couldn&apos;t load your tasks.</p>
+        ) : (
+          <>
+            {tasks.summary.open > 0 && (
+              <p className="mb-2 text-sm">
+                <span className={tasks.summary.overdue > 0 ? "font-semibold text-red-600" : ""}>
+                  {tasks.summary.overdue} overdue
+                </span>
+                {" · "}
+                {tasks.summary.dueToday} due later today
+              </p>
+            )}
+            <TaskList tasks={tasks.tasks.slice(0, HOME_TASK_LIMIT)} dealHref="/rep/deals" empty="Nothing to do right now" />
+            {tasks.tasks.length > HOME_TASK_LIMIT && (
+              <p className="mt-2 text-sm">
+                <Link href="/rep/tasks" className="underline">
+                  {tasks.tasks.length - HOME_TASK_LIMIT} more open task{tasks.tasks.length - HOME_TASK_LIMIT === 1 ? "" : "s"}
+                </Link>
+              </p>
+            )}
+          </>
+        )}
+      </Card>
+
       <Card title="Needs follow-up" count={followUps?.length}>
         {followUps === null ? (
           <p>Couldn&apos;t load follow-ups.</p>
