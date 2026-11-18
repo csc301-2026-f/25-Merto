@@ -5,6 +5,7 @@ import { Sidebar, type NavLink } from "@/components/Sidebar";
 // Same frame as the manager pages (app/manager/layout.tsx).
 const links: NavLink[] = [
   { label: "Home", href: "/rep" },
+  { label: "Tasks", href: "/rep/tasks" },
   { label: "Stats", href: "/rep/stats" },
   { label: "Calendar", href: "/rep/calendar" },
   { label: "Create customer", href: "/rep/create-customer" },

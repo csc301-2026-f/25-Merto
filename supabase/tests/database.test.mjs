@@ -16,7 +16,8 @@ const allSeeds = await Promise.all(seedNames.map((name) => readSql(`seed/${name}
 const demos = await readSql('demo/queries.sql');
 const transfer = await readSql('demo/transfer.sql');
 const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
-  'audit_events', 'ai_evaluations', 'ai_flags', 'deal_assignments', 'reply_drafts', 'mpnet_evaluations', 'mpnet_flags'];
+  'audit_events', 'ai_evaluations', 'ai_flags', 'deal_assignments', 'reply_drafts', 'mpnet_evaluations', 'mpnet_flags',
+  'deal_tasks'];
 const ids = {
   karen: '10000000-0000-0000-0000-000000000001',
   dana: '10000000-0000-0000-0000-000000000002',
@@ -61,7 +62,7 @@ describe('Merto database contract', () => {
 
   it('loads the real migration and reseeds without duplicating or changing sample records', async () => {
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 14, 2, 4, 1, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 14, 2, 4, 1, 0, 0, 0, 0, 0, 0, 0]);
     await db.exec(seed);
     assert.deepEqual(await snapshot(), before);
   });
@@ -162,6 +163,19 @@ describe('Merto database contract', () => {
       [ids.jordan]);
   });
 
+  it('requires a title, a creator, and completion details exactly for completed deal tasks', async () => {
+    const insert = 'insert into public.deal_tasks (deal_id, title, created_by, status, completed_by, completed_at) values ($1, $2, $3, $4, $5, $6)';
+    await expectSqlError(insert, [ids.jordan, '  ', ids.dana, 'open', null, null], '23514');
+    await expectSqlError(insert, [ids.jordan, 'x'.repeat(201), ids.dana, 'open', null, null], '23514');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', null, 'open', null, null], '23502');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', ids.dana, 'completed', null, null], '23514');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', ids.dana, 'completed', null, new Date()], '23514');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', ids.dana, 'open', ids.dana, new Date()], '23514');
+    await expectSqlError(insert, [ids.missing, 'Call bank', ids.dana, 'open', null, null], '23503');
+    await db.query(insert, [ids.jordan, 'Call bank', ids.dana, 'open', null, null]);
+    await db.query(insert, [ids.jordan, 'Call bank', ids.dana, 'completed', ids.dana, new Date()]);
+  });
+
   it('detects outbound contact after opt-out, including on another deal for the same buyer', async () => {
     const optedOutBuyer = (await db.query('select buyer_id from public.deals where id = $1', [ids.rob])).rows[0].buyer_id;
     const otherDeal = (await db.query("insert into public.deals (buyer_id, vehicle_interest, source) values ($1, 'Another vehicle', 'email') returning id",
@@ -180,7 +194,7 @@ describe('Merto database contract', () => {
   it('loads every scenario seed twice without changing records or timestamps', async () => {
     for (const sql of allSeeds) await db.exec(sql);
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 223, 20, 16, 1, 0, 0, 1, 0, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 223, 20, 16, 1, 0, 0, 1, 0, 0, 0, 3]);
     for (const sql of allSeeds) await db.exec(sql);
     assert.deepEqual(await snapshot(), before);
     assert.equal((await db.exec(demos))[0].rows.length, 37);

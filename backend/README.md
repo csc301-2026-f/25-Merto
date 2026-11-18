@@ -365,6 +365,23 @@ approve it, then record the simulated send. The timeline should contain both
 decisions and only one outbound follow-up; the visit reminder should clear only
 after that send.
 
+## Deal tasks
+
+A rep's own to-do list on each deal. Tasks belong to the deal, so the rep who owns
+the deal sees and completes them, and they move with the deal on a transfer. The GM
+can see and change tasks on every deal. Adding a task to a delivered or lost deal is 409.
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/deals/:dealId/tasks` | GM, owning rep | The deal's tasks: open first, soonest due first (undated last), then completed, most recent first. |
+| `POST /api/deals/:dealId/tasks` | GM, owning rep | Body `{ "title": string, "dueAt"?: ISO time with zone }`. Returns 201 and the task. |
+| `PATCH /api/tasks/:taskId` | GM, owning rep | Body `{ "completed": boolean }`. Marks it done (records who and when) or reopens it. Already in that state is 409. |
+| `GET /api/tasks` | GM: all; rep: own deals | `?status=open` (default), `completed`, or `all`. Returns `summary` (`open`, `overdue`, `dueToday`: open tasks in scope, whatever `status` lists) and `tasks`, each with its `deal`. |
+
+Each task has `id`, `dealId`, `title`, `status`, `dueAt`, `overdue` (open and past
+due), `createdAt`, `createdBy`, `completedAt`, and `completedBy`. `dueToday` counts
+open tasks due from now to midnight in `DEALERSHIP_TIME_ZONE`.
+
 ## Unresolved work (US4)
 
 `GET /api/open-items` lists open items (promises, missing documents, unanswered
@@ -632,6 +649,7 @@ dev instead.
 | `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
 | `src/scenarios/` | US13 scenario checks: `catalog.ts` (scenarios), `agents.ts` (agent interface, built-in agents), `tools.ts` (agent tools), `checks.ts` (deterministic checks), `runner.ts` (sandbox run, scorecard), `service.ts` (GM only), `routes.ts`. |
 | `src/open-items/` | US4 unresolved work: `policy.ts` (filters, close notes), `repository.ts` (SQL), `service.ts` (permissions, summary, resolve/cancel), `routes.ts`. |
+| `src/tasks/` | Deal tasks: `policy.ts` (input), `repository.ts` (SQL), `service.ts` (permissions, summary), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
 
 ## Limits
