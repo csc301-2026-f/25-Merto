@@ -72,6 +72,122 @@ describe('deal list and buyer record', () => {
   });
 });
 
+describe('sales outcomes', () => {
+  const api = useApi();
+  const { call } = api;
+
+  it('lets only the manager compare every rep, including reps without closed deals', async () => {
+    const [empty] = await api.db.query<{ id: string }>(
+      "insert into public.staff_users (name, email, role) values ('New Rep', 'new-rep@example.test', 'rep') returning id");
+    const response = await call(STAFF.karen, 'GET', '/api/deals/stats/reps');
+    assert.equal(response.status, 200);
+    const reps = await api.db.query<{ id: string }>("select id from public.staff_users where role = 'rep'");
+    assert.equal(response.body.length, reps.length);
+    for (const rep of reps) {
+      const personal = await call(rep.id, 'GET', '/api/deals/stats');
+      const row = response.body.find((entry: { repId: string }) => entry.repId === rep.id);
+      const { repId, name, ...totals } = row;
+      assert.equal(repId, rep.id);
+      assert.ok(name);
+      assert.deepEqual(totals, personal.body);
+    }
+    assert.deepEqual(response.body.find((entry: { repId: string }) => entry.repId === empty.id), {
+      repId: empty.id, name: 'New Rep', sold: 0, lost: 0, closed: 0, saleRate: null,
+    });
+    assert.equal((await call(STAFF.dana, 'GET', '/api/deals/stats/reps')).status, 403);
+    assert.equal((await call(null, 'GET', '/api/deals/stats/reps')).status, 401);
+  });
+
+  it('counts only closed deals in scope and leaves the rate empty without closed deals', async () => {
+    const path = '/api/deals/stats';
+    assert.deepEqual(await call(STAFF.dana, 'GET', path), {
+      status: 200,
+      body: { sold: 3, lost: 2, closed: 5, saleRate: 0.6 },
+    });
+    const store = await call(STAFF.karen, 'GET', path);
+    assert.equal(store.status, 200);
+    assert.ok(store.body.closed > 5);
+    assert.equal((await call(null, 'GET', path)).status, 401);
+
+    await api.db.query("update public.deals set owner_id = null where owner_id = $1", [STAFF.dana]);
+    assert.deepEqual((await call(STAFF.dana, 'GET', path)).body, {
+      sold: 0, lost: 0, closed: 0, saleRate: null,
+    });
+  });
+
+  it('filters the rep’s closed deals and preserves links to the owning rep’s records', async () => {
+    const path = '/api/deals/stats/outcomes';
+    const sold = await call(STAFF.dana, 'GET', `${path}?outcome=sold`);
+    assert.equal(sold.status, 200);
+    assert.equal(sold.body.deals.length, 3);
+    assert.ok(sold.body.deals.every((deal: { stage: string }) => deal.stage === 'delivered'));
+
+    const lost = await call(STAFF.dana, 'GET', `${path}?outcome=lost`);
+    assert.equal(lost.status, 200);
+    assert.equal(lost.body.deals.length, 2);
+    for (const deal of lost.body.deals) {
+      assert.equal(deal.stage, 'lost');
+      assert.ok(deal.lostReason);
+      assert.equal((await call(STAFF.dana, 'GET', `/api/deals/${deal.dealId}`)).status, 200);
+      assert.equal((await call(STAFF.arjun, 'GET', `/api/deals/${deal.dealId}`)).status, 403);
+    }
+    assert.deepEqual((await call(STAFF.dana, 'GET', `${path}?page=2`)).body, {
+      deals: [],
+      hasNextPage: false,
+    });
+    assert.equal((await call(STAFF.dana, 'GET', `${path}?outcome=working`)).status, 400);
+    assert.equal((await call(STAFF.dana, 'GET', `${path}?page=0`)).status, 400);
+    assert.equal((await call(null, 'GET', path)).status, 401);
+  });
+
+  it('returns a 100% sale rate for all-sold deals and 0% for all-lost deals', async () => {
+    const path = '/api/deals/stats';
+    await api.db.query(
+      "update public.deals set stage = 'delivered', lost_reason = null where owner_id = $1 and stage = 'lost'",
+      [STAFF.dana]);
+    assert.deepEqual((await call(STAFF.dana, 'GET', path)).body, {
+      sold: 5, lost: 0, closed: 5, saleRate: 1,
+    });
+
+    await api.db.query(
+      "update public.deals set stage = 'lost', lost_reason = 'Buyer declined' where owner_id = $1 and stage = 'delivered'",
+      [STAFF.dana]);
+    assert.deepEqual((await call(STAFF.dana, 'GET', path)).body, {
+      sold: 0, lost: 5, closed: 5, saleRate: 0,
+    });
+    assert.deepEqual((await call(STAFF.dana, 'GET', `${path}/outcomes?outcome=sold`)).body, {
+      deals: [], hasNextPage: false,
+    });
+  });
+
+  it('paginates filtered results without overlap, including an exactly full last page', async () => {
+    const path = '/api/deals/stats/outcomes?outcome=sold';
+    const original = await call(STAFF.dana, 'GET', path);
+    const arjun = await call(STAFF.arjun, 'GET', path);
+    const inserted = await api.db.query<{ id: string }>(`
+      insert into public.deals (buyer_id, owner_id, vehicle_interest, source, stage)
+      select d.buyer_id, d.owner_id, 'Pagination fixture', 'website', 'delivered'
+      from public.deals d cross join generate_series(1, 37)
+      where d.id = $1
+      returning id
+    `, [DEALS.jordan]);
+    const first = await call(STAFF.dana, 'GET', path);
+    const second = await call(STAFF.dana, 'GET', `${path}&page=2`);
+    assert.equal(first.status, 200);
+    assert.equal(second.status, 200);
+    assert.equal(first.body.deals.length, 20);
+    assert.equal(second.body.deals.length, 20);
+    assert.equal(first.body.hasNextPage, true);
+    assert.equal(second.body.hasNextPage, false);
+    const ids = (deals: { dealId: string }[]) => deals.map((deal) => deal.dealId);
+    assert.deepEqual(
+      [...ids(first.body.deals), ...ids(second.body.deals)],
+      [...inserted.map(({ id }) => id).sort().reverse(), ...ids(original.body.deals)],
+    );
+    assert.deepEqual(await call(STAFF.arjun, 'GET', path), arjun);
+  });
+});
+
 describe('adding a buyer', () => {
   const api = useApi();
   const { call } = api;

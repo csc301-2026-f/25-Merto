@@ -148,6 +148,9 @@ row lock, so only one succeeds.
 | Method and path | Who | What it does |
 | --- | --- | --- |
 | `GET /api/deals` | GM: all; rep: own | Open deals (not delivered or lost), most recent activity first: `dealId`, `buyer`, `vehicleInterest`, `stage`, `source`, `ownerId`, `owner`, `optedOut`, `openItems`, `lastActivityAt`, `createdAt`. |
+| `GET /api/deals/stats` | GM: all; rep: own | All-time `sold` (delivered), `lost`, `closed`, and `saleRate` (sold divided by closed, or null if there are no closed deals). |
+| `GET /api/deals/stats/reps` | GM only | Every sales rep's name, ID, sold, lost, closed, and sale rate. Includes reps with no closed deals. Counts use current deal ownership. |
+| `GET /api/deals/stats/outcomes` | GM: all; rep: own | Closed deal records for `outcome=all\|sold\|lost`, 20 per `page` (defaults to 1), with `hasNextPage`. Ordered by deal creation, newest first. |
 | `GET /api/deals/:dealId` | GM, owning rep | The buyer record: deal fields, `buyer` (contact, `optedOut`), `owner`, `timeline`, `openItems`, `appointments`, `assignments` (as above). |
 | `POST /api/deals` | GM, rep | Adds a buyer and their first deal (201). See below. |
 | `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
@@ -362,6 +365,23 @@ check, sign in as Dana, open Maya, reject one draft, prepare another, edit and
 approve it, then record the simulated send. The timeline should contain both
 decisions and only one outbound follow-up; the visit reminder should clear only
 after that send.
+
+## Deal tasks
+
+A rep's own to-do list on each deal. Tasks belong to the deal, so the rep who owns
+the deal sees and completes them, and they move with the deal on a transfer. The GM
+can see and change tasks on every deal. Adding a task to a delivered or lost deal is 409.
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/deals/:dealId/tasks` | GM, owning rep | The deal's tasks: open first, soonest due first (undated last), then completed, most recent first. |
+| `POST /api/deals/:dealId/tasks` | GM, owning rep | Body `{ "title": string, "dueAt"?: ISO time with zone }`. Returns 201 and the task. |
+| `PATCH /api/tasks/:taskId` | GM, owning rep | Body `{ "completed": boolean }`. Marks it done (records who and when) or reopens it. Already in that state is 409. |
+| `GET /api/tasks` | GM: all; rep: own deals | `?status=open` (default), `completed`, or `all`. Returns `summary` (`open`, `overdue`, `dueToday`: open tasks in scope, whatever `status` lists) and `tasks`, each with its `deal`. |
+
+Each task has `id`, `dealId`, `title`, `status`, `dueAt`, `overdue` (open and past
+due), `createdAt`, `createdBy`, `completedAt`, and `completedBy`. `dueToday` counts
+open tasks due from now to midnight in `DEALERSHIP_TIME_ZONE`.
 
 ## Unresolved work (US4)
 
@@ -630,6 +650,7 @@ dev instead.
 | `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
 | `src/scenarios/` | US13 scenario checks: `catalog.ts` (scenarios), `agents.ts` (agent interface, built-in agents), `tools.ts` (agent tools), `checks.ts` (deterministic checks), `runner.ts` (sandbox run, scorecard), `service.ts` (GM only), `routes.ts`. |
 | `src/open-items/` | US4 unresolved work: `policy.ts` (filters, close notes), `repository.ts` (SQL), `service.ts` (permissions, summary, resolve/cancel), `routes.ts`. |
+| `src/tasks/` | Deal tasks: `policy.ts` (input), `repository.ts` (SQL), `service.ts` (permissions, summary), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
 
 ## Limits
