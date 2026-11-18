@@ -88,6 +88,39 @@ export function activeDeals(db: Queryable, ownerId: string | null): Promise<Deal
     order by "lastActivityAt" desc nulls last, d.id`, [ownerId]);
 }
 
+export async function dealOutcomeCounts(db: Queryable, ownerId: string | null) {
+  const [counts] = await db.query<{ sold: number; lost: number }>(`
+    select count(*) filter (where stage = 'delivered')::int as sold,
+      count(*) filter (where stage = 'lost')::int as lost
+    from public.deals
+    where stage in ('delivered', 'lost') and ($1::uuid is null or owner_id = $1)
+  `, [ownerId]);
+  return counts;
+}
+
+type ClosedDeal = {
+  dealId: string;
+  buyer: string;
+  vehicleInterest: string;
+  stage: 'delivered' | 'lost';
+  lostReason: string | null;
+};
+
+export function closedDeals(db: Queryable, ownerId: string | null,
+  stage: ClosedDeal['stage'] | null, limit: number, offset: number) {
+  return db.query<ClosedDeal>(`
+    select d.id as "dealId", b.name as buyer, d.vehicle_interest as "vehicleInterest",
+      d.stage, d.lost_reason as "lostReason"
+    from public.deals d
+    join public.buyers b on b.id = d.buyer_id
+    where d.stage in ('delivered', 'lost')
+      and ($1::uuid is null or d.owner_id = $1)
+      and ($2::text is null or d.stage = $2)
+    order by d.created_at desc, d.id desc
+    limit $3 offset $4
+  `, [ownerId, stage, limit, offset]);
+}
+
 export async function findDeal(db: Queryable, dealId: string): Promise<DealRecord | undefined> {
   const [deal] = await db.query<DealRecord>(`
     select d.id as "dealId", b.id as "buyerId", b.name as buyer, b.email, b.phone,

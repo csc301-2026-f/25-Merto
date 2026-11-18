@@ -12,6 +12,14 @@ export function dealRoutes(db: Database) {
     res.json(await deals.listDeals(db, currentStaff(res)));
   });
 
+  router.get('/deals/stats', async (_req, res) => {
+    res.json(await deals.dealStats(db, currentStaff(res)));
+  });
+
+  router.get('/deals/stats/outcomes', async (req, res) => {
+    res.json(await deals.dealOutcomes(db, currentStaff(res), req.query));
+  });
+
   router.post('/deals', async (req, res) => {
     const body = typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body) ? req.body : {};
     res.status(201).json(await deals.createDeal(db, currentStaff(res), body));

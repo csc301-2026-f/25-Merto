@@ -10,15 +10,18 @@ import type { DueFollowUp } from "@/lib/follow-ups";
 import type { AppointmentOverview } from "@/lib/appointments";
 import { formatDateTime } from "@/lib/format";
 import { label } from "@/lib/format";
+import { DealOutcomeSummary } from "@/components/DealOutcomeSummary";
+import { loadDealStats } from "@/lib/deal-stats";
 
 async function RepDashboard() {
   await requireRole("rep");
 
   // The backend returns only this rep's deals and follow-ups.
-  const [followUps, deals, appointments] = await Promise.all([
+  const [followUps, deals, appointments, stats] = await Promise.all([
     loadJson<DueFollowUp[]>("/api/follow-ups/due"),
     loadJson<Deal[]>("/api/deals"),
     loadJson<AppointmentOverview>("/api/appointments/overview"),
+    loadDealStats(),
   ]);
 
   return (
@@ -78,6 +81,12 @@ async function RepDashboard() {
             ))}
           </ul>
         )}
+      </Card>
+
+      <Card title="Sales outcomes" hideCount>
+        <EntryLink href="/rep/stats" title="View stats" aside="">
+          <DealOutcomeSummary stats={stats} />
+        </EntryLink>
       </Card>
 
       <Card title="My customers" count={deals?.length}>

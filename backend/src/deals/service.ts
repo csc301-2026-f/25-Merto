@@ -4,11 +4,29 @@ import { requireDealAccess, type Staff } from '../auth.ts';
 import type { Database } from '../db.ts';
 import { conflict, notFound } from '../errors.ts';
 import { addAssignmentEvent, addAssignmentRecord, assignmentHistory } from '../assignment/repository.ts';
-import { parseNewDeal, phoneDigits } from './policy.ts';
+import { CLOSED_DEALS_PAGE_SIZE, parseDealOutcomesQuery, parseNewDeal, phoneDigits } from './policy.ts';
 import * as repo from './repository.ts';
 
 export function listDeals(db: Database, staff: Staff) {
   return repo.activeDeals(db, staff.role === 'gm' ? null : staff.id);
+}
+
+export async function dealStats(db: Database, staff: Staff) {
+  const { sold, lost } = await repo.dealOutcomeCounts(db, staff.role === 'gm' ? null : staff.id);
+  const closed = sold + lost;
+  return { sold, lost, closed, saleRate: closed === 0 ? null : sold / closed };
+}
+
+export async function dealOutcomes(db: Database, staff: Staff, query: Record<string, unknown>) {
+  const { outcome, page } = parseDealOutcomesQuery(query);
+  const ownerId = staff.role === 'gm' ? null : staff.id;
+  const stage = outcome === 'all' ? null : outcome === 'sold' ? 'delivered' : 'lost';
+  const rows = await repo.closedDeals(db, ownerId, stage, CLOSED_DEALS_PAGE_SIZE + 1,
+    (page - 1) * CLOSED_DEALS_PAGE_SIZE);
+  return {
+    deals: rows.slice(0, CLOSED_DEALS_PAGE_SIZE),
+    hasNextPage: rows.length > CLOSED_DEALS_PAGE_SIZE,
+  };
 }
 
 // The whole record stays on the deal when its owner changes (US8), so the new
