@@ -6,6 +6,7 @@ import { Sidebar, type NavLink } from "@/components/Sidebar";
 const links: NavLink[] = [
   { label: "Home", href: "/rep" },
   { label: "Tasks", href: "/rep/tasks" },
+  { label: "Statistics", href: "/rep/stats" },
   { label: "Calendar", href: "/rep/calendar" },
   { label: "Create customer", href: "/rep/create-customer" },
 ];

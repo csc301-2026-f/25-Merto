@@ -5,6 +5,8 @@ import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
 import { EntryLink } from "@/components/EntryLink";
 import { OpenItemList } from "@/components/OpenItemList";
+import { DealOutcomeSummary } from "@/components/DealOutcomeSummary";
+import { loadDealStats } from "@/lib/deal-stats";
 
 import type { QueueItem } from "@/lib/evaluation";
 import type { OpenItemsOverview } from "@/lib/open-items";
@@ -16,13 +18,20 @@ const OPEN_ITEMS_SHOWN = 10;
 async function ManagerHome() {
   await requireRole("manager");
 
-  const [queue, openItems] = await Promise.all([
+  const [queue, openItems, stats] = await Promise.all([
     loadJson<QueueItem[]>("/api/ai-flags/queue"),
     loadJson<OpenItemsOverview>("/api/open-items"),
+    loadDealStats(),
   ]);
 
   return (
     <div className="space-y-8">
+
+      <Card title="Store sales outcomes" hideCount>
+        <EntryLink href="/manager/statistics" title="View statistics" aside="">
+          <DealOutcomeSummary stats={stats} />
+        </EntryLink>
+      </Card>
 
       {/* Deals Need Attention */}
       <Card

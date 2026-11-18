@@ -1,5 +1,6 @@
 
 import { Suspense } from "react";
+import Link from "next/link";
 import { requireRole } from "@/lib/auth/session";
 import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
@@ -10,7 +11,8 @@ import type { DueFollowUp } from "@/lib/follow-ups";
 import type { AppointmentOverview } from "@/lib/appointments";
 import { formatDateTime } from "@/lib/format";
 import { label } from "@/lib/format";
-import Link from "next/link";
+import { DealOutcomeSummary } from "@/components/DealOutcomeSummary";
+import { loadDealStats } from "@/lib/deal-stats";
 import { TaskList } from "@/components/TaskList";
 import type { TasksOverview } from "@/lib/tasks";
 
@@ -20,11 +22,12 @@ async function RepDashboard() {
   await requireRole("rep");
 
   // The backend returns only this rep's deals and follow-ups.
-  const [followUps, deals, appointments, tasks] = await Promise.all([
+  const [followUps, deals, appointments, tasks, stats] = await Promise.all([
     loadJson<DueFollowUp[]>("/api/follow-ups/due"),
     loadJson<Deal[]>("/api/deals"),
     loadJson<AppointmentOverview>("/api/appointments/overview"),
     loadJson<TasksOverview>("/api/tasks"),
+    loadDealStats(),
   ]);
 
   return (
@@ -114,6 +117,12 @@ async function RepDashboard() {
             ))}
           </ul>
         )}
+      </Card>
+
+      <Card title="Sales outcomes" hideCount>
+        <EntryLink href="/rep/stats" title="View statistics" aside="">
+          <DealOutcomeSummary stats={stats} />
+        </EntryLink>
       </Card>
 
       <Card title="My customers" count={deals?.length}>

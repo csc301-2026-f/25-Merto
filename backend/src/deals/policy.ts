@@ -11,6 +11,19 @@ export const CHANNELS = ['email', 'sms', 'call'] as const;
 export type Channel = typeof CHANNELS[number];
 
 export const MAX_TEXT_LENGTH = 200;
+export const CLOSED_DEALS_PAGE_SIZE = 20;
+
+export function parseDealOutcomesQuery(query: Record<string, unknown>) {
+  const outcome = query.outcome ?? 'all';
+  if (outcome !== 'all' && outcome !== 'sold' && outcome !== 'lost') {
+    throw badRequest('outcome must be all, sold, or lost.');
+  }
+  const page = query.page ?? '1';
+  if (typeof page !== 'string' || !/^[1-9]\d{0,8}$/.test(page)) {
+    throw badRequest('page must be a positive integer with at most nine digits.');
+  }
+  return { outcome, page: Number(page) };
+}
 
 export interface NewDeal {
   name: string;
