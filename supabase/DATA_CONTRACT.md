@@ -32,7 +32,7 @@ erDiagram
   deals ||--o{ timeline_events : records
   staff_users o|--o{ timeline_events : authors
   deals ||--o{ appointments : schedules
-  staff_users o|--o{ appointments : requests/confirms
+  staff_users o|--o{ appointments : "requests/confirms"
   deals ||--o{ audit_events : audits
   staff_users o|--o{ audit_events : acts
   deals ||--o{ open_items : tracks
