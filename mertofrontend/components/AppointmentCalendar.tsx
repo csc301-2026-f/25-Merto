@@ -11,8 +11,8 @@ import {
   type FormEvent,
 } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { saveAppointment } from "@/app/appointments/actions";
+import { useRouter, useSearchParams } from "next/navigation";
+import { confirmRequestedAppointment, saveAppointment } from "@/app/appointments/actions";
 import { APPOINTMENT_STATUSES, type Appointment, type AppointmentOverview } from "@/lib/appointments";
 import type { Deal, Rep } from "@/lib/deals";
 import {
@@ -288,12 +288,16 @@ export function AppointmentCalendar({
   reps: Rep[];
 }) {
   const today = todayInDealershipTimeZone();
+  const searchParams = useSearchParams();
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedRepId, setSelectedRepId] = useState("");
-  const [panel, setPanel] = useState<"appointments" | "edit" | "create">("appointments");
+  const [panel, setPanel] = useState<"appointments" | "details" | "edit" | "create">("appointments");
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [editing, setEditing] = useState<Appointment | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
+  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(
+    () => searchParams.get("appointmentId"),
+  );
   const router = useRouter();
 
   const [month, setMonth] = useState(() => {
@@ -312,12 +316,18 @@ export function AppointmentCalendar({
     : overview.requestedToConfirm;
   const showAppointmentList = useCallback((message?: string) => {
     setPanel("appointments");
+    setSelectedAppointment(null);
     setEditing(null);
     setNotice(message ?? null);
     if (message) router.refresh();
   }, [router]);
+  const handleAppointmentConfirmed = useCallback(() => {
+    setNotice("Appointment confirmed.");
+    router.refresh();
+  }, [router]);
 
   const startCreate = () => {
+    setSelectedAppointment(null);
     setEditing(null);
     setNotice(null);
     setPanel("create");
@@ -328,8 +338,23 @@ export function AppointmentCalendar({
     const [year, monthNumber] = appointmentDate.split("-").map(Number);
     setSelectedDate(appointmentDate);
     setMonth(new Date(year, monthNumber - 1, 1));
+    setSelectedAppointment(null);
     setEditing(appointment);
     setNotice(null);
+    setPanel("edit");
+  };
+
+  const showAppointmentDetails = (appointment: Appointment, date: string) => {
+    setSelectedDate(date);
+    setSelectedAppointment(appointment);
+    setEditing(null);
+    setNotice(null);
+    setPanel("details");
+  };
+
+  const editSelectedAppointment = () => {
+    if (!selectedAppointment) return;
+    setEditing(selectedAppointment);
     setPanel("edit");
   };
 
@@ -370,6 +395,7 @@ export function AppointmentCalendar({
 
   function chooseDate(date: Date) {
     setSelectedDate(dateKey(date));
+    setSelectedAppointment(null);
     setPanel("appointments");
     setEditing(null);
     setNotice(null);
@@ -386,16 +412,16 @@ export function AppointmentCalendar({
 
       </header>
 
-      {role === "manager" && (
-        <section aria-label="Appointments requested but not confirmed">
-          <AppointmentExceptionList
-            appointments={requestedToConfirm}
-            expandedId={expandedRequestId}
-            onToggle={(id) => setExpandedRequestId((current) => current === id ? null : id)}
-            onEdit={startEdit}
-          />
-        </section>
-      )}
+      <section aria-label="Appointments requested but not confirmed">
+        <AppointmentExceptionList
+          role={role}
+          appointments={requestedToConfirm}
+          expandedId={expandedRequestId}
+          onToggle={(id) => setExpandedRequestId((current) => current === id ? null : id)}
+          onEdit={startEdit}
+          onConfirmed={handleAppointmentConfirmed}
+        />
+      </section>
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
         {/* Calendar */}
@@ -488,8 +514,7 @@ export function AppointmentCalendar({
                         key={appointment.id}
                         type="button"
                         onClick={() => {
-                          setSelectedDate(key);
-                          startEdit(appointment);
+                          showAppointmentDetails(appointment, key);
                         }}
                         className="block w-full truncate rounded bg-amber-100 px-1 py-1 text-left text-[10px] text-[#594a2e] transition hover:bg-[#d5bd91] sm:text-xs dark:bg-[#d5bd91]/20 dark:text-amber-200 dark:hover:bg-[#d5bd91]/30"
                         title={`${appointment.buyer} · ${formatDateTime(appointment.scheduledFor)}`}
@@ -518,7 +543,13 @@ export function AppointmentCalendar({
           <section className="flex h-full flex-col overflow-hidden rounded-xl bg-slate-100 shadow-sm dark:bg-zinc-900">
             <header className="border-b border-zinc-300 p-4 dark:border-zinc-700">
               <h2 className="font-semibold">
-                {panel === "appointments" ? "Appointments" : panel === "edit" ? "Edit Appointment" : "Create Appointment"}
+                {panel === "appointments"
+                  ? "Appointments"
+                  : panel === "details"
+                    ? "Appointment Details"
+                    : panel === "edit"
+                      ? "Edit Appointment"
+                      : "Create Appointment"}
               </h2>
               {panel === "appointments" && (
                 <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
@@ -534,7 +565,29 @@ export function AppointmentCalendar({
             )}
 
             <div className="flex-1 p-4">
-              {panel === "appointments" ? (
+              {panel === "details" && selectedAppointment ? (
+                <div className="space-y-3">
+                  <p className="font-semibold">{selectedAppointment.buyer}</p>
+                  <p className="text-sm">{formatDateTime(selectedAppointment.scheduledFor)}</p>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    {selectedAppointment.vehicleInterest} · {label(selectedAppointment.status)}
+                  </p>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    Rep: {selectedAppointment.owner ?? "Unassigned"}
+                    {" · "}
+                    {selectedAppointment.status === "completed"
+                      ? "Showed up"
+                      : selectedAppointment.status === "no_show"
+                        ? "Did not show"
+                        : "Attendance not recorded"}
+                  </p>
+                  {selectedAppointment.outcomeNote && (
+                    <p className="text-sm text-zinc-600 dark:text-zinc-300">
+                      {selectedAppointment.outcomeNote}
+                    </p>
+                  )}
+                </div>
+              ) : panel === "appointments" ? (
                 dayAppointments.length === 0 ? (
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">No appointments scheduled.</p>
                 ) : (
@@ -576,7 +629,14 @@ export function AppointmentCalendar({
                   selectedDate={selectedDate}
                   appointment={panel === "edit" ? editing : null}
                   role={role}
-                  onCancel={() => showAppointmentList()}
+                  onCancel={() => {
+                    if (selectedAppointment) {
+                      setEditing(null);
+                      setPanel("details");
+                    } else {
+                      showAppointmentList();
+                    }
+                  }}
                   onSaved={showAppointmentList}
                 />
               )}
@@ -589,6 +649,17 @@ export function AppointmentCalendar({
                 </button>
               </footer>
             )}
+            {panel === "details" && selectedAppointment && (
+              <footer className="border-t border-zinc-300 p-4 dark:border-zinc-700">
+                <button
+                  type="button"
+                  onClick={editSelectedAppointment}
+                  className={primaryButtonClass}
+                >
+                  Edit Appointment
+                </button>
+              </footer>
+            )}
           </section>
         </aside>
       </div>
@@ -597,15 +668,19 @@ export function AppointmentCalendar({
 }
 
 function AppointmentExceptionList({
+  role,
   appointments,
   expandedId,
   onToggle,
   onEdit,
+  onConfirmed,
 }: {
+  role: "manager" | "rep";
   appointments: Appointment[];
   expandedId: string | null;
   onToggle: (id: string) => void;
   onEdit: (appointment: Appointment) => void;
+  onConfirmed: () => void;
 }) {
   return (
     <section className="rounded-xl bg-slate-100 p-4 shadow-sm dark:bg-zinc-900">
@@ -648,8 +723,16 @@ function AppointmentExceptionList({
                     >
                       Edit Appointment
                     </button>
+                    {role === "rep" && (
+                      <ConfirmAppointmentButton
+                        appointmentId={appointment.id}
+                        onConfirmed={onConfirmed}
+                      />
+                    )}
                     <Link
-                      href={`/manager/deal-details/${encodeURIComponent(appointment.dealId)}`}
+                      href={role === "manager"
+                        ? `/manager/deal-details/${encodeURIComponent(appointment.dealId)}`
+                        : `/rep/deals/${encodeURIComponent(appointment.dealId)}`}
                       className={buttonClass}
                     >
                       View Full Record
@@ -662,5 +745,42 @@ function AppointmentExceptionList({
         </ul>
       )}
     </section>
+  );
+}
+
+function ConfirmAppointmentButton({
+  appointmentId,
+  onConfirmed,
+}: {
+  appointmentId: string;
+  onConfirmed: () => void;
+}) {
+  const [state, formAction, pending] = useActionState(
+    confirmRequestedAppointment,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (state?.success) onConfirmed();
+  }, [onConfirmed, state]);
+
+  return (
+    <div>
+      <form action={formAction}>
+        <input type="hidden" name="appointmentId" value={appointmentId} />
+        <button
+          type="submit"
+          disabled={pending}
+          className={primaryButtonClass}
+        >
+          {pending ? "Confirming…" : "Confirm Appointment"}
+        </button>
+      </form>
+      {state?.error && (
+        <p role="alert" className="mt-1 text-sm text-red-700 dark:text-red-400">
+          {state.error}
+        </p>
+      )}
+    </div>
   );
 }

@@ -8,6 +8,8 @@ import type { DealRecord as DealRecordData } from "@/lib/deals";
 import { demoEvaluatorId, evaluationRequest, type Evaluation, type EvaluationEngine, type EvaluationSearchParams } from "@/lib/evaluation";
 
 import { DealRecord } from "@/components/DealRecord";
+import { DealTasks } from "@/components/DealTasks";
+import type { Task } from "@/lib/tasks";
 import { EvaluationSummary } from "@/components/EvaluationSummary";
 
 type Params = Promise<{
@@ -32,9 +34,10 @@ async function FullRecord({
   if (requested && engine?.id !== requested) return <p>Could not load the selected evaluator.</p>;
   const context = evaluationRequest(engine?.id);
 
-  const [deal, evaluation] = await Promise.all([
+  const [deal, evaluation, tasks] = await Promise.all([
     loadJson<DealRecordData>(`/api/deals/${id}`, context),
     loadJson<Evaluation>(`/api/deals/${id}/evaluation`, context),
+    loadJson<Task[]>(`/api/deals/${id}/tasks`),
   ]);
 
   if (!deal) {
@@ -48,6 +51,7 @@ async function FullRecord({
 
       <DealRecord
         deal={deal}
+        tasks={<DealTasks dealId={dealId} tasks={tasks} canAdd={!["delivered", "lost"].includes(deal.stage)} />}
         flags={evaluation?.flags}
       />
 

@@ -85,10 +85,12 @@ function OwnershipEntry({
 export function DealRecord({
   deal,
   followUp,
+  tasks,
   flags,
 }: {
   deal: DealRecordData;
   followUp?: ReactNode;
+  tasks?: ReactNode;
   flags?: Flag[];
 }) {
   return (
@@ -143,6 +145,14 @@ export function DealRecord({
 
 
       {followUp}
+
+
+      {/* The rep's own to-do list for this deal */}
+      {tasks && (
+        <Section title="Tasks">
+          {tasks}
+        </Section>
+      )}
 
 
       {/* Ownership, open items and appointments */}
