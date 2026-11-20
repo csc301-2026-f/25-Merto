@@ -10,7 +10,7 @@ const STATUS_STYLES: Record<string, string> = {
   resolved: "bg-green-100 text-green-800",
   cancelled: "bg-gray-200 text-gray-800",
 };
-
+const buttonClass = "rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-600 dark:hover:bg-zinc-700";
 const isOverdue = (item: DealOpenItem) =>
   item.status === "open" && item.dueAt !== null && Date.parse(item.dueAt) < Date.now();
 
@@ -84,9 +84,9 @@ function OpenItemRow({ item }: { item: DealOpenItem }) {
       {action === null ? (
         <div className="flex gap-2">
           <button type="button" onClick={() => setAction("resolve")}
-            className="rounded border-2 px-2 py-0.5 text-xs font-semibold">Resolve</button>
+            className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-zinc-700">Resolve</button>
           <button type="button" onClick={() => setAction("cancel")}
-            className="rounded border-2 px-2 py-0.5 text-xs font-semibold">Cancel item</button>
+            className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-zinc-700">Cancel item</button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-2">
@@ -99,11 +99,11 @@ function OpenItemRow({ item }: { item: DealOpenItem }) {
           {error && <p role="alert" className="text-xs text-red-600">{error}</p>}
           <div className="flex gap-2">
             <button type="submit" disabled={pending || (action === "cancel" && !note.trim())}
-              className="rounded border-2 px-2 py-0.5 text-xs font-semibold disabled:opacity-50">
+              className={buttonClass}>
               {pending ? "Saving…" : action === "resolve" ? "Mark resolved" : "Cancel this item"}
             </button>
             <button type="button" disabled={pending} onClick={() => { setAction(null); setError(undefined); }}
-              className="px-2 py-0.5 text-xs underline">Back</button>
+              className={buttonClass}>Back</button>
           </div>
         </form>
       )}

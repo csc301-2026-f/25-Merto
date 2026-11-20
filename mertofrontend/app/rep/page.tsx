@@ -62,6 +62,12 @@ async function RepDashboard() {
         )}
       </Card>
 
+      <Card title="Sales outcomes" hideCount>
+        <EntryLink href="/rep/stats" title="View statistics" aside="">
+          <DealOutcomeSummary stats={stats} />
+        </EntryLink>
+      </Card>
+
       <Card title="Needs follow-up" count={followUps?.length}>
         {followUps === null ? (
           <p>Couldn&apos;t load follow-ups.</p>
@@ -121,12 +127,6 @@ async function RepDashboard() {
             ))}
           </ul>
         )}
-      </Card>
-
-      <Card title="Sales outcomes" hideCount>
-        <EntryLink href="/rep/stats" title="View statistics" aside="">
-          <DealOutcomeSummary stats={stats} />
-        </EntryLink>
       </Card>
 
       <Card title="My customers" count={deals?.length}>

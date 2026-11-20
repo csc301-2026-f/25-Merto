@@ -28,7 +28,7 @@ export function RunEvaluation({ engine }: { engine: EvaluationEngine | null }) {
         adds flags for new problems.
       </p>
       <button type="submit" disabled={pending || (engine !== null && !engine.ready)}
-        className="rounded border-2 px-4 py-2 font-semibold disabled:opacity-50">
+        className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-600 dark:hover:bg-zinc-700">
         {pending ? "Evaluating…" : "Run AI evaluation"}
       </button>
       {state?.ok === false && <p role="alert" className="text-sm text-red-600">{state.error}</p>}
