@@ -7,9 +7,12 @@ import { loadJson } from "@/lib/api";
 import { Card } from "@/components/Card";
 import { EntryLink } from "@/components/EntryLink";
 
-import { demoEvaluatorId, evaluationRequest, type EvaluationEngine, type EvaluationSearchParams, type Metrics, type QueueItem } from "@/lib/evaluation";
+import { demoEvaluatorId, evaluationRequest, type EvaluationEngine, type EvaluationSearchParams, type Metrics, type QueueItem, type SecondReviewItem } from "@/lib/evaluation";
 
 import { RunEvaluation } from "../run-evaluation";
+import { ReviewLearningDemo } from "@/components/ReviewLearningDemo";
+import { SecondReviewQueue } from "@/components/SecondReviewQueue";
+import type { ReviewLearningStatus } from "@/lib/review-learning";
 
 
 function labelFor(key: string) {
@@ -99,9 +102,13 @@ async function AiReviewPage({ searchParams }: { searchParams: EvaluationSearchPa
   }
   if (requested && engine?.id !== requested) return <p>Could not load the selected evaluator. Refresh this page.</p>;
   const context = evaluationRequest(engine?.id);
-  const [metrics, queue] = await Promise.all([
+  // The review-learning demo exists only in the local MPNet sandbox.
+  const learningDemo = engine?.scope === "local" && engine.id === "mpnet";
+  const [metrics, queue, secondReviews, learning] = await Promise.all([
     loadJson<Metrics>("/api/ai-evaluation/metrics", context),
     loadJson<QueueItem[]>("/api/ai-flags/queue", context),
+    loadJson<SecondReviewItem[]>("/api/ai-flags/second-review", context),
+    learningDemo ? loadJson<ReviewLearningStatus>("/api/demo/review-learning", context) : Promise.resolve(null),
   ]);
 
   return (
@@ -145,6 +152,22 @@ async function AiReviewPage({ searchParams }: { searchParams: EvaluationSearchPa
           </div>
         </div>
       </Card>
+
+      {learningDemo && (
+        <Card title="Learning from GM reviews (local demo)" hideCount>
+          <div className="rounded-xl bg-slate-100 p-4 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
+            <ReviewLearningDemo status={learning} />
+          </div>
+        </Card>
+      )}
+
+      {secondReviews && secondReviews.length > 0 && (
+        <div id="second-opinions">
+          <Card title="Second opinion needed" count={secondReviews.length}>
+            <SecondReviewQueue items={secondReviews} evaluatorId={engine?.id} />
+          </Card>
+        </div>
+      )}
 
       {/* Flags Awaiting Review */}
       <Card

@@ -146,6 +146,16 @@ Database migrations are not applied by any workflow. Apply new files in
 `supabase/migrations` to the hosted database by hand, following
 [hosted database setup](supabase/HOSTED_INTEGRATION.md).
 
+For the flag resolution rollout on the shared database:
+
+1. Before merging the backend change, apply
+   [the nullable resolution columns](supabase/migrations/20261123000100_flag_resolution.sql).
+2. Merge the backend change and verify that Vercel is serving it.
+3. Apply
+   [the resolution backfill and checks](supabase/migrations/20261123000200_enforce_flag_resolution.sql)
+   after the new backend is live. This fills in resolutions recorded by the previous
+   backend and preserves resolution metadata already written by the new backend.
+
 ## Continuous integration
 
 ### `ci.yml`

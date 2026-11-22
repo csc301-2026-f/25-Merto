@@ -409,3 +409,58 @@ describe('Merto database contract', () => {
     }
   });
 });
+
+it('rolls out flag resolution columns before enforcing them in both evaluator stores', async () => {
+  const rollout = new PGlite();
+  try {
+    await rollout.exec('create role anon; create role authenticated;');
+    const enforcement = migrationNames.indexOf('20261123000200_enforce_flag_resolution.sql');
+    assert.ok(enforcement > 0);
+    for (const migration of migrations.slice(0, enforcement)) await rollout.exec(migration);
+    await rollout.exec(seed);
+
+    const legacyAt = new Date('2026-11-22T12:00:00Z');
+    const newAt = new Date('2026-11-22T13:00:00Z');
+    for (const prefix of ['ai', 'mpnet']) {
+      await rollout.query(`
+        insert into public.${prefix}_evaluations (deal_id, result) values ($1, 'flagged')
+      `, [ids.jordan]);
+      await rollout.query(`
+        insert into public.${prefix}_flags (deal_id, evidence_event_id, flag_type, severity, explanation)
+        values ($1, $2, 'tone', 'low', 'Legacy resolution'),
+               ($1, $2, 'unsupported_price', 'medium', 'New resolution')
+      `, [ids.jordan, ids.jordanAssigned]);
+
+      // The previous backend updates only the review fields.
+      await rollout.query(`
+        update public.${prefix}_flags
+        set review_status = 'resolved', reviewed_by = $1, reviewed_at = $2
+        where flag_type = 'tone'
+      `, [ids.karen, legacyAt]);
+      // The new backend records resolution separately from the original review.
+      await rollout.query(`
+        update public.${prefix}_flags
+        set review_status = 'resolved', reviewed_by = $1, reviewed_at = $2,
+            resolved_by = $3, resolved_at = $4
+        where flag_type = 'unsupported_price'
+      `, [ids.karen, legacyAt, ids.dana, newAt]);
+    }
+
+    await rollout.exec(migrations[enforcement]);
+    for (const prefix of ['ai', 'mpnet']) {
+      const { rows } = await rollout.query(`
+        select reviewed_by, reviewed_at, resolved_by, resolved_at
+        from public.${prefix}_flags order by flag_type
+      `);
+      assert.deepEqual(rows, [
+        { reviewed_by: ids.karen, reviewed_at: legacyAt, resolved_by: ids.karen, resolved_at: legacyAt },
+        { reviewed_by: ids.karen, reviewed_at: legacyAt, resolved_by: ids.dana, resolved_at: newAt },
+      ]);
+      await assert.rejects(rollout.query(`
+        update public.${prefix}_flags set resolved_by = null, resolved_at = null where flag_type = 'tone'
+      `), { code: '23514', constraint: `${prefix}_flags_resolved_status_check` });
+    }
+  } finally {
+    await rollout.close();
+  }
+});

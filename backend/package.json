@@ -10,7 +10,8 @@
     "check:hosted": "tsx scripts/check-hosted.ts",
     "test": "tsx --test --test-concurrency=1 test/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "eval:rules": "tsx scripts/eval-rules.ts"
+    "eval:rules": "tsx scripts/eval-rules.ts",
+    "eval:export-labels": "tsx scripts/export-review-labels.ts"
   },
   "engines": {
     "node": ">=20"

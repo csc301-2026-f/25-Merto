@@ -53,6 +53,17 @@ export const MANUAL_FLAG_TYPES = {
 } as const;
 export type ManualFlagType = keyof typeof MANUAL_FLAG_TYPES;
 
+// GET /api/ai-flags/second-review: reviews that strongly disagree with the model.
+export type SecondReviewItem = Flag & {
+  dealId: string;
+  buyer: string;
+  reviewer: string;
+  reviewedBy: string;
+  modelScore: number;
+  buyerMessage: string | null;
+  canReview: boolean; // false for the GM who made the first review
+};
+
 // GET /api/ai-flags/queue
 export type QueueItem = Flag & {
   dealId: string;

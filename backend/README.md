@@ -652,6 +652,7 @@ dev instead.
 | `src/open-items/` | US4 unresolved work: `policy.ts` (filters, close notes), `repository.ts` (SQL), `service.ts` (permissions, summary, resolve/cancel), `routes.ts`. |
 | `src/tasks/` | Deal tasks: `policy.ts` (input), `repository.ts` (SQL), `service.ts` (permissions, summary), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
+| `src/evaluation/training-labels.ts`, `scripts/export-review-labels.ts` | Turn GM reviews into a training-label snapshot (see below). |
 
 ## Limits
 
@@ -678,3 +679,48 @@ deterministic evaluation. The trained MPNet weights are committed as lossless
 safetensors shards in [`model-service/weights/mpnet-v3`](../model-service/weights/mpnet-v3)
 and verified locally at build time; Python runtime dependencies are installed
 from the pinned requirements. See [deployment setup](../model-service/README.md).
+
+## GM reviews as training labels
+
+`npm run eval:export-labels` reads every flag in `ai_flags` and `mpnet_flags` and
+writes a label snapshot to `ml/feedback/`. It needs `DATABASE_URL` and only reads.
+The folder is git-ignored because snapshots hold real message text. The script
+trains nothing: retraining stays a separate, offline step that a person starts.
+
+A review becomes a label for one wording signal (the flag-to-signal mapping in
+`model-engine.ts`) only when it says whether the wording was read right:
+
+| Review | Label |
+| --- | --- |
+| Confirmed issue, resolved, or a GM-added flag | signal = 1 |
+| False positive: misread wording | signal = 0 |
+| False positive: already handled or visit confirmed | None. The deal history was misjudged, not the wording. |
+| False positive: not a problem or other | Triage: a person decides |
+| Pending, or a reply nobody flagged | None |
+
+Safeguards against a wrong review or a few repeated messages steering the model:
+
+- A review counts once it is 7 days old (`--cooling-days`), since a GM can still
+  change it. Resolved flags are final and count at once.
+- Fixed-ID deals (the seeds, including the scenario deals used for testing, and the
+  `check:hosted` fixture) never become labels.
+- A buyer signal (a missed handoff) goes on the one buyer message the flagged reply
+  answered. If the reply answered several, the review goes to triage.
+- Reviews of one message that disagree (in either store), and the same wording
+  labelled both ways on different messages, go to triage.
+- Repeated wording counts once; `duplicates` says how many copies were folded in.
+- About 20% of deals (`--holdout-percent`), chosen by a hash of the deal ID, are kept
+  for testing. Wording seen on one of them is held out for every signal.
+- Pass `--previous <last snapshot>` to count only new labels. The script says whether
+  there are at least 50 new training labels, with 10 on one signal
+  (`--min-new`, `--min-new-per-signal`).
+
+Every label lists its sources: the flag, reviewer, review time, and `modelVersion`,
+the model that raised the flag or, for a GM-added flag, the model that missed it.
+Evaluations save the version the model service reports (`null` for the rules); a
+model run that reports none is refused and saves nothing. Apply
+`supabase/migrations/20261117000100_evaluation_model_version.sql` before deploying
+this backend, since evaluations write the new column.
+
+Not done yet: checking reviews against the model's confidence, comparing reviewers,
+retraining, and the test gate a new model must pass before it replaces the current one.
