@@ -32,7 +32,7 @@ erDiagram
   deals ||--o{ timeline_events : records
   staff_users o|--o{ timeline_events : authors
   deals ||--o{ appointments : schedules
-  staff_users o|--o{ appointments : requests/confirms
+  staff_users o|--o{ appointments : "requests/confirms"
   deals ||--o{ audit_events : audits
   staff_users o|--o{ audit_events : acts
   deals ||--o{ open_items : tracks
@@ -183,6 +183,29 @@ writes are transactional with the appointment and timeline changes.
 Resolving an item means setting both `status = 'resolved'` and `resolved_at`.
 Reopening or cancelling means clearing `resolved_at`. Tasks without deadlines
 are allowed; in query 04 their `overdue` result is null, rather than false.
+
+### `deal_tasks`: a rep's own to-do list on a deal
+
+Added by `migrations/20261118000200_deal_tasks.sql`. Unlike `open_items`, which
+record what the buyer is waiting on, a task is internal work a rep writes for
+themselves ("call the bank"). Tasks belong to the deal, so whoever owns the deal
+owns its tasks, and they move with a transfer without being rewritten.
+
+| Field | Type / nullable | Meaning and rules |
+| --- | --- | --- |
+| `id` | UUID / no | Task ID. |
+| `deal_id` | UUID / no | References `deals.id`. |
+| `title` | text / no | Nonblank, at most 200 characters. |
+| `due_at` | timestamptz / yes | Optional due time. |
+| `status` | text / no | `open` (default) or `completed`. |
+| `created_by` | UUID / no | Staff member who added it; references `staff_users.id`. |
+| `created_at` | timestamptz / no | Defaults to now. |
+| `completed_by` | UUID / yes | Who marked it done; set exactly when `completed_at` is. |
+| `completed_at` | timestamptz / yes | Required exactly when status is `completed`. |
+
+Reopening a task clears `completed_by` and `completed_at`. RLS is enabled and
+`anon`/`authenticated` have no grants, as for the core tables.
+`seed/seed_deal_tasks.sql` adds three sample tasks.
 
 ## Reads available as integration examples
 

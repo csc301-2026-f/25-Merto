@@ -47,3 +47,31 @@ export async function saveAppointment(
   revalidatePath(`/${session.role}`, "layout");
   return { success: isEdit ? "Appointment Updated" : "Appointment Created" };
 }
+
+export async function confirmRequestedAppointment(
+  _previousState: AppointmentActionState | undefined,
+  formData: FormData,
+): Promise<AppointmentActionState> {
+  const session = await getSession();
+  if (!session) redirect("/login");
+  const appointmentId = String(formData.get("appointmentId") ?? "");
+
+  let response: Response;
+  try {
+    response = await backendFetch(
+      `/api/appointments/${encodeURIComponent(appointmentId)}/confirm`,
+      { method: "POST", body: JSON.stringify({}) },
+    );
+  } catch {
+    return { error: "Could not reach the server." };
+  }
+
+  if (!response.ok) {
+    return {
+      error: (await errorMessage(response)) ?? "Could not confirm the appointment.",
+    };
+  }
+
+  revalidatePath(`/${session.role}`, "layout");
+  return { success: "Appointment confirmed." };
+}

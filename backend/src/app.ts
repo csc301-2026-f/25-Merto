@@ -13,6 +13,7 @@ import { openItemRoutes } from './open-items/routes.ts';
 import { replyDraftRoutes } from './reply-drafts/routes.ts';
 import { appointmentRoutes } from './appointments/routes.ts';
 import { scenarioRoutes } from './scenarios/routes.ts';
+import { taskRoutes } from './tasks/routes.ts';
 
 export interface AppOptions {
   evaluationEngine?: EvaluationEngine;
@@ -43,7 +44,7 @@ export function createApp(db: Database, options: AppOptions = {}) {
   // Every /api route needs X-Staff-Id; look the caller up once per request.
   // Assignment routes come before deal routes so /deals/unassigned is not a deal ID.
   app.use('/api', requireStaff(db), meRoutes(), ...(options.demoRoutes ? [options.demoRoutes] : []), evaluationRoutes(db, options.evaluationEngine, options.evaluationContext), assignmentRoutes(db),
-    followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), scenarioRoutes(db), dealRoutes(db));
+    followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), scenarioRoutes(db), taskRoutes(db), dealRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });
   });

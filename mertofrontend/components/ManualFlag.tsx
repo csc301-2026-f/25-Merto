@@ -23,7 +23,7 @@ export function ManualFlag({ dealId, reply, evaluatorId, existingTypes = [], but
   if (!open) {
     return (
       <button type="button" onClick={() => setOpen(true)}
-        className="mt-2 rounded border border-zinc-500 px-3 py-1 text-sm font-semibold">
+        className="mt-2 rounded border border-zinc-500 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-400 dark:hover:bg-zinc-700">
         {buttonLabel}
       </button>
     );
@@ -32,10 +32,10 @@ export function ManualFlag({ dealId, reply, evaluatorId, existingTypes = [], but
     <form action={action} className="mt-3 space-y-2">
       <label htmlFor={`manual-type-${reply.id}`} className="block text-sm font-semibold">What is wrong with it?</label>
       <select id={`manual-type-${reply.id}`} name="flagType" defaultValue="" disabled={pending} required
-        className="w-full rounded border border-zinc-400 bg-transparent p-2 text-sm">
+        className="w-full rounded border  border-zinc-400 bg-transparent p-2 text-sm">
         <option value="" disabled>Choose a problem</option>
         {choices.map(([type, label]) => (
-          <option key={type} value={type}>{label}</option>
+          <option className="text-black" key={type} value={type}>{label}</option>
         ))}
       </select>
       <label htmlFor={`manual-note-${reply.id}`} className="block text-sm font-semibold">Note (optional)</label>
@@ -43,11 +43,11 @@ export function ManualFlag({ dealId, reply, evaluatorId, existingTypes = [], but
         className="w-full rounded border border-zinc-400 bg-transparent p-2 text-sm" />
       <div className="flex flex-wrap gap-2">
         <button type="submit" disabled={pending}
-          className="rounded border border-zinc-500 px-3 py-2 text-sm font-semibold disabled:opacity-50">
+          className="rounded-lg border border-zinc-500 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-400 dark:hover:bg-zinc-700">
           Add flag
         </button>
         <button type="button" onClick={() => setOpen(false)} disabled={pending}
-          className="rounded px-3 py-2 text-sm underline disabled:opacity-50">
+          className="rounded-lg border border-zinc-500 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-400 dark:hover:bg-zinc-700">
           Cancel
         </button>
       </div>
