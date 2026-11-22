@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .env
 .vercel/
+# Embeddings cached by demo_retrain.py for the local demo.
+.demo-cache/

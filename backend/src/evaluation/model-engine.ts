@@ -5,12 +5,14 @@ import { detectIssues, type Conversation } from './detect.ts';
 import type { EngineStatus, EvaluationEngine } from './engine.ts';
 import { DEFAULT_RULES, type FlagType, type RuleSet } from './rules.ts';
 
-const SIGNALS = {
+export const SIGNALS = {
   ai: ['claims_booking', 'guarantees_availability', 'quotes_price', 'off_tone'],
   buyer: ['asks_for_person', 'asks_about_price'],
 } as const;
-type Side = keyof typeof SIGNALS;
-const FLAGS: [FlagType, Side, string][] = [
+export type Side = keyof typeof SIGNALS;
+export type Signal = (typeof SIGNALS)[Side][number];
+// The wording signal behind each flag type. ignored_opt_out has none: it comes from send history.
+export const FLAG_SIGNALS: [FlagType, Side, Signal][] = [
   ['appointment_certainty', 'ai', 'claims_booking'],
   ['unsupported_availability', 'ai', 'guarantees_availability'],
   ['unsupported_price', 'ai', 'quotes_price'],
@@ -91,6 +93,13 @@ async function createModelEngine(baseUrl: string, timeoutMs: number,
         return { ...initial.engine, ready };
       } catch { return { ...initial.engine, ready: false }; }
     },
+    async score(side: Side, text: string) {
+      const result = await request('/predict', { messages: [{ id: 'score', side, text }] });
+      const prediction = result?.predictions?.[0];
+      if (!identity(result?.engine) || prediction?.side !== side
+        || SIGNALS[side].some(signal => !probability(prediction.signals?.[signal]))) throw unavailable();
+      return prediction.signals as Record<string, number>;
+    },
     async detect(conversation: Conversation) {
       const messages: Message[] = conversation.events.flatMap(event => {
         const side = event.actorType === 'ai' && event.direction === 'outbound' ? 'ai'
@@ -115,7 +124,7 @@ async function createModelEngine(baseUrl: string, timeoutMs: number,
         if (expected.size) throw unavailable();
       }
       const rules: RuleSet = { ignored_opt_out: DEFAULT_RULES.ignored_opt_out };
-      for (const [flagType, side, signal] of FLAGS) {
+      for (const [flagType, side, signal] of FLAG_SIGNALS) {
         const base = DEFAULT_RULES[flagType];
         rules[flagType] = {
           severity: base.severity, explanation: base.explanation,

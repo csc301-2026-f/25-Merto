@@ -4,7 +4,7 @@
 import type { Queryable } from '../db.ts';
 import type { Conversation, Issue, TimelineEvent } from './detect.ts';
 import type { FlagType, Severity } from './rules.ts';
-import type { ReviewDecision, ReviewReason, ReviewStatus } from './review-policy.ts';
+import type { ReviewDecision, ReviewReason, ReviewStatus, SecondReview } from './review-policy.ts';
 import { evaluationTables } from './store.ts';
 
 export interface DealSummary {
@@ -18,6 +18,8 @@ export interface Evaluation {
   dealId: string;
   result: 'passed' | 'flagged';
   evaluatedAt: Date;
+  // The model version of the latest run; null for the deterministic rules.
+  modelVersion: string | null;
 }
 
 export interface Flag {
@@ -34,6 +36,13 @@ export interface Flag {
   // 'manual' when a GM added the flag to a reply the evaluator did not flag.
   source: 'evaluator' | 'manual';
   createdBy: string | null;
+  // The model version that raised the flag or, for a manual flag, missed it.
+  modelVersion: string | null;
+  // The model's probability for this flag's signal, recorded at review time.
+  modelScore: number | null;
+  secondReview: SecondReview | null;
+  secondReviewedBy: string | null;
+  secondReviewedAt: Date | null;
   createdAt: Date;
 }
 
@@ -54,7 +63,9 @@ export interface QueueItem extends FlagWithEvidence {
 const flagColumns = `f.id, f.deal_id as "dealId", f.flag_type as "flagType", f.severity,
   f.explanation, f.review_status as "reviewStatus", f.reviewed_by as "reviewedBy",
   f.reviewed_at as "reviewedAt", f.review_note as "reviewNote", f.review_reason as "reviewReason",
-  f.source, f.created_by as "createdBy", f.created_at as "createdAt"`;
+  f.source, f.created_by as "createdBy", f.model_version as "modelVersion", f.model_score as "modelScore",
+  f.second_review as "secondReview", f.second_reviewed_by as "secondReviewedBy",
+  f.second_reviewed_at as "secondReviewedAt", f.created_at as "createdAt"`;
 const evidenceColumns = `e.id as "evidenceEventId", e.channel as "evidenceChannel",
   e.body as "evidenceBody", e.created_at as "evidenceAt"`;
 const severityOrder = `case f.severity when 'high' then 1 when 'medium' then 2 else 3 end`;
@@ -104,19 +115,20 @@ export async function dealIdsWithAiActivity(db: Queryable): Promise<string[]> {
 
 // Upserts the deal's evaluation and adds only flags that do not exist yet, so a
 // rerun keeps earlier flags and GM decisions. Returns how many flags were new.
-export async function saveEvaluation(tx: Queryable, dealId: string, issues: Issue[]) {
+export async function saveEvaluation(tx: Queryable, dealId: string, issues: Issue[], modelVersion: string | null) {
   await tx.query(`
-    insert into ${evaluationTables(tx).evaluations} (deal_id, result) values ($1, 'passed')
-    on conflict (deal_id) do update set evaluated_at = now()`, [dealId]);
+    insert into ${evaluationTables(tx).evaluations} (deal_id, result, model_version) values ($1, 'passed', $2)
+    on conflict (deal_id) do update set evaluated_at = now(), model_version = excluded.model_version`,
+    [dealId, modelVersion]);
 
   let newFlags = 0;
   for (const issue of issues) {
     const inserted = await tx.query(`
-      insert into ${evaluationTables(tx).flags} (deal_id, evidence_event_id, flag_type, severity, explanation)
-      values ($1, $2, $3, $4, $5)
+      insert into ${evaluationTables(tx).flags} (deal_id, evidence_event_id, flag_type, severity, explanation, model_version)
+      values ($1, $2, $3, $4, $5, $6)
       on conflict (evidence_event_id, flag_type) do nothing
       returning id`,
-      [dealId, issue.evidenceEventId, issue.flagType, issue.severity, issue.explanation]);
+      [dealId, issue.evidenceEventId, issue.flagType, issue.severity, issue.explanation, modelVersion]);
     newFlags += inserted.length;
   }
 
@@ -125,7 +137,7 @@ export async function saveEvaluation(tx: Queryable, dealId: string, issues: Issu
     set result = case when exists (select 1 from ${evaluationTables(tx).flags} where deal_id = $1)
       then 'flagged' else 'passed' end
     where deal_id = $1
-    returning deal_id as "dealId", result, evaluated_at as "evaluatedAt"`, [dealId]);
+    returning deal_id as "dealId", result, evaluated_at as "evaluatedAt", model_version as "modelVersion"`, [dealId]);
 
   if (newFlags > 0) {
     await tx.query(`
@@ -138,7 +150,7 @@ export async function saveEvaluation(tx: Queryable, dealId: string, issues: Issu
 
 export async function findEvaluation(db: Queryable, dealId: string): Promise<Evaluation | undefined> {
   const [evaluation] = await db.query<Evaluation>(`
-    select deal_id as "dealId", result, evaluated_at as "evaluatedAt"
+    select deal_id as "dealId", result, evaluated_at as "evaluatedAt", model_version as "modelVersion"
     from ${evaluationTables(db).evaluations} where deal_id = $1`, [dealId]);
   return evaluation;
 }
@@ -176,13 +188,15 @@ const label = (value: string) => value.replaceAll('_', ' ');
 
 // Records the decision and puts it on the deal's timeline in the same transaction.
 // The reason is kept only for a false positive.
+// A new decision clears any second opinion, which was about the old one.
 export async function saveReview(tx: Queryable, flag: Flag, reviewerId: string,
-  decision: ReviewDecision, note: string | null, reason: ReviewReason | null): Promise<Flag> {
+  decision: ReviewDecision, note: string | null, reason: ReviewReason | null, modelScore: number | null): Promise<Flag> {
   const [reviewed] = await tx.query<Flag>(`
     update ${evaluationTables(tx).flags} f
-    set review_status = $2, reviewed_by = $3, reviewed_at = now(), review_note = $4, review_reason = $5
+    set review_status = $2, reviewed_by = $3, reviewed_at = now(), review_note = $4, review_reason = $5,
+      model_score = $6, second_review = null, second_reviewed_by = null, second_reviewed_at = null
     where f.id = $1
-    returning ${flagColumns}`, [flag.id, decision, reviewerId, note, reason]);
+    returning ${flagColumns}`, [flag.id, decision, reviewerId, note, reason, modelScore]);
 
   await tx.query(`
     insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
@@ -218,15 +232,18 @@ export async function findAiReply(db: Queryable, dealId: string, eventId: string
 }
 
 // A GM-added flag is already judged, so it starts as a confirmed issue that
-// still needs resolving. Returns undefined if the reply already has this flag.
+// still needs resolving. It records the version of the deal's latest run: the
+// model that missed the problem. Returns undefined if the reply already has this flag.
 export async function saveManualFlag(tx: Queryable, dealId: string, eventId: string, flagType: FlagType,
-  severity: Severity, explanation: string, gmId: string, note: string | null): Promise<Flag | undefined> {
+  severity: Severity, explanation: string, gmId: string, note: string | null,
+  modelScore: number | null): Promise<Flag | undefined> {
   const [flag] = await tx.query<Flag>(`
     insert into ${evaluationTables(tx).flags} as f (deal_id, evidence_event_id, flag_type, severity, explanation,
-      review_status, reviewed_by, reviewed_at, review_note, source, created_by)
-    values ($1, $2, $3, $4, $5, 'confirmed_issue', $6, now(), $7, 'manual', $6)
+      review_status, reviewed_by, reviewed_at, review_note, source, created_by, model_version, model_score)
+    values ($1, $2, $3, $4, $5, 'confirmed_issue', $6, now(), $7, 'manual', $6,
+      (select model_version from ${evaluationTables(tx).evaluations} where deal_id = $1), $8)
     on conflict (evidence_event_id, flag_type) do nothing
-    returning ${flagColumns}`, [dealId, eventId, flagType, severity, explanation, gmId, note]);
+    returning ${flagColumns}`, [dealId, eventId, flagType, severity, explanation, gmId, note, modelScore]);
   if (!flag) return undefined;
 
   await tx.query(`update ${evaluationTables(tx).evaluations} set result = 'flagged' where deal_id = $1`, [dealId]);
@@ -261,4 +278,103 @@ export async function evaluationCounts(db: Queryable) {
       count(*) filter (where source = 'evaluator' and review_reason = 'other')::int as other
     from ${evaluationTables(db).flags}`);
   return counts;
+}
+
+// One row per flag in either evaluator's store, reviewed or not, for the
+// training-label export; training-labels.ts decides which rows become labels.
+// For a missed handoff the evidence is the AI reply, so buyerTurn holds the
+// buyer messages that reply answered: those since the previous AI reply, the
+// same pairing detectIssues uses. It is empty for every other flag type.
+export interface FlagForTraining {
+  store: 'deterministic' | 'mpnet';
+  flagId: string;
+  dealId: string;
+  flagType: FlagType;
+  source: 'evaluator' | 'manual';
+  reviewStatus: ReviewStatus;
+  reviewReason: ReviewReason | null;
+  reviewedBy: string | null;
+  reviewedAt: Date | null;
+  modelVersion: string | null;
+  modelScore: number | null;
+  secondReview: SecondReview | null;
+  evidenceEventId: string;
+  evidenceBody: string;
+  buyerTurn: { id: string; body: string }[];
+}
+
+export function flagsForTraining(db: Queryable): Promise<FlagForTraining[]> {
+  const columns = `id, deal_id, evidence_event_id, flag_type, source, review_status, review_reason,
+    reviewed_by, reviewed_at, model_version, model_score, second_review`;
+  return db.query<FlagForTraining>(`
+    with flags as (
+      select 'deterministic' as store, ${columns} from public.ai_flags
+      union all
+      select 'mpnet' as store, ${columns} from public.mpnet_flags
+    )
+    select f.store, f.id as "flagId", f.deal_id as "dealId", f.flag_type as "flagType", f.source,
+      f.review_status as "reviewStatus", f.review_reason as "reviewReason", f.reviewed_by as "reviewedBy",
+      f.reviewed_at as "reviewedAt", f.model_version as "modelVersion", f.model_score as "modelScore",
+      f.second_review as "secondReview", e.id as "evidenceEventId", e.body as "evidenceBody",
+      coalesce(turn.messages, '[]'::json) as "buyerTurn"
+    from flags f
+    join public.timeline_events e on e.id = f.evidence_event_id
+    left join lateral (
+      select json_agg(json_build_object('id', b.id, 'body', b.body) order by b.created_at, b.id) as messages
+      from public.timeline_events b
+      where f.flag_type in ('missed_escalation', 'missed_price_handoff')
+        and b.deal_id = f.deal_id and b.actor_type = 'buyer' and b.direction = 'inbound'
+        and (b.created_at, b.id) < (e.created_at, e.id)
+        and not exists (
+          select 1 from public.timeline_events a
+          where a.deal_id = f.deal_id and a.actor_type = 'ai' and a.direction = 'outbound'
+            and (a.created_at, a.id) > (b.created_at, b.id) and (a.created_at, a.id) < (e.created_at, e.id))
+    ) turn on true
+    order by f.store, f.deal_id, e.created_at, f.id`);
+}
+
+// Where a flag points: its deal, the flagged message and the flag type.
+export async function flagTarget(db: Queryable, flagId: string) {
+  const [target] = await db.query<{ dealId: string; evidenceEventId: string; flagType: FlagType }>(`
+    select deal_id as "dealId", evidence_event_id as "evidenceEventId", flag_type as "flagType"
+    from ${evaluationTables(db).flags} where id = $1`, [flagId]);
+  return target;
+}
+
+export interface SecondReviewCandidate extends FlagWithEvidence {
+  buyer: string;
+  reviewer: string;
+  // The buyer's latest message before the flagged reply, for buyer-side flags.
+  buyerMessage: string | null;
+}
+
+// Reviewed flags with a model score and no second opinion yet. The service
+// keeps the ones that strongly disagree with the model.
+export function secondReviewCandidates(db: Queryable): Promise<SecondReviewCandidate[]> {
+  return db.query<SecondReviewCandidate>(`
+    select ${flagColumns}, ${evidenceColumns}, b.name as buyer, s.name as reviewer,
+      (select m.body from public.timeline_events m
+        where m.deal_id = f.deal_id and m.actor_type = 'buyer' and m.direction = 'inbound'
+          and (m.created_at, m.id) < (e.created_at, e.id)
+        order by m.created_at desc, m.id desc limit 1) as "buyerMessage"
+    from ${evaluationTables(db).flags} f
+    join public.timeline_events e on e.id = f.evidence_event_id
+    join public.deals d on d.id = f.deal_id
+    join public.buyers b on b.id = d.buyer_id
+    join public.staff_users s on s.id = f.reviewed_by
+    where f.review_status <> 'pending' and f.model_score is not null and f.second_review is null
+    order by f.reviewed_at, f.id`);
+}
+
+export async function saveSecondReview(tx: Queryable, flag: Flag, staffId: string, decision: SecondReview): Promise<Flag> {
+  const [saved] = await tx.query<Flag>(`
+    update ${evaluationTables(tx).flags} f
+    set second_review = $2, second_reviewed_by = $3, second_reviewed_at = now()
+    where f.id = $1
+    returning ${flagColumns}`, [flag.id, decision, staffId]);
+  await tx.query(`
+    insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
+    values ($1, 'ai_review', 'gm', $2, 'note', 'internal', $3)`,
+  [flag.dealId, staffId, `Second GM opinion on the ${label(flag.flagType)} review: ${decision}.`]);
+  return saved;
 }

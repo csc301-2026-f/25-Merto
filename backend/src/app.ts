@@ -20,6 +20,8 @@ export interface AppOptions {
   replyGenerator?: ReplyGenerator;
   // Shared password for POST /auth/login. Leave unset to turn sign-in off.
   devLoginPassword?: string;
+  // Local demo only: extra /api routes, behind the same staff check.
+  demoRoutes?: express.Router;
 }
 
 // Client errors (ours, or express.json's 400 for a malformed body) keep their
@@ -40,7 +42,7 @@ export function createApp(db: Database, options: AppOptions = {}) {
   app.use('/auth', devLoginRoutes(db, options.devLoginPassword));
   // Every /api route needs X-Staff-Id; look the caller up once per request.
   // Assignment routes come before deal routes so /deals/unassigned is not a deal ID.
-  app.use('/api', requireStaff(db), meRoutes(), evaluationRoutes(db, options.evaluationEngine, options.evaluationContext), assignmentRoutes(db),
+  app.use('/api', requireStaff(db), meRoutes(), ...(options.demoRoutes ? [options.demoRoutes] : []), evaluationRoutes(db, options.evaluationEngine, options.evaluationContext), assignmentRoutes(db),
     followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), scenarioRoutes(db), dealRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });

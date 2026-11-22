@@ -237,8 +237,10 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
 
 - `timeline_events` gains `unique (id, deal_id)` and the two event types above.
 - `ai_evaluations`: `id`, `deal_id` (unique; references `deals`), `result`
-  (`passed` or `flagged`), `evaluated_at`. At most one row per deal: the latest
-  evaluation. No row means "not evaluated".
+  (`passed` or `flagged`), `evaluated_at`, `model_version` (the model version of
+  the latest run; null for the deterministic rules and for runs saved before the
+  column existed). At most one row per deal: the latest evaluation. No row means
+  "not evaluated". `mpnet_evaluations` has the same columns.
 - `ai_flags`: `id`, `deal_id` (references `ai_evaluations.deal_id`),
   `evidence_event_id`, `flag_type` (`appointment_certainty`,
   `unsupported_availability`, `unsupported_price`, `missed_escalation`,
@@ -249,7 +251,9 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
   problem a GM added to a reply the evaluator missed), `created_by` (references
   `staff_users`; set exactly when `source` is `manual`), and `review_reason`
   (`misread_wording`, `already_handled`, `visit_confirmed`, `not_a_problem`,
-  `other`; only while `review_status` is `false_positive`). `mpnet_flags` has
+  `other`; only while `review_status` is `false_positive`), and `model_version`
+  (the model version that raised the flag or, for a manual flag, the version of
+  the run that missed it; null for the deterministic rules). `mpnet_flags` has
   the same columns.
 - `(evidence_event_id, deal_id)` references `timeline_events(id, deal_id)`, so a
   flag's evidence is always a message on the same deal.

@@ -1,3 +1,5 @@
 node_modules/
 .env
 .vercel
+# GM review label snapshots (npm run eval:export-labels) hold real message text.
+ml/feedback/

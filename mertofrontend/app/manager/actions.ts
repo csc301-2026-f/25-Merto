@@ -157,3 +157,56 @@ export async function addManualFlag(
   if (result.ok) revalidatePath("/manager", "layout");
   return result;
 }
+
+export type DemoActionState<T> = { ok: true; value: T } | { ok: false; error: string } | undefined;
+
+// Local demo only: the review-learning routes exist only in the MPNet sandbox.
+async function demoPost<T>(path: string): Promise<DemoActionState<T>> {
+  await requireRole("manager");
+  let res: Response;
+  try {
+    res = await backendFetch(`/api/demo/review-learning/${path}`, { ...evaluationRequest("mpnet"), method: "POST" });
+  } catch {
+    return { ok: false, error: "Could not reach the server." };
+  }
+  if (!res.ok) return { ok: false, error: (await errorMessage(res)) ?? "The demo step failed." };
+  const value = (await res.json()) as T;
+  revalidatePath("/manager", "layout");
+  return { ok: true, value };
+}
+
+export async function simulateReviews() {
+  return demoPost<import("@/lib/review-learning").SimulationResult>("simulate");
+}
+
+export async function retrainFromReviews() {
+  return demoPost<import("@/lib/review-learning").RetrainResult>("retrain");
+}
+
+export async function resetDemoModel() {
+  return demoPost<{ version: string }>("reset");
+}
+
+export async function recheckWithModel() {
+  return demoPost<import("@/lib/review-learning").RecheckResult>("recheck");
+}
+
+// A second GM agrees or disagrees with a review that strongly disagrees with the model.
+export async function secondReview(flagId: string, decision: "agree" | "disagree", evaluatorId?: string): Promise<ActionResult> {
+  await requireRole("manager");
+  let res: Response;
+  try {
+    res = await backendFetch(`/api/ai-flags/${flagId}/second-review`, {
+      ...evaluationRequest(evaluatorId), method: "POST", body: JSON.stringify({ decision }),
+    });
+  } catch {
+    return { ok: false, error: "Could not reach the server." };
+  }
+  const result = await toResult(res, "Could not save the second opinion.");
+  if (result.ok) revalidatePath("/manager", "layout");
+  return result;
+}
+
+export async function simulateSecondOpinions() {
+  return demoPost<{ agreed: number; disagreed: number }>("second-opinions");
+}

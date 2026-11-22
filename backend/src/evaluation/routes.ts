@@ -19,7 +19,7 @@ export function evaluationRoutes(db: Database, engine: EvaluationEngine = rulesE
 
   router.post('/evaluations/run', async (_req, res) => {
     const { db, engine } = context(res);
-    res.json(await evaluation.evaluateAllDeals(db, currentStaff(res), engine.detect));
+    res.json(await evaluation.evaluateAllDeals(db, currentStaff(res), engine));
   });
 
   router.get('/ai-evaluation/engine', async (_req, res) => {
@@ -34,7 +34,7 @@ export function evaluationRoutes(db: Database, engine: EvaluationEngine = rulesE
 
   router.post('/deals/:dealId/evaluation', async (req, res) => {
     const { db, engine } = context(res);
-    res.json(await evaluation.evaluateDeal(db, currentStaff(res), requireUuid(req.params.dealId, 'dealId'), engine.detect));
+    res.json(await evaluation.evaluateDeal(db, currentStaff(res), requireUuid(req.params.dealId, 'dealId'), engine));
   });
 
   router.get('/deals/:dealId/evaluation/preview', async (req, res) => {
@@ -51,14 +51,25 @@ export function evaluationRoutes(db: Database, engine: EvaluationEngine = rulesE
     const { db } = context(res);
     const { decision, note, reason } = req.body ?? {};
     res.json(await evaluation.reviewFlag(db, currentStaff(res),
-      requireUuid(req.params.flagId, 'flagId'), decision, note, reason));
+      requireUuid(req.params.flagId, 'flagId'), decision, note, reason, context(res).engine));
+  });
+
+  router.get('/ai-flags/second-review', async (_req, res) => {
+    const { db } = context(res);
+    res.json(await evaluation.secondReviewQueue(db, currentStaff(res)));
+  });
+
+  router.post('/ai-flags/:flagId/second-review', async (req, res) => {
+    const { db } = context(res);
+    res.json(await evaluation.secondReviewFlag(db, currentStaff(res),
+      requireUuid(req.params.flagId, 'flagId'), req.body?.decision));
   });
 
   router.post('/deals/:dealId/flags', async (req, res) => {
     const { db } = context(res);
     const { evidenceEventId, flagType, note } = req.body ?? {};
     res.status(201).json(await evaluation.addManualFlag(db, currentStaff(res),
-      requireUuid(req.params.dealId, 'dealId'), evidenceEventId, flagType, note));
+      requireUuid(req.params.dealId, 'dealId'), evidenceEventId, flagType, note, context(res).engine));
   });
 
   router.get('/ai-evaluation/metrics', async (_req, res) => {

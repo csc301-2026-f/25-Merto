@@ -14,7 +14,7 @@ it('offers only MPNet/rules and retains separate results and reviews across swit
     modelEngine: async id => {
       loads.push(id);
       return {
-        status: async () => ({ mode: 'model', name: id, ready: true }),
+        status: async () => ({ mode: 'model', name: id, version: `${id}-test`, ready: true }),
         detect: () => {
           const type: FlagType = 'appointment_certainty';
           return [{ evidenceEventId: EVENTS.mayaAllSet, flagType: type,
