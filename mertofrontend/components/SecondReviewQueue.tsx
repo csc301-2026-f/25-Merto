@@ -52,7 +52,8 @@ export function SecondReviewQueue({ items, evaluatorId }: { items: SecondReviewI
     <div className="space-y-3">
       <p className="text-sm opacity-70">
         These reviews strongly disagree with the model (it was at least 90% sure of the opposite). They train the model
-        only if a second GM agrees; if you disagree, the review is not used for training.
+        only if a second GM agrees; if you disagree, the review is not used for training, and a dismissed flag becomes
+        an issue to follow up.
       </p>
       <ul className="space-y-2">
         {items.map((item) => <Item key={item.id} item={item} evaluatorId={evaluatorId} />)}

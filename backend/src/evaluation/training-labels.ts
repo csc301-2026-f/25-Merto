@@ -9,7 +9,7 @@
 import { createHash } from 'node:crypto';
 import { FLAG_SIGNALS, type Side, type Signal } from './model-engine.ts';
 import type { FlagForTraining } from './repository.ts';
-import { isDisputed } from './review-policy.ts';
+import { isDisputed, reviewLabel } from './review-policy.ts';
 
 export interface LabelSource {
   store: FlagForTraining['store'];
@@ -45,7 +45,8 @@ export type TriageReason =
   | 'no_buyer_message' // a missed handoff with no buyer message before the reply
   | 'conflicting_reviews' // the same message and signal reviewed both ways
   | 'same_text_conflict' // the same wording labelled both ways on different messages
-  | 'needs_second_review'; // strongly disagrees with the model and no second GM has agreed yet
+  | 'needs_second_review' // strongly disagrees with the model and no second GM has agreed yet
+  | 'no_model_score'; // no score from the model version recorded on the flag, so a dispute cannot be ruled out
 
 export interface TriageItem {
   reason: TriageReason;
@@ -103,8 +104,11 @@ interface Candidate {
 export function buildTrainingLabels(rows: FlagForTraining[], options: LabelOptions) {
   const skipped = { pending: 0, noSignal: 0, fixtureDeal: 0, cooling: 0, contextReason: 0, secondReviewDisagreed: 0 };
   const triage: TriageItem[] = [];
-  const candidates: Candidate[] = [];
+  const isRecent = (row: FlagForTraining) => row.reviewStatus !== 'resolved'
+    && options.now.getTime() - new Date(row.reviewedAt!).getTime() < options.coolingDays * DAY_MS;
 
+  // 1. Every review that judges the wording, on the message its signal reads.
+  const judgments: (Candidate & { row: FlagForTraining })[] = [];
   for (const row of rows) {
     const mapping = SIGNAL_BY_FLAG.get(row.flagType);
     const source: LabelSource = {
@@ -115,28 +119,15 @@ export function buildTrainingLabels(rows: FlagForTraining[], options: LabelOptio
     if (row.reviewStatus === 'pending' || !row.reviewedAt) { skipped.pending++; continue; }
     if (!mapping) { skipped.noSignal++; continue; }
     if (isFixtureDeal(row.dealId)) { skipped.fixtureDeal++; continue; }
-    if (row.reviewStatus !== 'resolved'
-      && options.now.getTime() - new Date(row.reviewedAt).getTime() < options.coolingDays * DAY_MS) {
-      skipped.cooling++; continue;
-    }
 
-    let label: 0 | 1;
-    if (row.reviewStatus === 'confirmed_issue' || row.reviewStatus === 'resolved') label = 1;
-    else if (row.reviewReason === 'misread_wording') label = 0;
-    else if (row.reviewReason === 'already_handled' || row.reviewReason === 'visit_confirmed') {
-      skipped.contextReason++; continue;
-    } else {
-      triage.push({ reason: 'unclear_reason', signal: mapping.signal, messageIds: [row.evidenceEventId],
-        text: row.evidenceBody, sources: [source] });
-      continue;
-    }
-
-    // A second GM who disagreed overrules the review. A review that strongly
-    // disagrees with the model waits for a second GM to agree.
-    if (row.secondReview === 'disagree') { skipped.secondReviewDisagreed++; continue; }
-    if (isDisputed(label, row.modelScore) && row.secondReview !== 'agree') {
-      triage.push({ reason: 'needs_second_review', signal: mapping.signal, messageIds: [row.evidenceEventId],
-        text: row.evidenceBody, sources: [source] });
+    const label = reviewLabel(row.reviewStatus, row.reviewReason);
+    if (label === null) {
+      if (isRecent(row)) skipped.cooling++;
+      else if (row.reviewReason === 'already_handled' || row.reviewReason === 'visit_confirmed') skipped.contextReason++;
+      else {
+        triage.push({ reason: 'unclear_reason', signal: mapping.signal, messageIds: [row.evidenceEventId],
+          text: row.evidenceBody, sources: [source] });
+      }
       continue;
     }
 
@@ -154,7 +145,44 @@ export function buildTrainingLabels(rows: FlagForTraining[], options: LabelOptio
       }
       message = row.buyerTurn[0];
     }
-    candidates.push({ messageId: message.id, dealId: row.dealId, ...mapping, label, text: message.body, source });
+    judgments.push({ messageId: message.id, dealId: row.dealId, ...mapping, label, text: message.body, source, row });
+  }
+
+  // 2. Opposing judgments of one wording and signal go to triage together,
+  // before anything else holds a review back: a review still cooling or waiting
+  // for a second GM is still a GM's opinion. One a second GM overruled is not.
+  // The same message always has the same wording, so this covers both one
+  // message reviewed twice and one template reviewed on different deals.
+  const keyOf = (j: { text: string; signal: Signal }) => `${j.signal}:${normalizeText(j.text)}`;
+  const opinions = new Map<string, typeof judgments>();
+  for (const j of judgments) {
+    if (j.row.secondReview === 'disagree') continue;
+    opinions.set(keyOf(j), [...opinions.get(keyOf(j)) ?? [], j]);
+  }
+  const conflicted = new Set<string>();
+  for (const [key, group] of opinions) {
+    if (group.every((j) => j.label === group[0].label)) continue;
+    conflicted.add(key);
+    const messageIds = [...new Set(group.map((j) => j.messageId))];
+    triage.push({ reason: messageIds.length === 1 ? 'conflicting_reviews' : 'same_text_conflict',
+      signal: group[0].signal, messageIds, text: group[0].text, sources: group.map((j) => j.source) });
+  }
+
+  // 3. The rest train the model only once settled: not overruled, past the
+  // cooling period, scored by the model that made the flag, and either in line
+  // with that model or agreed by a second GM.
+  const candidates: Candidate[] = [];
+  for (const { row, ...candidate } of judgments) {
+    if (conflicted.has(keyOf(candidate))) continue;
+    if (row.secondReview === 'disagree') { skipped.secondReviewDisagreed++; continue; }
+    if (isRecent(row)) { skipped.cooling++; continue; }
+    const settled = row.secondReview === 'agree';
+    if (!settled && (row.modelScore === null || isDisputed(candidate.label, row.modelScore))) {
+      triage.push({ reason: row.modelScore === null ? 'no_model_score' : 'needs_second_review', signal: candidate.signal,
+        messageIds: [candidate.messageId], text: candidate.text, sources: [candidate.source] });
+      continue;
+    }
+    candidates.push(candidate);
   }
 
   // One label per message and signal. Both stores may hold a review of it;

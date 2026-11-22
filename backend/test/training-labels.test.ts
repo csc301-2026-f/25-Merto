@@ -22,7 +22,7 @@ function row(overrides: Partial<FlagForTraining> = {}): FlagForTraining {
   return {
     store: 'mpnet', flagId: randomUUID(), dealId: TRAIN_DEAL, flagType: 'tone', source: 'evaluator',
     reviewStatus: 'confirmed_issue', reviewReason: null, reviewedBy: STAFF.karen, reviewedAt: daysAgo(30),
-    modelVersion: 'v3-test', modelScore: null, secondReview: null,
+    modelVersion: 'v3-test', modelScore: 0.5, secondReview: null,
     evidenceEventId: randomUUID(), evidenceBody: `Reply ${randomUUID()}`, buyerTurn: [],
     ...overrides,
   };
@@ -73,6 +73,50 @@ describe('training labels from GM reviews', () => {
     assert.deepEqual(triage.map((t) => [t.reason, t.sources[0].flagId]),
       [['needs_second_review', rows[0].flagId], ['needs_second_review', rows[3].flagId]]);
     assert.equal(skipped.secondReviewDisagreed, 1);
+  });
+
+  it('sends a review with no score from the model that made the flag to triage', () => {
+    const scored = row();
+    const unscored = row({ modelScore: null });
+    const agreed = row({ modelScore: null, secondReview: 'agree' });
+    const { labels, triage } = buildTrainingLabels([scored, unscored, agreed], options());
+    assert.deepEqual(labels.map((l) => l.sources[0].flagId).sort(), [scored.flagId, agreed.flagId].sort());
+    assert.deepEqual(triage.map((t) => [t.reason, t.sources[0].flagId]), [['no_model_score', unscored.flagId]]);
+  });
+
+  it('finds opposing reviews before holding any back for a second opinion or cooling', () => {
+    const message = randomUUID();
+    const same = { evidenceEventId: message, evidenceBody: 'Same reply' };
+    for (const held of [
+      falsePositive('misread_wording', { ...same, store: 'mpnet', modelScore: 0.97 }), // waits for a second GM
+      falsePositive('misread_wording', { ...same, store: 'mpnet', reviewedAt: daysAgo(1) }), // still cooling
+      falsePositive('misread_wording', { ...same, store: 'mpnet', modelScore: null }), // unscored
+    ]) {
+      const confirmed = row({ ...same, store: 'deterministic' });
+      const { labels, triage } = buildTrainingLabels([confirmed, held], options());
+      assert.deepEqual(labels, [], 'Neither opinion trains the model');
+      assert.deepEqual(triage.map((t) => [t.reason, t.sources.map((src) => src.flagId).sort()]),
+        [['conflicting_reviews', [confirmed.flagId, held.flagId].sort()]]);
+    }
+    // A review a second GM overruled is not an opposing opinion.
+    const overruled = falsePositive('misread_wording', { ...same, store: 'mpnet', modelScore: 0.97, secondReview: 'disagree' });
+    const confirmed = row({ ...same, store: 'deterministic' });
+    const { labels, skipped } = buildTrainingLabels([confirmed, overruled], options());
+    assert.deepEqual([labels.map((l) => l.sources[0].flagId), skipped.secondReviewDisagreed], [[confirmed.flagId], 1]);
+  });
+
+  it('finds the same wording judged both ways on different deals before any review is held back', () => {
+    const wording = { evidenceBody: 'I can book you in at 3pm.' };
+    for (const held of [
+      falsePositive('misread_wording', { ...wording, dealId: TRAIN_DEAL_2, modelScore: 0.97 }), // waits for a second GM
+      falsePositive('misread_wording', { ...wording, dealId: TRAIN_DEAL_2, reviewedAt: daysAgo(1) }), // still cooling
+    ]) {
+      const confirmed = row({ ...wording, evidenceBody: 'i can  book you in at 3pm.' });
+      const { labels, triage } = buildTrainingLabels([confirmed, held], options());
+      assert.deepEqual(labels, [], 'Neither copy trains the model');
+      assert.deepEqual(triage.map((t) => [t.reason, t.messageIds.sort()]),
+        [['same_text_conflict', [confirmed.evidenceEventId, held.evidenceEventId].sort()]]);
+    }
   });
 
   it('waits out the cooling period unless the flag is resolved', () => {

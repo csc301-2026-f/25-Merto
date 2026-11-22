@@ -16,8 +16,9 @@ export interface EngineStatus {
 export interface EvaluationEngine {
   detect: IssueDetector;
   status(): Promise<EngineStatus>;
-  // A model's probability for each wording signal of one message. The rules have none.
-  score?(side: 'ai' | 'buyer', text: string): Promise<Record<string, number>>;
+  // A model's probability for each wording signal of one message, with the model
+  // version that produced it. The rules have none.
+  score?(side: 'ai' | 'buyer', text: string): Promise<{ version: string; signals: Record<string, number> }>;
 }
 
 // Normal app/deployment behaviour stays opt-in-free and deterministic.

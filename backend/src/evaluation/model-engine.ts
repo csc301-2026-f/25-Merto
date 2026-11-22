@@ -98,7 +98,7 @@ async function createModelEngine(baseUrl: string, timeoutMs: number,
       const prediction = result?.predictions?.[0];
       if (!identity(result?.engine) || prediction?.side !== side
         || SIGNALS[side].some(signal => !probability(prediction.signals?.[signal]))) throw unavailable();
-      return prediction.signals as Record<string, number>;
+      return { version: initial.engine.version as string, signals: prediction.signals as Record<string, number> };
     },
     async detect(conversation: Conversation) {
       const messages: Message[] = conversation.events.flatMap(event => {

@@ -21,6 +21,7 @@ const TRIAGE: Record<string, string> = {
   conflicting_reviews: "Reviews disagree",
   same_text_conflict: "Same wording labelled both ways",
   needs_second_review: "Waiting for a second GM",
+  no_model_score: "No score from the model that made the flag",
 };
 const button = "rounded border-2 px-4 py-2 font-semibold disabled:opacity-50";
 const GREEN = "text-green-700 dark:text-green-400";
@@ -262,7 +263,7 @@ export function ReviewLearningDemo({ status }: { status: ReviewLearningStatus | 
         {opinions?.ok === false && <p role="alert" className="text-sm text-red-600">{opinions.error}</p>}
         {opinions?.ok && (
           <p role="status" className="text-sm">
-            Second GM agreed with {opinions.value.agreed} and disagreed with {opinions.value.disagreed} (those are not used).
+            Second GM agreed with {opinions.value.agreed} and disagreed with {opinions.value.disagreed} (those are not used; dismissals they disagreed with became issues to follow up).
           </p>
         )}
       </form>

@@ -43,6 +43,8 @@ export interface Flag {
   secondReview: SecondReview | null;
   secondReviewedBy: string | null;
   secondReviewedAt: Date | null;
+  resolvedBy: string | null;
+  resolvedAt: Date | null;
   createdAt: Date;
 }
 
@@ -65,7 +67,8 @@ const flagColumns = `f.id, f.deal_id as "dealId", f.flag_type as "flagType", f.s
   f.reviewed_at as "reviewedAt", f.review_note as "reviewNote", f.review_reason as "reviewReason",
   f.source, f.created_by as "createdBy", f.model_version as "modelVersion", f.model_score as "modelScore",
   f.second_review as "secondReview", f.second_reviewed_by as "secondReviewedBy",
-  f.second_reviewed_at as "secondReviewedAt", f.created_at as "createdAt"`;
+  f.second_reviewed_at as "secondReviewedAt", f.resolved_by as "resolvedBy",
+  f.resolved_at as "resolvedAt", f.created_at as "createdAt"`;
 const evidenceColumns = `e.id as "evidenceEventId", e.channel as "evidenceChannel",
   e.body as "evidenceBody", e.created_at as "evidenceAt"`;
 const severityOrder = `case f.severity when 'high' then 1 when 'medium' then 2 else 3 end`;
@@ -188,15 +191,26 @@ const label = (value: string) => value.replaceAll('_', ' ');
 
 // Records the decision and puts it on the deal's timeline in the same transaction.
 // The reason is kept only for a false positive.
-// A new decision clears any second opinion, which was about the old one.
-export async function saveReview(tx: Queryable, flag: Flag, reviewerId: string,
-  decision: ReviewDecision, note: string | null, reason: ReviewReason | null, modelScore: number | null): Promise<Flag> {
-  const [reviewed] = await tx.query<Flag>(`
+// Resolving a confirmed issue is follow-up work, not a new judgment: it sets
+// only resolved_by and resolved_at, so the reviewer, note, reason, model score
+// and second opinion stay as the judging GM left them. Any other decision is a
+// new judgment: it replaces the reviewer and model score and clears the
+// second opinion, which was about the old judgment.
+export async function saveReview(tx: Queryable, flag: Flag, reviewerId: string, decision: ReviewDecision,
+  note: string | null, reason: ReviewReason | null, judgment: { kept: true } | { kept: false; modelScore: number | null }): Promise<Flag> {
+  const [reviewed] = await tx.query<Flag>(judgment.kept ? `
+    update ${evaluationTables(tx).flags} f
+    set review_status = $2, resolved_by = $3, resolved_at = now()
+    where f.id = $1
+    returning ${flagColumns}` : `
     update ${evaluationTables(tx).flags} f
     set review_status = $2, reviewed_by = $3, reviewed_at = now(), review_note = $4, review_reason = $5,
-      model_score = $6, second_review = null, second_reviewed_by = null, second_reviewed_at = null
+      model_score = $6, second_review = null, second_reviewed_by = null, second_reviewed_at = null,
+      resolved_by = case when $2 = 'resolved' then $3::uuid end,
+      resolved_at = case when $2 = 'resolved' then now() end
     where f.id = $1
-    returning ${flagColumns}`, [flag.id, decision, reviewerId, note, reason, modelScore]);
+    returning ${flagColumns}`,
+  judgment.kept ? [flag.id, decision, reviewerId] : [flag.id, decision, reviewerId, note, reason, judgment.modelScore]);
 
   await tx.query(`
     insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
@@ -335,8 +349,10 @@ export function flagsForTraining(db: Queryable): Promise<FlagForTraining[]> {
 
 // Where a flag points: its deal, the flagged message and the flag type.
 export async function flagTarget(db: Queryable, flagId: string) {
-  const [target] = await db.query<{ dealId: string; evidenceEventId: string; flagType: FlagType }>(`
-    select deal_id as "dealId", evidence_event_id as "evidenceEventId", flag_type as "flagType"
+  const [target] = await db.query<{ dealId: string; evidenceEventId: string; flagType: FlagType;
+    modelVersion: string | null }>(`
+    select deal_id as "dealId", evidence_event_id as "evidenceEventId", flag_type as "flagType",
+      model_version as "modelVersion"
     from ${evaluationTables(db).flags} where id = $1`, [flagId]);
   return target;
 }
@@ -366,15 +382,23 @@ export function secondReviewCandidates(db: Queryable): Promise<SecondReviewCandi
     order by f.reviewed_at, f.id`);
 }
 
+// Saves a second GM's opinion. When the second GM disagrees with a dismissal,
+// someone still thinks the AI reply is a problem, so the flag becomes a
+// confirmed issue to follow up, with no second round of review. The 'disagree'
+// stays on the flag, so the training export still skips it; the dismissal and
+// its reason stay on the deal's timeline.
 export async function saveSecondReview(tx: Queryable, flag: Flag, staffId: string, decision: SecondReview): Promise<Flag> {
+  const reopen = decision === 'disagree' && flag.reviewStatus === 'false_positive';
   const [saved] = await tx.query<Flag>(`
     update ${evaluationTables(tx).flags} f
     set second_review = $2, second_reviewed_by = $3, second_reviewed_at = now()
+      ${reopen ? ", review_status = 'confirmed_issue', review_reason = null" : ''}
     where f.id = $1
     returning ${flagColumns}`, [flag.id, decision, staffId]);
   await tx.query(`
     insert into public.timeline_events (deal_id, event_type, actor_type, actor_id, channel, direction, body)
     values ($1, 'ai_review', 'gm', $2, 'note', 'internal', $3)`,
-  [flag.dealId, staffId, `Second GM opinion on the ${label(flag.flagType)} review: ${decision}.`]);
+  [flag.dealId, staffId, `Second GM opinion on the ${label(flag.flagType)} review: ${decision}.`
+    + (reopen ? ' The dismissal is overruled and the flag is now an issue to follow up.' : '')]);
   return saved;
 }

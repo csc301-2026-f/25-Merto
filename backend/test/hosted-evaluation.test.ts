@@ -118,12 +118,13 @@ it('records the model version on each run, its flags, and the GM flags it missed
 it('asks a second GM about reviews that strongly disagree with the model', async () => {
   const db = await sandboxDatabase();
   const secondGm = '10000000-0000-0000-0000-0000000000a2';
+  let version = 'v3-test';
   await db.query(`insert into public.staff_users (id, name, role, email) values ($1, 'Second GM', 'gm', 'second-gm@example.test')`, [secondGm]);
   const provider = hostedEvaluationContext(db, async () => ({
-    status: async () => ({ id: 'mpnet', name: 'MPNet v3', mode: 'model', version: 'v3-test', ready: true }),
+    status: async () => ({ id: 'mpnet', name: 'MPNet v3', mode: 'model', version, ready: true }),
     detect: conversation => conversation.events.some(event => event.id === EVENTS.mayaAllSet)
       ? [{ evidenceEventId: EVENTS.mayaAllSet, flagType: 'tone', severity: 'low', explanation: 'Model finding' }] : [],
-    score: async () => ({ claims_booking: 0.5, guarantees_availability: 0.5, quotes_price: 0.5, off_tone: 0.97 }),
+    score: async () => ({ version, signals: { claims_booking: 0.5, guarantees_availability: 0.5, quotes_price: 0.05, off_tone: 0.97 } }),
   }));
   const server = createApp(db, { evaluationContext: provider }).listen(0, '127.0.0.1');
   await new Promise(resolve => server.once('listening', resolve));
@@ -156,6 +157,33 @@ it('asks a second GM about reviews that strongly disagree with the model', async
     const changed = await call(`/api/ai-flags/${flag.id}/review`, 'POST', { decision: 'confirmed_issue' });
     assert.deepEqual([changed.body.reviewStatus, changed.body.secondReview], ['confirmed_issue', null]);
     assert.deepEqual((await call('/api/ai-flags/second-review')).body, [], 'A confirmation agrees with the model');
+
+    // A second GM who disagrees with a dismissal turns it into an issue to
+    // follow up; the disagreement stays, so it never trains the model.
+    await call(`/api/ai-flags/${flag.id}/review`, 'POST', { decision: 'false_positive', reason: 'misread_wording' });
+    const overruled = await call(`/api/ai-flags/${flag.id}/second-review`, 'POST', { decision: 'disagree' }, secondGm);
+    assert.deepEqual([overruled.status, overruled.body.reviewStatus, overruled.body.reviewReason, overruled.body.secondReview],
+      [200, 'confirmed_issue', null, 'disagree']);
+    assert.ok(!(await call('/api/ai-flags/queue')).body.some((item: { id: string }) => item.id === flag.id),
+      'It is not sent back for another review');
+    assert.deepEqual((await call('/api/ai-flags/second-review')).body, []);
+
+    // A GM adds a price problem the model was 95% sure was fine: disputed. The
+    // second GM rejects it, and the flag stays. Resolving it later is follow-up
+    // work: the reviewer, score and rejection stay, even when the second GM resolves it.
+    await call(`/api/deals/${DEALS.jordan}/evaluation`, 'POST');
+    const added = await call(`/api/deals/${DEALS.jordan}/flags`, 'POST',
+      { evidenceEventId: EVENTS.jordanAiReply, flagType: 'unsupported_price' });
+    assert.deepEqual([added.status, added.body.modelScore], [201, 0.05]);
+    assert.equal((await call(`/api/ai-flags/${added.body.id}/second-review`, 'POST', { decision: 'disagree' }, secondGm)).status, 200);
+    const resolved = await call(`/api/ai-flags/${added.body.id}/review`, 'POST', { decision: 'resolved' }, secondGm);
+    assert.deepEqual([resolved.status, resolved.body.secondReview, resolved.body.modelScore,
+      resolved.body.reviewedBy, resolved.body.resolvedBy], [200, 'disagree', 0.05, STAFF.karen, secondGm]);
+
+    // After v4 goes live, a review of a flag v3 raised is not scored with v4.
+    version = 'v4-test';
+    const later = await call(`/api/ai-flags/${flag.id}/review`, 'POST', { decision: 'false_positive', reason: 'misread_wording' });
+    assert.deepEqual([later.body.modelVersion, later.body.modelScore], ['v3-test', null]);
   } finally {
     server.closeAllConnections();
     await new Promise<void>(resolve => server.close(() => resolve()));

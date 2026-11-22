@@ -276,8 +276,20 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
   (`misread_wording`, `already_handled`, `visit_confirmed`, `not_a_problem`,
   `other`; only while `review_status` is `false_positive`), and `model_version`
   (the model version that raised the flag or, for a manual flag, the version of
-  the run that missed it; null for the deterministic rules). `mpnet_flags` has
-  the same columns.
+  the run that missed it; null for the deterministic rules), `model_score` (0 to 1:
+  that same model version's probability for the flag's wording signal, recorded
+  when a GM decides; null when that version cannot score it, so a later model
+  never stands in), and `second_review` (`agree`/`disagree`), `second_reviewed_by`,
+  `second_reviewed_at` (all three set together, never while `pending`) for a second
+  GM's opinion on a review that strongly disagrees with the model. The second GM
+  must differ from the reviewer. When the second GM disagrees with a dismissal,
+  the flag also becomes `confirmed_issue` (reason cleared; the dismissal stays on
+  the deal's timeline) so someone follows it up, and the `disagree` keeps it out
+  of training. Any new judgment clears the second opinion. Then `resolved_by` (references
+  `staff_users`) and `resolved_at`, set exactly when `review_status` is
+  `resolved`: who followed up the problem. Resolving a confirmed issue changes
+  only these and the status, so the reviewer, note, score and second opinion
+  stay as the judging GM left them. `mpnet_flags` has the same columns.
 - `(evidence_event_id, deal_id)` references `timeline_events(id, deal_id)`, so a
   flag's evidence is always a message on the same deal.
 - `(evidence_event_id, flag_type)` is unique, so re-evaluating never duplicates a flag.

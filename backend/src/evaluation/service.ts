@@ -98,7 +98,9 @@ export async function addManualFlag(db: Database, staff: Staff, dealId: string,
   if (note != null && typeof note !== 'string') throw badRequest('note must be a string.');
   const type = flagType as FlagType;
   const flagNote = typeof note === 'string' && note.trim() ? note.trim() : null;
-  const modelScore = await scoreFlag(db, engine, dealId, evidenceEventId, type);
+  // The flag will record the version of the deal's latest run, so the score must come from it.
+  const recordedVersion = (await repo.findEvaluation(db, dealId))?.modelVersion ?? null;
+  const modelScore = await scoreFlag(db, engine, dealId, evidenceEventId, type, recordedVersion);
   return db.transaction(async (tx) => {
     if (!await repo.findDeal(tx, dealId)) throw notFound('Deal not found.');
     if (!await repo.findEvaluation(tx, dealId)) throw conflict('Run an evaluation on this deal before adding flags.');
@@ -132,7 +134,8 @@ export async function reviewFlag(db: Database, staff: Staff, flagId: string,
   const reviewNote = typeof note === 'string' && note.trim() ? note.trim() : null;
   const reviewReason = decision === 'false_positive' ? reason ?? null : null;
   const target = await repo.flagTarget(db, flagId);
-  const modelScore = target ? await scoreFlag(db, engine, target.dealId, target.evidenceEventId, target.flagType) : null;
+  const modelScore = target
+    ? await scoreFlag(db, engine, target.dealId, target.evidenceEventId, target.flagType, target.modelVersion) : null;
   return db.transaction(async (tx) => {
     const flag = await repo.lockFlag(tx, flagId);
     if (!flag) throw notFound('AI flag not found.');
@@ -141,7 +144,10 @@ export async function reviewFlag(db: Database, staff: Staff, flagId: string,
     }
     if (decision === 'false_positive' && !reviewReason) throw badRequest('Choose why this flag is a false positive.');
     if (reviewReason === 'other' && !reviewNote) throw badRequest('Add a note saying why this flag is a false positive.');
-    return repo.saveReview(tx, flag, staff.id, decision, reviewNote, reviewReason, modelScore);
+    const before = reviewLabel(flag.reviewStatus, flag.reviewReason);
+    const kept = before !== null && before === reviewLabel(decision, reviewReason);
+    return repo.saveReview(tx, flag, staff.id, decision, reviewNote, reviewReason,
+      kept ? { kept: true } : { kept: false, modelScore });
   });
 }
 
@@ -176,12 +182,15 @@ export async function evaluationMetrics(db: Database, staff: Staff) {
 
 // The model's probability for the flag's wording signal, on the message that
 // signal reads: the flagged AI reply, or the one buyer message it answered.
-// Null for the rules, for a turn with several buyer messages, or if the model
-// is unavailable: scoring must never block a GM's review.
+// It must come from the model version recorded on the flag (the one that raised
+// or missed it); a score from any other version is not saved. Null for the
+// rules, for another version, for a turn with several buyer messages, or if the
+// model is unavailable: scoring must never block a GM's review, and the label
+// export sends an unscored review to triage.
 async function scoreFlag(db: Database, engine: EvaluationEngine | undefined, dealId: string,
-  evidenceEventId: string, flagType: FlagType): Promise<number | null> {
+  evidenceEventId: string, flagType: FlagType, recordedVersion: string | null): Promise<number | null> {
   const mapping = FLAG_SIGNALS.find(([type]) => type === flagType);
-  if (!engine?.score || !mapping) return null;
+  if (!engine?.score || !mapping || !recordedVersion) return null;
   const [, side, signal] = mapping;
   const { events } = await repo.loadConversation(db, dealId);
   const at = events.findIndex((event) => event.id === evidenceEventId);
@@ -196,8 +205,10 @@ async function scoreFlag(db: Database, engine: EvaluationEngine | undefined, dea
     text = turn[0].body;
   }
   try {
-    const value = (await engine.score(side, text))[signal];
-    return typeof value === 'number' ? Math.round(value * 1000) / 1000 : null;
+    const scored = await engine.score(side, text);
+    const value = scored.signals[signal];
+    if (scored.version !== recordedVersion || typeof value !== 'number') return null;
+    return Math.round(value * 1000) / 1000;
   } catch { return null; }
 }
 
