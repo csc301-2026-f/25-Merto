@@ -1,8 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
-import { recheckWithModel, resetDemoModel, retrainFromReviews, simulateReviews, simulateSecondOpinions } from "@/app/manager/actions";
-import { FLAG_FOR_SIGNAL, flagLabel, type LabelReport, type RecheckResult, type RetrainResult, type ReviewLearningStatus } from "@/lib/review-learning";
+import { useActionState, useState } from "react";
+import {
+  recheckWithModel, resetDemoModel, retrainFromReviews, simulateReviews, simulateSecondOpinions, type DemoActionState,
+} from "@/app/manager/actions";
+import { Card } from "@/components/Card";
+import { SecondReviewQueue } from "@/components/SecondReviewQueue";
+import {
+  FLAG_FOR_SIGNAL, flagLabel, type LabelReport, type RecheckResult, type RetrainResult, type ReviewLearningReplayData,
+  type ReviewLearningStatus, type SimulationResult,
+} from "@/lib/review-learning";
 
 const KINDS: Record<string, string> = {
   reliable: "Correct reviews",
@@ -149,7 +156,7 @@ function Result({ result }: { result: RetrainResult }) {
 const percent = (value: number | null) => (value === null ? "Not measured" : `${(value * 100).toFixed(1)}%`);
 
 // Same metric names as the Results list above, so the two read the same way.
-function Recheck({ result }: { result: RecheckResult }) {
+function Recheck({ result, replay }: { result: RecheckResult; replay: boolean }) {
   const rows: [string, string | number, string | number, string][] = [
     ["Evaluated conversations", result.evaluated, result.evaluated, ""],
     // Fewer flags is not better by itself, so these two are not coloured.
@@ -184,7 +191,9 @@ function Recheck({ result }: { result: RecheckResult }) {
         </tbody>
       </table>
       <p className="mt-2 text-xs opacity-70">
-        Preview only: nothing was saved, so the Results above do not change. GM decisions are kept: a false positive the
+        {replay
+          ? "Recorded preview: “Saved results” are the recorded run’s, not this site’s Results above."
+          : "Preview only: nothing was saved, so the Results above do not change."} GM decisions are kept: a false positive the
         model no longer raises drops out, and a missed flag it now catches counts as caught. Most of these reviews trained
         the new model; on the 20% of deals held out from training: false positives still flagged {held.dismissed.rerun} of{" "}
         {held.dismissed.saved}, confirmed issues still flagged {held.confirmed.rerun} of {held.confirmed.saved}, missed
@@ -194,12 +203,84 @@ function Recheck({ result }: { result: RecheckResult }) {
   );
 }
 
+type Step<T> = () => DemoActionState<T> | Promise<DemoActionState<T>>;
+type LearningActions = {
+  simulate: Step<SimulationResult>;
+  secondOpinions: Step<{ agreed: number; disagreed: number }>;
+  retrain: Step<RetrainResult>;
+  recheck: Step<RecheckResult>;
+  reset: Step<{ version: string }>;
+};
+
+const LIVE: LearningActions = {
+  simulate: simulateReviews,
+  secondOpinions: simulateSecondOpinions,
+  retrain: retrainFromReviews,
+  recheck: recheckWithModel,
+  reset: resetDemoModel,
+};
+
+// The local demo: every step runs against the local sandbox and model service.
 export function ReviewLearningDemo({ status }: { status: ReviewLearningStatus | null }) {
-  const [simulated, simulate, simulating] = useActionState(() => simulateReviews(), undefined);
-  const [retrained, retrain, retraining] = useActionState(() => retrainFromReviews(), undefined);
-  const [reset, resetAction, resetting] = useActionState(() => resetDemoModel(), undefined);
-  const [rechecked, recheck, rechecking] = useActionState(() => recheckWithModel(), undefined);
-  const [opinions, giveOpinions, givingOpinions] = useActionState(() => simulateSecondOpinions(), undefined);
+  return <LearningSteps status={status} actions={LIVE} />;
+}
+
+// The hosted site cannot refit the classifier, so it replays a recorded local
+// run step by step. Nothing is sent to the model or saved; a refresh starts over.
+export function ReviewLearningReplay({ replay }: { replay: ReviewLearningReplayData }) {
+  // The status after each step, and what step 4 showed at that point.
+  const statuses = [replay.start, replay.afterSimulate, replay.afterSecondOpinions, replay.afterRetrain].map((s) => s.status);
+  const rechecks = [undefined, replay.afterSimulate.recheck, replay.afterSecondOpinions.recheck, replay.afterRetrain.recheck];
+  const [stage, setStage] = useState(0);
+  const [run, setRun] = useState(0);
+  const done = <T,>(value: T, next?: number) => {
+    if (next !== undefined) setStage(next);
+    return { ok: true as const, value };
+  };
+  const actions: LearningActions = {
+    simulate: () => done(replay.simulate, 1),
+    secondOpinions: () => done(replay.secondOpinions, 2),
+    retrain: () => done(replay.retrain, 3),
+    recheck: () => {
+      const recorded = rechecks[stage];
+      return recorded ? done(recorded) : { ok: false as const, error: "Simulate GM reviews first." };
+    },
+    reset: () => {
+      setStage(0);
+      setRun((n) => n + 1);
+      return done({ version: replay.start.status.modelVersion ?? "the original model" });
+    },
+  };
+  const recorded = new Date(replay.recordedAt).toLocaleDateString("en-CA");
+  return (
+    <>
+      <Card title="Learning from GM reviews (recorded demo)" hideCount>
+        <div className="rounded-xl bg-slate-100 p-4 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
+          <LearningSteps key={run} status={statuses[stage]} actions={actions} recordedOn={recorded} />
+        </div>
+      </Card>
+      {stage === 1 && (
+        <div id="second-opinions">
+          <Card title="Second opinion needed" count={replay.secondOpinionQueue.length}>
+            <SecondReviewQueue items={replay.secondOpinionQueue} recorded />
+          </Card>
+        </div>
+      )}
+    </>
+  );
+}
+
+function LearningSteps({ status, actions, recordedOn }: {
+  status: ReviewLearningStatus | null;
+  actions: LearningActions;
+  recordedOn?: string; // set when replaying a recorded run
+}) {
+  const replay = recordedOn !== undefined;
+  const [simulated, simulate, simulating] = useActionState(() => actions.simulate(), undefined);
+  const [retrained, retrain, retraining] = useActionState(() => actions.retrain(), undefined);
+  const [reset, resetAction, resetting] = useActionState(() => actions.reset(), undefined);
+  const [rechecked, recheck, rechecking] = useActionState(() => actions.recheck(), undefined);
+  const [opinions, giveOpinions, givingOpinions] = useActionState(() => actions.secondOpinions(), undefined);
   const waiting = status?.secondOpinionsWaiting ?? 0;
   const readiness = status?.labels.readiness;
   // One retrain per demo run; "Reset to the original model" allows another.
@@ -207,10 +288,18 @@ export function ReviewLearningDemo({ status }: { status: ReviewLearningStatus | 
 
   return (
     <div className="space-y-4">
-      <p className="text-sm opacity-70">
-        Simulated GM reviews, not real ones. The reviews go through the same label rules as a real export, then the
-        classifier is refit offline in the local model service. Restart the demo to start over.
-      </p>
+      {replay ? (
+        <p className="text-sm opacity-70">
+          A recorded run of the local demo ({recordedOn}): simulated GM reviews, not real ones, put through the same label
+          rules as a real export, then the classifier refit locally. This site only replays those results; it does not
+          call the model or change any data. Refresh the page to start over.
+        </p>
+      ) : (
+        <p className="text-sm opacity-70">
+          Simulated GM reviews, not real ones. The reviews go through the same label rules as a real export, then the
+          classifier is refit offline in the local model service. Restart the demo to start over.
+        </p>
+      )}
       <p className="text-sm">
         Model version: <code>{status?.modelVersion ?? "unknown"}</code>
         {readiness && <> · Training labels ready: {readiness.newTrainLabels}/{readiness.minNewLabels}</>}
@@ -257,8 +346,10 @@ export function ReviewLearningDemo({ status }: { status: ReviewLearningStatus | 
           {givingOpinions ? "Giving second opinions…" : "2. Give the remaining second opinions"}
         </button>
         <p className="text-sm opacity-70">
-          Reviews where the GM and the model strongly disagree need a second GM before they can train the model. Answer
-          a few in “Second opinion needed” below, then let this button answer the rest as a careful second GM would.
+          Reviews where the GM and the model strongly disagree need a second GM before they can train the model.{" "}
+          {replay
+            ? "In the recorded run, this button answered them as a careful second GM would."
+            : "Answer a few in “Second opinion needed” below, then let this button answer the rest as a careful second GM would."}
         </p>
         {opinions?.ok === false && <p role="alert" className="text-sm text-red-600">{opinions.error}</p>}
         {opinions?.ok && (
@@ -285,7 +376,7 @@ export function ReviewLearningDemo({ status }: { status: ReviewLearningStatus | 
         </button>
         <p className="text-sm opacity-70">Compares the saved Results with a fresh run of the current model. Nothing is saved.</p>
         {rechecked?.ok === false && <p role="alert" className="text-sm text-red-600">{rechecked.error}</p>}
-        {rechecked?.ok && <Recheck result={rechecked.value} />}
+        {rechecked?.ok && <Recheck result={rechecked.value} replay={replay} />}
       </form>
 
       <form action={resetAction}>

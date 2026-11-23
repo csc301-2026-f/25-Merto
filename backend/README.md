@@ -722,5 +722,12 @@ model run that reports none is refused and saves nothing. Apply
 `supabase/migrations/20261117000100_evaluation_model_version.sql` before deploying
 this backend, since evaluations write the new column.
 
-Not done yet: checking reviews against the model's confidence, comparing reviewers,
-retraining, and the test gate a new model must pass before it replaces the current one.
+### Review-learning demo
+
+`npm run demo:model` runs the whole loop live in AI Review (MPNet): simulated GM
+reviews, second opinions, a classifier refit in the local model service, and the
+gold-set gate. The hosted site cannot refit the classifier (serverless instances
+keep no state), so it replays one recorded local run instead. The replay calls
+neither the model nor the database. To record it again after changing the demo,
+start a fresh `npm run demo:model`, run `npm run demo:record-replay`, and commit
+`mertofrontend/lib/review-learning-replay.json`.
