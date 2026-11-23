@@ -5,6 +5,7 @@ import express from 'express';
 import { createApp } from '../app.ts';
 import type { Database } from '../db.ts';
 import { rulesEngine, type EvaluationEngine } from './engine.ts';
+import { reviewLearningRoutes, type ModelAdmin } from './review-learning-demo.ts';
 
 export const DEMO_EVALUATORS = [
   { id: 'mpnet', name: 'MPNet v3' },
@@ -16,18 +17,25 @@ export const DEMO_EVALUATOR_HEADER = 'X-Merto-Demo-Evaluator';
 export async function createLocalDemoApp(options: {
   openDatabase(): Promise<Database>;
   modelEngine(id: Exclude<DemoEvaluator, 'deterministic'>): Promise<EvaluationEngine>;
+  // Retrains the local model service's heads; turns on the review-learning demo for MPNet.
+  modelAdmin?: ModelAdmin;
 }) {
   const contexts = new Map<DemoEvaluator, Promise<{ db: Database; app: ReturnType<typeof createApp> }>>();
   function context(id: DemoEvaluator) {
     if (!contexts.has(id)) {
       const pending = (async () => {
-        const evaluator = id === 'deterministic' ? rulesEngine : await options.modelEngine(id);
+        let evaluator = id === 'deterministic' ? rulesEngine : await options.modelEngine(id);
         const db = await options.openDatabase();
         const evaluationEngine: EvaluationEngine = {
-          detect: evaluator.detect,
+          detect: conversation => evaluator.detect(conversation),
+          score: id === 'deterministic' ? undefined : (side, text) => evaluator.score!(side, text),
           status: async () => ({ ...await evaluator.status(), id, scope: 'local', choices: [...DEMO_EVALUATORS] }),
         };
-        return { db, app: createApp(db, { evaluationEngine, devLoginPassword: 'test' }) };
+        // After a retrain the model service reports a new version, so reconnect to pick it up.
+        const reload = async () => { if (id !== 'deterministic') evaluator = await options.modelEngine(id); };
+        const demoRoutes = id === 'mpnet' && options.modelAdmin
+          ? reviewLearningRoutes(db, evaluationEngine, options.modelAdmin, reload) : undefined;
+        return { db, app: createApp(db, { evaluationEngine, devLoginPassword: 'test', demoRoutes }) };
       })();
       contexts.set(id, pending);
       // A transient load error must be retryable, and must never choose rules.

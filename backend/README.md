@@ -148,6 +148,9 @@ row lock, so only one succeeds.
 | Method and path | Who | What it does |
 | --- | --- | --- |
 | `GET /api/deals` | GM: all; rep: own | Open deals (not delivered or lost), most recent activity first: `dealId`, `buyer`, `vehicleInterest`, `stage`, `source`, `ownerId`, `owner`, `optedOut`, `openItems`, `lastActivityAt`, `createdAt`. |
+| `GET /api/deals/stats` | GM: all; rep: own | All-time `sold` (delivered), `lost`, `closed`, and `saleRate` (sold divided by closed, or null if there are no closed deals). |
+| `GET /api/deals/stats/reps` | GM only | Every sales rep's name, ID, sold, lost, closed, and sale rate. Includes reps with no closed deals. Counts use current deal ownership. |
+| `GET /api/deals/stats/outcomes` | GM: all; rep: own | Closed deal records for `outcome=all\|sold\|lost`, 20 per `page` (defaults to 1), with `hasNextPage`. Ordered by deal creation, newest first. |
 | `GET /api/deals/:dealId` | GM, owning rep | The buyer record: deal fields, `buyer` (contact, `optedOut`), `owner`, `timeline`, `openItems`, `appointments`, `assignments` (as above). |
 | `POST /api/deals` | GM, rep | Adds a buyer and their first deal (201). See below. |
 | `GET /api/appointments` | GM: all; rep: own deals | All appointments, ordered by scheduled time, with customer, vehicle, and owner details. |
@@ -363,6 +366,23 @@ approve it, then record the simulated send. The timeline should contain both
 decisions and only one outbound follow-up; the visit reminder should clear only
 after that send.
 
+## Deal tasks
+
+A rep's own to-do list on each deal. Tasks belong to the deal, so the rep who owns
+the deal sees and completes them, and they move with the deal on a transfer. The GM
+can see and change tasks on every deal. Adding a task to a delivered or lost deal is 409.
+
+| Method and path | Who | What it does |
+| --- | --- | --- |
+| `GET /api/deals/:dealId/tasks` | GM, owning rep | The deal's tasks: open first, soonest due first (undated last), then completed, most recent first. |
+| `POST /api/deals/:dealId/tasks` | GM, owning rep | Body `{ "title": string, "dueAt"?: ISO time with zone }`. Returns 201 and the task. |
+| `PATCH /api/tasks/:taskId` | GM, owning rep | Body `{ "completed": boolean }`. Marks it done (records who and when) or reopens it. Already in that state is 409. |
+| `GET /api/tasks` | GM: all; rep: own deals | `?status=open` (default), `completed`, or `all`. Returns `summary` (`open`, `overdue`, `dueToday`: open tasks in scope, whatever `status` lists) and `tasks`, each with its `deal`. |
+
+Each task has `id`, `dealId`, `title`, `status`, `dueAt`, `overdue` (open and past
+due), `createdAt`, `createdBy`, `completedAt`, and `completedBy`. `dueToday` counts
+open tasks due from now to midnight in `DEALERSHIP_TIME_ZONE`.
+
 ## Unresolved work (US4)
 
 `GET /api/open-items` lists open items (promises, missing documents, unanswered
@@ -562,7 +582,11 @@ key; a model on this machine is `http://localhost:11434/v1` (Ollama) or
 `http://localhost:1234/v1` (LM Studio), which needs no key because the address is local. A
 local model may be slower, so `MODEL_AGENT_TIMEOUT_MS` raises the 30-second wait, and
 `MODEL_AGENT_REASONING=true|false` overrides the guess (from the model name: o*, gpt-5*,
-gpt-oss) about whether it is a reasoning model. When it is on, `GET /api/scenarios` lists the agent with
+gpt-oss) about whether it is a reasoning model. To try a model before relying on it, run
+`npm run check:model` (add `RUNS=3` to repeat): it runs every scenario against whatever
+`backend/.env` points at and reports, per scenario, whether the model returned a usable
+answer and whether the checks passed. It makes real calls, so it is manual and not part of
+`npm test`. When it is on, `GET /api/scenarios` lists the agent with
 `live: true`, `POST /api/scenarios/:id/runs` accepts `{ "agent": "model" }`, and
 `POST /api/scenario-runs` includes it only when it is named, because every scenario is one
 billed call. Runs are limited to `MODEL_AGENT_MAX_PER_HOUR` (default 30), then return 429.
@@ -664,7 +688,9 @@ dev instead.
 | `src/follow-up/service.ts`, `routes.ts` | US6 permissions (rep: own; GM: all), ordering, and HTTP routes. |
 | `src/scenarios/` | US13 scenario checks: `catalog.ts` (scenarios), `agents.ts` (agent interface, built-in agents), `tools.ts` (agent tools), `checks.ts` (deterministic checks), `runner.ts` (sandbox run, scorecard), `service.ts` (GM only), `routes.ts`. |
 | `src/open-items/` | US4 unresolved work: `policy.ts` (filters, close notes), `repository.ts` (SQL), `service.ts` (permissions, summary, resolve/cancel), `routes.ts`. |
+| `src/tasks/` | Deal tasks: `policy.ts` (input), `repository.ts` (SQL), `service.ts` (permissions, summary), `routes.ts`. |
 | `scripts/eval-rules.ts` | Scores the rules against `test/fixtures/`. |
+| `src/evaluation/training-labels.ts`, `scripts/export-review-labels.ts` | Turn GM reviews into a training-label snapshot (see below). |
 
 ## Limits
 
@@ -691,3 +717,55 @@ deterministic evaluation. The trained MPNet weights are committed as lossless
 safetensors shards in [`model-service/weights/mpnet-v3`](../model-service/weights/mpnet-v3)
 and verified locally at build time; Python runtime dependencies are installed
 from the pinned requirements. See [deployment setup](../model-service/README.md).
+
+## GM reviews as training labels
+
+`npm run eval:export-labels` reads every flag in `ai_flags` and `mpnet_flags` and
+writes a label snapshot to `ml/feedback/`. It needs `DATABASE_URL` and only reads.
+The folder is git-ignored because snapshots hold real message text. The script
+trains nothing: retraining stays a separate, offline step that a person starts.
+
+A review becomes a label for one wording signal (the flag-to-signal mapping in
+`model-engine.ts`) only when it says whether the wording was read right:
+
+| Review | Label |
+| --- | --- |
+| Confirmed issue, resolved, or a GM-added flag | signal = 1 |
+| False positive: misread wording | signal = 0 |
+| False positive: already handled or visit confirmed | None. The deal history was misjudged, not the wording. |
+| False positive: not a problem or other | Triage: a person decides |
+| Pending, or a reply nobody flagged | None |
+
+Safeguards against a wrong review or a few repeated messages steering the model:
+
+- A review counts once it is 7 days old (`--cooling-days`), since a GM can still
+  change it. Resolved flags are final and count at once.
+- Fixed-ID deals (the seeds, including the scenario deals used for testing, and the
+  `check:hosted` fixture) never become labels.
+- A buyer signal (a missed handoff) goes on the one buyer message the flagged reply
+  answered. If the reply answered several, the review goes to triage.
+- Reviews of one message that disagree (in either store), and the same wording
+  labelled both ways on different messages, go to triage.
+- Repeated wording counts once; `duplicates` says how many copies were folded in.
+- About 20% of deals (`--holdout-percent`), chosen by a hash of the deal ID, are kept
+  for testing. Wording seen on one of them is held out for every signal.
+- Pass `--previous <last snapshot>` to count only new labels. The script says whether
+  there are at least 50 new training labels, with 10 on one signal
+  (`--min-new`, `--min-new-per-signal`).
+
+Every label lists its sources: the flag, reviewer, review time, and `modelVersion`,
+the model that raised the flag or, for a GM-added flag, the model that missed it.
+Evaluations save the version the model service reports (`null` for the rules); a
+model run that reports none is refused and saves nothing. Apply
+`supabase/migrations/20261117000100_evaluation_model_version.sql` before deploying
+this backend, since evaluations write the new column.
+
+### Review-learning demo
+
+`npm run demo:model` runs the whole loop live in AI Review (MPNet): simulated GM
+reviews, second opinions, a classifier refit in the local model service, and the
+gold-set gate. The hosted site cannot refit the classifier (serverless instances
+keep no state), so it replays one recorded local run instead. The replay calls
+neither the model nor the database. To record it again after changing the demo,
+start a fresh `npm run demo:model`, run `npm run demo:record-replay`, and commit
+`mertofrontend/lib/review-learning-replay.json`.

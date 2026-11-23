@@ -32,7 +32,7 @@ erDiagram
   deals ||--o{ timeline_events : records
   staff_users o|--o{ timeline_events : authors
   deals ||--o{ appointments : schedules
-  staff_users o|--o{ appointments : requests/confirms
+  staff_users o|--o{ appointments : "requests/confirms"
   deals ||--o{ audit_events : audits
   staff_users o|--o{ audit_events : acts
   deals ||--o{ open_items : tracks
@@ -184,6 +184,29 @@ Resolving an item means setting both `status = 'resolved'` and `resolved_at`.
 Reopening or cancelling means clearing `resolved_at`. Tasks without deadlines
 are allowed; in query 04 their `overdue` result is null, rather than false.
 
+### `deal_tasks`: a rep's own to-do list on a deal
+
+Added by `migrations/20261118000200_deal_tasks.sql`. Unlike `open_items`, which
+record what the buyer is waiting on, a task is internal work a rep writes for
+themselves ("call the bank"). Tasks belong to the deal, so whoever owns the deal
+owns its tasks, and they move with a transfer without being rewritten.
+
+| Field | Type / nullable | Meaning and rules |
+| --- | --- | --- |
+| `id` | UUID / no | Task ID. |
+| `deal_id` | UUID / no | References `deals.id`. |
+| `title` | text / no | Nonblank, at most 200 characters. |
+| `due_at` | timestamptz / yes | Optional due time. |
+| `status` | text / no | `open` (default) or `completed`. |
+| `created_by` | UUID / no | Staff member who added it; references `staff_users.id`. |
+| `created_at` | timestamptz / no | Defaults to now. |
+| `completed_by` | UUID / yes | Who marked it done; set exactly when `completed_at` is. |
+| `completed_at` | timestamptz / yes | Required exactly when status is `completed`. |
+
+Reopening a task clears `completed_by` and `completed_at`. RLS is enabled and
+`anon`/`authenticated` have no grants, as for the core tables.
+`seed/seed_deal_tasks.sql` adds three sample tasks.
+
 ## Reads available as integration examples
 
 The SQL in `demo/queries.sql` defines example result shapes. Hard-coded demo IDs
@@ -237,8 +260,10 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
 
 - `timeline_events` gains `unique (id, deal_id)` and the two event types above.
 - `ai_evaluations`: `id`, `deal_id` (unique; references `deals`), `result`
-  (`passed` or `flagged`), `evaluated_at`. At most one row per deal: the latest
-  evaluation. No row means "not evaluated".
+  (`passed` or `flagged`), `evaluated_at`, `model_version` (the model version of
+  the latest run; null for the deterministic rules and for runs saved before the
+  column existed). At most one row per deal: the latest evaluation. No row means
+  "not evaluated". `mpnet_evaluations` has the same columns.
 - `ai_flags`: `id`, `deal_id` (references `ai_evaluations.deal_id`),
   `evidence_event_id`, `flag_type` (`appointment_certainty`,
   `unsupported_availability`, `unsupported_price`, `missed_escalation`,
@@ -249,8 +274,22 @@ the database tests. See [hosted integration](HOSTED_INTEGRATION.md) for setup an
   problem a GM added to a reply the evaluator missed), `created_by` (references
   `staff_users`; set exactly when `source` is `manual`), and `review_reason`
   (`misread_wording`, `already_handled`, `visit_confirmed`, `not_a_problem`,
-  `other`; only while `review_status` is `false_positive`). `mpnet_flags` has
-  the same columns.
+  `other`; only while `review_status` is `false_positive`), and `model_version`
+  (the model version that raised the flag or, for a manual flag, the version of
+  the run that missed it; null for the deterministic rules), `model_score` (0 to 1:
+  that same model version's probability for the flag's wording signal, recorded
+  when a GM decides; null when that version cannot score it, so a later model
+  never stands in), and `second_review` (`agree`/`disagree`), `second_reviewed_by`,
+  `second_reviewed_at` (all three set together, never while `pending`) for a second
+  GM's opinion on a review that strongly disagrees with the model. The second GM
+  must differ from the reviewer. When the second GM disagrees with a dismissal,
+  the flag also becomes `confirmed_issue` (reason cleared; the dismissal stays on
+  the deal's timeline) so someone follows it up, and the `disagree` keeps it out
+  of training. Any new judgment clears the second opinion. Then `resolved_by` (references
+  `staff_users`) and `resolved_at`, set exactly when `review_status` is
+  `resolved`: who followed up the problem. Resolving a confirmed issue changes
+  only these and the status, so the reviewer, note, score and second opinion
+  stay as the judging GM left them. `mpnet_flags` has the same columns.
 - `(evidence_event_id, deal_id)` references `timeline_events(id, deal_id)`, so a
   flag's evidence is always a message on the same deal.
 - `(evidence_event_id, flag_type)` is unique, so re-evaluating never duplicates a flag.

@@ -23,6 +23,11 @@ export function hostedEvaluationContext(db: Database,
   }
   const mpnet: EvaluationEngine = {
     detect: async conversation => (await model()).detect(conversation),
+    score: async (side, text) => {
+      const loadedModel = await model();
+      if (!loadedModel.score) throw new HttpError(503, 'The model cannot score messages.');
+      return loadedModel.score(side, text);
+    },
     status: async () => {
       try { return await (await model()).status(); }
       catch { return { id: 'mpnet', mode: 'model', name: 'MPNet v3', ready: false }; }
@@ -35,6 +40,7 @@ export function hostedEvaluationContext(db: Database,
     const selected = id === 'mpnet' ? mpnet : rulesEngine;
     return { db: id === 'mpnet' ? modelDb : db, engine: {
       detect: selected.detect,
+      score: selected.score,
       status: async () => ({ ...await selected.status(), id, scope: 'hosted', choices: [...HOSTED_EVALUATORS] }),
     } };
   };

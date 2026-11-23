@@ -38,3 +38,25 @@ export function dealReviewStatus(evaluated: boolean, flagStatuses: ReviewStatus[
   }
   return 'false_positive';
 }
+
+// The wording label a review gives its signal: 1 for a real problem (confirmed,
+// resolved, or added by a GM), 0 for a flag dismissed as misread wording, and
+// null when the review says nothing about the wording.
+export function reviewLabel(status: ReviewStatus, reason: ReviewReason | null): 0 | 1 | null {
+  if (status === 'confirmed_issue' || status === 'resolved') return 1;
+  if (status === 'false_positive' && reason === 'misread_wording') return 0;
+  return null;
+}
+
+// A review strongly disagrees with the model when the model was nearly sure of
+// the opposite. Such a review trains the model only once a second GM agrees.
+export const DISPUTE_THRESHOLDS = { sureIssue: 0.9, sureFine: 0.1 } as const;
+export function isDisputed(label: 0 | 1 | null, modelScore: number | null): boolean {
+  if (label === null || modelScore === null) return false;
+  return label === 0 ? modelScore >= DISPUTE_THRESHOLDS.sureIssue : modelScore <= DISPUTE_THRESHOLDS.sureFine;
+}
+
+export const SECOND_REVIEWS = ['agree', 'disagree'] as const;
+export type SecondReview = (typeof SECOND_REVIEWS)[number];
+export const isSecondReview = (value: unknown): value is SecondReview =>
+  SECOND_REVIEWS.includes(value as SecondReview);

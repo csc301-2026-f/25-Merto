@@ -41,12 +41,12 @@ export function FlagReview({ flag, evaluatorId }: { flag: Flag; evaluatorId?: st
         {allowed.map(decision => decision === "false_positive" ? (
           <button key={decision} type="button" onClick={() => setChoosingReason(open => !open)} disabled={pending}
             aria-expanded={choosingReason} aria-controls={`review-reasons-${flag.id}`}
-            className="rounded border border-zinc-500 px-3 py-2 text-sm font-semibold disabled:opacity-50">
+            className="rounded-lg border border-zinc-500 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-400 dark:hover:bg-zinc-700">
             {LABELS[decision]}
           </button>
         ) : (
           <button key={decision} type="submit" name="decision" value={decision} disabled={pending}
-            className="rounded border border-zinc-500 px-3 py-2 text-sm font-semibold disabled:opacity-50">
+            className="rounded-lg border border-zinc-500 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-400 dark:hover:bg-zinc-700">
             {LABELS[decision]}
           </button>
         ))}
@@ -57,7 +57,7 @@ export function FlagReview({ flag, evaluatorId }: { flag: Flag; evaluatorId?: st
           <div className="flex flex-wrap gap-2">
             {(Object.entries(REVIEW_REASONS) as [ReviewReason, string][]).map(([reason, label]) => (
               <button key={reason} type="submit" name="reason" value={reason} disabled={pending}
-                className="rounded border border-zinc-500 bg-white/60 px-3 py-2 text-sm disabled:opacity-50 dark:bg-zinc-950/40">
+                className="rounded-lg border border-zinc-500 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-400 dark:hover:bg-zinc-700">
                 {label}
               </button>
             ))}

@@ -5,8 +5,12 @@ import { Sidebar, type NavLink } from "@/components/Sidebar";
 // Same frame as the manager pages (app/manager/layout.tsx).
 const links: NavLink[] = [
   { label: "Home", href: "/rep" },
+  { label: "My Book", href: "/rep/my-book" },
+  { label: "Tasks", href: "/rep/tasks" },
+  { label: "Statistics", href: "/rep/stats" },
   { label: "Calendar", href: "/rep/calendar" },
   { label: "Create customer", href: "/rep/create-customer" },
+  
 ];
 
 export default function RepLayout({ children }: { children: React.ReactNode }) {

@@ -12,8 +12,7 @@ export function CreateCustomerForm({ reps }: { reps?: Rep[] }) {
     "w-full max-w-md rounded-lg border border-zinc-300  px-3 py-2 text-black outline-none transition dark:border-zinc-600 dark:text-white";
 
   const selectClass =
-    "w-full max-w-md rounded-lg border border-zinc-300  px-3 py-2 text-black outline-none transition dark:border-zinc-600 dark:text-white";
-
+    "w-full max-w-md rounded-lg border border-zinc-300 bg-white px-3 py-2 focus:border-[#d5bd91] focus:outline-none transition dark:border-zinc-700 dark:bg-zinc-800 dark:text-white";
   return (
     <form
       action={formAction}
@@ -49,7 +48,6 @@ export function CreateCustomerForm({ reps }: { reps?: Rep[] }) {
                   <option
                     key={option}
                     value={option}
-                    className="bg-white text-black"
                   >
                     {option.replaceAll("_", " ")}
                   </option>
@@ -113,9 +111,9 @@ export function CreateCustomerForm({ reps }: { reps?: Rep[] }) {
               name="repId"
               defaultValue={state?.values?.repId ?? ""}
               disabled={pending}
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-black outline-none dark:border-zinc-600 dark:text-white"
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-black focus:border-[#d5bd91] focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
             >
-              <option value="" className="bg-white text-black">
+              <option value="">
                 No rep (unassigned)
               </option>
 
@@ -123,7 +121,6 @@ export function CreateCustomerForm({ reps }: { reps?: Rep[] }) {
                 <option
                   key={rep.id}
                   value={rep.id}
-                  className="bg-white text-black"
                 >
                   {rep.name}
                 </option>

@@ -16,7 +16,8 @@ const allSeeds = await Promise.all(seedNames.map((name) => readSql(`seed/${name}
 const demos = await readSql('demo/queries.sql');
 const transfer = await readSql('demo/transfer.sql');
 const tables = ['staff_users', 'buyers', 'deals', 'timeline_events', 'appointments', 'open_items',
-  'audit_events', 'ai_evaluations', 'ai_flags', 'deal_assignments', 'reply_drafts', 'mpnet_evaluations', 'mpnet_flags'];
+  'audit_events', 'ai_evaluations', 'ai_flags', 'deal_assignments', 'reply_drafts', 'mpnet_evaluations', 'mpnet_flags',
+  'deal_tasks'];
 const ids = {
   karen: '10000000-0000-0000-0000-000000000001',
   dana: '10000000-0000-0000-0000-000000000002',
@@ -61,7 +62,7 @@ describe('Merto database contract', () => {
 
   it('loads the real migration and reseeds without duplicating or changing sample records', async () => {
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 14, 2, 4, 1, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [3, 4, 4, 14, 2, 4, 1, 0, 0, 0, 0, 0, 0, 0]);
     await db.exec(seed);
     assert.deepEqual(await snapshot(), before);
   });
@@ -162,6 +163,19 @@ describe('Merto database contract', () => {
       [ids.jordan]);
   });
 
+  it('requires a title, a creator, and completion details exactly for completed deal tasks', async () => {
+    const insert = 'insert into public.deal_tasks (deal_id, title, created_by, status, completed_by, completed_at) values ($1, $2, $3, $4, $5, $6)';
+    await expectSqlError(insert, [ids.jordan, '  ', ids.dana, 'open', null, null], '23514');
+    await expectSqlError(insert, [ids.jordan, 'x'.repeat(201), ids.dana, 'open', null, null], '23514');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', null, 'open', null, null], '23502');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', ids.dana, 'completed', null, null], '23514');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', ids.dana, 'completed', null, new Date()], '23514');
+    await expectSqlError(insert, [ids.jordan, 'Call bank', ids.dana, 'open', ids.dana, new Date()], '23514');
+    await expectSqlError(insert, [ids.missing, 'Call bank', ids.dana, 'open', null, null], '23503');
+    await db.query(insert, [ids.jordan, 'Call bank', ids.dana, 'open', null, null]);
+    await db.query(insert, [ids.jordan, 'Call bank', ids.dana, 'completed', ids.dana, new Date()]);
+  });
+
   it('detects outbound contact after opt-out, including on another deal for the same buyer', async () => {
     const optedOutBuyer = (await db.query('select buyer_id from public.deals where id = $1', [ids.rob])).rows[0].buyer_id;
     const otherDeal = (await db.query("insert into public.deals (buyer_id, vehicle_interest, source) values ($1, 'Another vehicle', 'email') returning id",
@@ -180,7 +194,7 @@ describe('Merto database contract', () => {
   it('loads every scenario seed twice without changing records or timestamps', async () => {
     for (const sql of allSeeds) await db.exec(sql);
     const before = await snapshot();
-    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 223, 20, 16, 1, 0, 0, 1, 0, 0, 0]);
+    assert.deepEqual(tables.map((table) => before[table].length), [5, 36, 37, 223, 20, 16, 1, 0, 0, 1, 0, 0, 0, 3]);
     for (const sql of allSeeds) await db.exec(sql);
     assert.deepEqual(await snapshot(), before);
     assert.equal((await db.exec(demos))[0].rows.length, 37);
@@ -394,4 +408,59 @@ describe('Merto database contract', () => {
       }
     }
   });
+});
+
+it('rolls out flag resolution columns before enforcing them in both evaluator stores', async () => {
+  const rollout = new PGlite();
+  try {
+    await rollout.exec('create role anon; create role authenticated;');
+    const enforcement = migrationNames.indexOf('20261123000200_enforce_flag_resolution.sql');
+    assert.ok(enforcement > 0);
+    for (const migration of migrations.slice(0, enforcement)) await rollout.exec(migration);
+    await rollout.exec(seed);
+
+    const legacyAt = new Date('2026-11-22T12:00:00Z');
+    const newAt = new Date('2026-11-22T13:00:00Z');
+    for (const prefix of ['ai', 'mpnet']) {
+      await rollout.query(`
+        insert into public.${prefix}_evaluations (deal_id, result) values ($1, 'flagged')
+      `, [ids.jordan]);
+      await rollout.query(`
+        insert into public.${prefix}_flags (deal_id, evidence_event_id, flag_type, severity, explanation)
+        values ($1, $2, 'tone', 'low', 'Legacy resolution'),
+               ($1, $2, 'unsupported_price', 'medium', 'New resolution')
+      `, [ids.jordan, ids.jordanAssigned]);
+
+      // The previous backend updates only the review fields.
+      await rollout.query(`
+        update public.${prefix}_flags
+        set review_status = 'resolved', reviewed_by = $1, reviewed_at = $2
+        where flag_type = 'tone'
+      `, [ids.karen, legacyAt]);
+      // The new backend records resolution separately from the original review.
+      await rollout.query(`
+        update public.${prefix}_flags
+        set review_status = 'resolved', reviewed_by = $1, reviewed_at = $2,
+            resolved_by = $3, resolved_at = $4
+        where flag_type = 'unsupported_price'
+      `, [ids.karen, legacyAt, ids.dana, newAt]);
+    }
+
+    await rollout.exec(migrations[enforcement]);
+    for (const prefix of ['ai', 'mpnet']) {
+      const { rows } = await rollout.query(`
+        select reviewed_by, reviewed_at, resolved_by, resolved_at
+        from public.${prefix}_flags order by flag_type
+      `);
+      assert.deepEqual(rows, [
+        { reviewed_by: ids.karen, reviewed_at: legacyAt, resolved_by: ids.karen, resolved_at: legacyAt },
+        { reviewed_by: ids.karen, reviewed_at: legacyAt, resolved_by: ids.dana, resolved_at: newAt },
+      ]);
+      await assert.rejects(rollout.query(`
+        update public.${prefix}_flags set resolved_by = null, resolved_at = null where flag_type = 'tone'
+      `), { code: '23514', constraint: `${prefix}_flags_resolved_status_check` });
+    }
+  } finally {
+    await rollout.close();
+  }
 });

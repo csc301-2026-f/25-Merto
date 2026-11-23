@@ -54,7 +54,11 @@ export function Timeline({ entries, buyer, flags }: { entries: TimelineEntry[]; 
         {options.map((option) => (
           <button key={option.value} type="button" aria-pressed={option.value === active.value}
             onClick={() => setFilter(option.value)}
-            className={`rounded border-2 px-2 py-0.5 text-sm ${option.value === active.value ? "font-semibold" : "opacity-70"}`}>
+            className={`rounded-lg border px-3 py-1 text-sm transition-colors border-zinc-300 hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-zinc-700 ${
+              option.value === active.value
+                ? "font-semibold bg-zinc-200 dark:bg-zinc-700"
+                : "opacity-70"
+            }`}>
             {option.text} ({entries.filter(option.matches).length})
           </button>
         ))}

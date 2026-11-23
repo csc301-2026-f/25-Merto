@@ -73,10 +73,10 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
               value={agent}
               onChange={(event) => setAgent(event.target.value)}
               disabled={pending}
-              className="ml-2 rounded border-2 bg-transparent px-2 py-1 font-normal"
+              className="ml-2 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-black focus:border-[#d5bd91] focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
             >
               {agents.map((known) => (
-                <option key={known.name} value={known.name} className="text-black">
+                <option key={known.name} value={known.name}>
                   {known.name}
                 </option>
               ))}
@@ -86,7 +86,7 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
             type="button"
             disabled={pending || !agent}
             onClick={() => runEvery([agent])}
-            className="rounded border-2 px-3 py-1.5 text-sm font-semibold disabled:opacity-50"
+            className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-zinc-700"
           >
             {busy === "all" ? "Running…" : "Run all scenarios"}
           </button>
@@ -95,7 +95,7 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
               type="button"
               disabled={pending || comparing.length < 2}
               onClick={() => runEvery(comparing)}
-              className="rounded border-2 px-3 py-1.5 text-sm font-semibold disabled:opacity-50"
+              className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 disabled:opacity-50 dark:border-zinc-600 dark:hover:bg-zinc-700"
             >
               Compare all agents
             </button>
@@ -149,7 +149,7 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
               type="button"
               disabled={pending || !agent}
               onClick={() => runOne(scenario.id)}
-              className="rounded border-2 px-3 py-1.5 text-sm font-semibold disabled:opacity-50"
+              className="rounded-lg border border-zinc-300 px-3 py-1 font-semibold transition-colors hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-zinc-700"
             >
               {busy === scenario.id ? "Running…" : `Run with ${agent}`}
             </button>

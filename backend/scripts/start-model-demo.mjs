@@ -66,7 +66,7 @@ try {
     verification.once('error', reject);
     verification.once('exit', code => code === 0 ? resolve() : reject(Error('Tracked MPNet weights failed verification.')));
   });
-  start('Model', python, ['run_local.py', '--port', String(ports.model)], modelService, { MERTO_MODEL_TOKEN: modelToken });
+  start('Model', python, ['run_local.py', '--port', String(ports.model), '--demo-retrain'], modelService, { MERTO_MODEL_TOKEN: modelToken });
   await ready(`${modelUrl}/health`, modelToken);
   start('API', process.execPath, ['--import', 'tsx', 'scripts/local-model-demo.ts'], backend, {
     MERTO_MODEL_URL: modelUrl, MERTO_MODEL_TOKEN: modelToken, MERTO_DEMO_API_PORT: String(ports.api),

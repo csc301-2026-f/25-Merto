@@ -1,0 +1,2407 @@
+{
+ "about": "Simulated GM reviews for the local review-learning demo. Not real reviews. Every message was written for this demo and kept only if it is not a near copy (cosine > 0.90) of a dev, test or seeded message. Labels follow prompts/codex-train-dataset-prompt.md for the target signal only.",
+ "neutralAiReply": "Thanks for your message! I've passed it along to the team.",
+ "families": {
+  "booking_lookalike": "Replies saying a person will confirm the visit (not a booking)",
+  "booking_implied": "Replies that settle a visit time (booking claims)",
+  "availability_indirect": "Replies saying the exact car is there (availability claims)",
+  "availability_lookalike": "Replies offering to check stock (not availability claims)",
+  "price_words": "Prices in words or rough amounts (price quotes)",
+  "price_lookalike": "Numbers that are not prices (not price quotes)",
+  "tone_bad": "Robotic, rude or pushy replies (off tone)",
+  "tone_ok": "Warm or apologetic replies (not off tone)",
+  "person_ask": "Buyers asking for a person",
+  "person_lookalike": "Buyers mentioning staff without asking for one",
+  "price_ask": "Buyers asking about price",
+  "price_ask_lookalike": "Buyers remarking on price or asking 'how much' about something else"
+ },
+ "reviewItems": [
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "I'll ask the inventory team if the Outback is still here."
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "The Bronco had a pending deal on it this morning, so I'll need to double check."
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "Want me to have someone confirm the Pilot is still in stock?"
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "That Wrangler was moved to our other store last week, I'm checking on its status."
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "We get new Konas in most weeks, would you like to be notified?"
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "Inventory moves fast this time of year, so a rep will confirm before you drive in."
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "Our used inventory changes daily; I'd recommend calling before you come."
+  },
+  {
+   "kind": "reliable",
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "I can't see live inventory, but a team member can confirm whether the Accord is here."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "You're welcome to suggest a time, and our team will confirm it for you."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Happy to help you plan a visit. Do weekdays or weekends suit you best?"
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Morning or afternoon tends to be quieter. Which would you prefer?"
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thank you for reaching out about the Sorento. If you'd like to see it, let me know which days work and I'll make sure the right person follows up."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Friday could work. I'll ask a rep to confirm and message you back."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "No problem, I've cancelled the earlier request. Whenever you're ready, tell me a time and our staff will confirm it."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've passed your Saturday request to Maria, she'll reach out to lock in a time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Good afternoon, I've shared your preferred time with our scheduling desk. Once they check the drive calendar they'll reach out with a confirmed slot."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for the update. We'll wait to hear what day works for you before setting anything up."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for asking about Saturday! I've added it as a request; a person on our team confirms every visit by phone."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hi Sam, thanks for getting back to me about the Escape. I've sent your Saturday morning request over to the sales floor, and whoever is on shift will text you to lock it in."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Sorry we missed you at the showroom last weekend! Want me to ask the team for another time?"
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hello! Our showroom is open 9 to 7 on weekdays. When would you like to come in? I'll pass your choice to the team."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for asking about a test drive in the Telluride. Someone from our team will call to find a time that fits."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks! A team member will call you to confirm whether 4pm works."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hi there, just following up on your visit request from yesterday. It's still waiting on a confirmation from the sales team, and I've nudged them."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I'll pass along that 5pm works best for you, and someone will reach out to finalize it."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for picking Saturday. Our team still needs to confirm, so watch for a text from them."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Our team will review your request for a Saturday test drive and follow up to confirm."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We don't have you on the schedule yet. Would you like me to send a request for this week?"
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've let the team know you'd like to come by after work on Tuesday. They'll confirm the time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've asked the team about an evening slot and will let you know what they say."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hi Ken, nothing is on the calendar for you yet. Once you pick a day, a rep will confirm it."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We received your test drive request. A person will confirm that slot shortly."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I can request a slot for you. What day were you hoping for?"
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Noted that you'd like a weekend slot. You'll hear back from the team about a time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Our booking coordinator will contact you to set a day and time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Sounds good! I'll tell the team you're hoping for Saturday and they'll reach out to confirm."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for your interest in a test drive! Someone from sales will reach out to schedule it."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Saturday mornings are popular. I'll put in a request and the team will let you know if there's space."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I see you asked about Sunday. We're closed Sundays, but I can pass along a request for Saturday or Monday."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hey Lena, the team got your request for a Monday visit. They usually confirm within a couple of hours, so keep an eye on your phone."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your request has been shared with the team; please wait for their confirmation before heading over."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Would sometime next week work for a visit? Let me know and I'll pass it on."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hope you enjoyed the test drive on Monday! Any thoughts on the Corolla?"
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Before we lock anything in, a salesperson needs to check the drive schedule."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks Priyanka, I've asked our manager to look at Tuesday morning for you. She'll confirm by text if it's open."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "The sales team handles appointments, so they'll text you to arrange a time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "The request for a 3:30 viewing is with the sales desk. They confirm all visits by phone."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I noted that you prefer mornings. A rep will get back to you with an appointment time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We're glad you're interested in a test drive. Our staff book all drives directly, so expect a call from them soon."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your preferred time of Thursday at 2 has been sent to our scheduling team for confirmation."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Got it, early afternoon is easiest for you. I'll let the team know so they can offer you a time."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've put a hold request in for Thursday at noon, but please don't head over until a team member confirms it with you."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Could you share two or three times that work? Then a rep can confirm one."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "You mentioned the weekend. A salesperson will contact you to pick a time together."
+  },
+  {
+   "kind": "reliable",
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've requested a callback so someone can book a time that works for you."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I left a review mentioning how helpful Jake was."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Your salesperson already called twice today, which was a bit much."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I talked to Mike yesterday and he was really helpful."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I don't need a call, just send the info here."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'll talk it over with my partner tonight."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Priya already sent me the forms, thank you!"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Is the sales office the building on the left when you drive in?"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Is the finance office open late on Thursdays?"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Hi Maria! Hope you had a nice weekend."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'm not ready to talk to sales yet, just browsing."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Was it Priya who called me yesterday?"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Your manager was really nice when I visited."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Who is the owner of the dealership? Just curious."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "My mechanic wants to see the service records."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "No need for anyone to call, email is fine."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Do your sales staff work on Sundays?"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Your receptionist was super friendly when I called."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'll bring my dad along, he knows cars better than me."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "please don't call, text only"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "My coworker bought from you last year and loved it."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I already spoke with someone on the phone, all good."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I had a great chat with your manager on Friday."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I spoke with your finance guy already."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'm meeting my financial advisor on Monday to go over it."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Is the person who answered the phone earlier named Jake?"
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'll let my wife know what you said."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'll call you guys if I have more questions."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'd rather keep chatting here than do a phone call."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Say hi to Jake for me, he sold my dad his truck."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "No calls please, I'm at work all day."
+  },
+  {
+   "kind": "reliable",
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "The manager I met on Friday said to message here."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": true,
+   "text": "send over the OTD on the white one"
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "The price is a bit more than I wanted to spend."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "I can't afford anything over my budget right now."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "The financing paperwork came through, thank you."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "How much range does the EV get?"
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "Prices these days are crazy."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "How much space is in the trunk?"
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "how much longer will the service take"
+  },
+  {
+   "kind": "reliable",
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "My budget is tight so I'm still thinking."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "Pricing details will come from our finance manager directly."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "That one has 2 keys and the original manual."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "That F-150 has 42,000 km on it."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The Model 3 gets about 400 km of range on a full charge."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "We're 15 minutes from the 401 exit."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The 4Runner was serviced at 60,000 km."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "Our service bay is open until 8 on weekdays."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "A person will send you the full numbers on the Tacoma."
+  },
+  {
+   "kind": "reliable",
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The CX-5 has 7 airbags and seats 5 comfortably."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "I don't know why you keep asking about the rate, it's the same as yesterday."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Pursuant to dealership policy, holds are not available."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Dear customer, your message has been received. Our records indicate an open inquiry. Further updates will be provided in due course."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Response generated. Vehicle availability status: indeterminate."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Sure, if you actually show up this time."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Notice: your test drive request does not meet submission requirements. Resubmit with all mandatory fields completed."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Again, the answer is no."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Inquiry closed due to inactivity. Submit a new request if needed."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your communication has been forwarded to the appropriate department for review."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your request is being processed. Response times may vary. Thank you for your cooperation."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "You'll have to figure out the financing yourself, we just sell cars."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Message received. Content flagged for review. Response pending."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Not sure what else you want me to say."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Information regarding the vehicle is available upon request through official channels."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "k"
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "This inbox is not monitored for general questions. Refer to the FAQ."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Read the listing, everything you need is there."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Per standard procedure, test drive requests require 48 hours notice. Non-compliant requests are declined."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Ok. Noted. Bye."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Per policy, we cannot accommodate that. Thank you for your understanding."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Per our terms, inquiries submitted after business hours will be addressed in sequence. Thank you."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your vehicle inquiry has been assigned a priority level of low."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "As stated in my previous message, we do not negotiate."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Communication noted. Further inquiries should be directed to the general mailbox."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "System notice: customer record updated. Await contact."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Honestly, if you can't decide on a colour, I can't help you."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "If you need more time to think, that's totally fine."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for your honesty about the timing. Feel free to reach out in the spring."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Totally understand wanting to sleep on it."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Totally understand that the timing isn't right. Thanks for letting us know."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Good morning! Hope your week is off to a great start."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Happy to help! Let me know if anything else comes up."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for the photos of your trade-in, they're really helpful."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Absolutely, I'll note that you prefer texts over calls."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Totally fair question, and thanks for asking."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks again for considering us, it means a lot."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Of course, I'll send the details by email so you can read them later."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Apologies, I sent the wrong brochure earlier. Here's the correct one."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Wishing you safe travels this weekend!"
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for letting me know about your budget. We'll keep that in mind and only send options that fit."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thank you for the kind words about our service team, I'll make sure they hear it."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Sorry for the double message, our system hiccupped."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Whenever it suits you is perfect for us."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No problem at all, I'll stop the reminders for now."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Understood, I've updated your preferences so you'll only get emails from now on."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Great question! The Tucson does come with Apple CarPlay."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks so much for choosing to service your car with us again."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Hope the rest of your weekend is relaxing!"
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Hope your son enjoys his first car!"
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for the quick reply! Let me know whenever you'd like the next steps."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for the lovely review, it made our day!"
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "That's a really popular choice, I can see why you like it."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Great to hear from you again, Mark! Hope the family is doing well."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Glad the test drive went well! Talk soon."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "That's a smart question to ask before buying used."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Sorry for the slow reply, it's been a busy morning here."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "We're here for you if anything comes up with the new car."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Sorry about the mix-up earlier, thanks for letting me know."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "We're sorry for any confusion in my last message. Here's a clearer summary."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Feel free to send any questions my way, big or small."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "We're grateful you gave us a chance, even if it didn't work out this time."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "That's completely fair. Lots of people like to compare a few dealers first, and we'd be glad to help when you're done."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "I completely get it, it's a big decision."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Of course, safety features are a smart thing to ask about."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Apologies for the delay in getting back to you today."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "That's a great question, and lots of buyers ask it. Here's how the warranty works."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No rush at all, take whatever time you need."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Really appreciate you giving us another chance after last time."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "We understand budgets matter, and we're happy to go at your pace."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "I'm sorry to hear about the trouble with your current car, that sounds stressful."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "So glad the new tires are working out for you!"
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "You're very welcome! Enjoy the rest of your evening."
+  },
+  {
+   "kind": "reliable",
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "It was a pleasure chatting with you today."
+  },
+  {
+   "kind": "repeated_template",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks! Your request is in, and a team member will confirm the time with you shortly.",
+   "copies": 8,
+   "review": "misread_wording"
+  },
+  {
+   "kind": "context_reason",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": true,
+   "text": "All set, you're booked for Thursday at 5:30 with Ahmed.",
+   "review": "visit_confirmed"
+  },
+  {
+   "kind": "context_reason",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": true,
+   "text": "Great, see you Saturday at 10 for the test drive.",
+   "review": "visit_confirmed"
+  },
+  {
+   "kind": "context_reason",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": true,
+   "text": "You're confirmed for tomorrow at noon to see the Outback.",
+   "review": "visit_confirmed"
+  },
+  {
+   "kind": "unclear_reason",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No rush at all, we'll be right here whenever you decide.",
+   "review": "not_a_problem"
+  },
+  {
+   "kind": "unclear_reason",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks a ton for your patience with us this week!",
+   "review": "other"
+  },
+  {
+   "kind": "unclear_reason",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We'd love to see you! Which day suits you best?",
+   "review": "not_a_problem"
+  },
+  {
+   "kind": "too_recent",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Totally get it, take all the time you need.",
+   "review": "confirmed_issue"
+  },
+  {
+   "kind": "too_recent",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Sorry for the slow reply today, it's been hectic here!",
+   "review": "confirmed_issue"
+  },
+  {
+   "kind": "too_recent",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Really sorry for the wait, thanks for hanging in there!",
+   "review": "confirmed_issue"
+  },
+  {
+   "kind": "conflicting_reviews",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for your understanding, we really appreciate your patience.",
+   "copies": 2,
+   "review": [
+    "confirmed_issue",
+    "misread_wording"
+   ]
+  },
+  {
+   "kind": "ambiguous_buyer",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": true,
+   "text": "Also can someone from sales call me tonight",
+   "review": "confirmed_issue",
+   "opener": "Hi, I'm interested in the white Tucson from your ad."
+  },
+  {
+   "kind": "ambiguous_buyer",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": true,
+   "text": "would rather talk to a real person about it",
+   "review": "confirmed_issue",
+   "opener": "Saw the RAV4 listing, looks nice."
+  },
+  {
+   "kind": "wrong_dismissal",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": true,
+   "text": "Perfect, you're booked for Saturday at 11 with Dana. See you then!",
+   "review": "misread_wording"
+  },
+  {
+   "kind": "wrong_dismissal",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": true,
+   "text": "Done, your test drive is confirmed for tomorrow at 4pm.",
+   "review": "misread_wording"
+  },
+  {
+   "kind": "wrong_dismissal",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "If you can't afford it, stop wasting our time.",
+   "review": "misread_wording"
+  },
+  {
+   "kind": "wrong_dismissal",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Read the listing yourself, I'm not explaining it again.",
+   "review": "misread_wording"
+  }
+ ],
+ "heldOut": [
+  {
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "All vehicles are subject to availability, so I'll have someone verify the RAV4."
+  },
+  {
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "Let me check whether the blue Civic is still on the lot and get back to you."
+  },
+  {
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "I'm not certain the Escape is still available. Let me find out."
+  },
+  {
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "The listing may be out of date. Someone will check if that Camry is still available."
+  },
+  {
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "We usually carry plenty of SUVs, though I can't promise a specific one."
+  },
+  {
+   "family": "availability_lookalike",
+   "side": "ai",
+   "signal": "guarantees_availability",
+   "label": false,
+   "text": "We have a wide range of trucks; which features matter most to you?"
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Dear Ms. Lopez, thank you for your interest. A member of our sales staff will contact you to arrange a convenient appointment."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Nothing is scheduled yet. A team member will contact you to pick a time."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your request for a home test drive has been passed to our delivery team, who will contact you about timing."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We can probably fit you in Friday, but a rep needs to confirm first."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for the details on your schedule! I can't confirm drive times from this chat, but I've added a note so the team knows evenings are best for you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've sent your request for after 5 on Wednesday to the team. They'll check who's available and get back to you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your request for a Thursday viewing has been received and will be confirmed by a team member."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Let me know a good window and our staff will reach out to confirm the details."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hi Noor, I'll pass your 2pm idea to Kevin. He'll confirm whether he's free then."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We can try for Sunday at 1. I'll check with the team and get back to you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "If you let me know a time that works, someone will confirm it with you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your request is with our team now; they'll confirm a time by end of day."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "We have openings most weekdays. Just let me know what fits your schedule."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Let me know if mornings still work and I'll ask the team to find a time."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Hey, just checking whether you still want to come in this weekend. If so, I'll send the request."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for visiting us yesterday, I hope the drive went well!"
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Happy to set something up. Would Friday afternoon or Saturday morning suit you better?"
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your request is noted. Please wait for a call from our team before coming in, since times fill up fast."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I can't book visits myself, but I've flagged your request so a manager can confirm it."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks Omar. I passed along that you'd like to bring your wife on Saturday; the sales desk will reply with a time that suits both of you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for the reschedule request. The team will offer you a new time shortly."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "It was great meeting you on Saturday. Let us know if you'd like a second look."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've put in a request for the 11am test drive. It isn't final until our sales desk calls you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for coming in last week to see the Tacoma! Let us know if you have any other questions."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Your trade-in appraisal request is in the queue. Someone from the used car team will call to agree on a time."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've shared your request with our sales manager, who will set the final time with you."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've forwarded your note about Wednesday evening; nothing is booked until a rep confirms."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "I've noted 9am Wednesday as your preferred time. A coordinator will confirm."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Tuesday is a possibility. Once our sales lead checks the calendar, they'll text you to confirm."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Thanks for your patience, Jess. The sales desk hasn't confirmed your Friday visit yet, so it isn't set in stone."
+  },
+  {
+   "family": "booking_lookalike",
+   "side": "ai",
+   "signal": "claims_booking",
+   "label": false,
+   "text": "Happy to help line up a visit. Are you thinking this week or next?"
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "My dad is a mechanic and he'll look it over."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Just texting to say the person I talked to yesterday was great."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "The service guy said it was ready, I'll pick it up tomorrow."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I need to run it by my brother first."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Thanks Maria, that answers my question."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "How many people work at your dealership?"
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'll have my husband call if he has questions."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Someone named Alex left me a voicemail, thanks."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Got a voicemail from your office, I'll listen to it tonight."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Mike mentioned the warranty when we talked."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Thanks, Sofia already called me this morning."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Thanks Dana, I got your email."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Mike told me to text this number, so here I am."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "My brother-in-law works in finance and he'll help me compare offers."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Your salesperson Tom was great last time."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Tell Dana I said thanks for the coffee last time."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "My wife will come with me to the test drive."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Your sales guy Ben was super patient with my questions last week."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "My friend Sara recommended your dealership."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "I'll swing by to say thanks to the team when I'm in the area."
+  },
+  {
+   "family": "person_lookalike",
+   "side": "buyer",
+   "signal": "asks_for_person",
+   "label": false,
+   "text": "Thanks to whoever detailed the car, it looks brand new."
+  },
+  {
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "Got the numbers, I'll look them over tonight."
+  },
+  {
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "that payment was way too high for me"
+  },
+  {
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "How many kilometers are on it?"
+  },
+  {
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "How much does the Tucson weigh?"
+  },
+  {
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "How much towing can the Ram handle?"
+  },
+  {
+   "family": "price_ask_lookalike",
+   "side": "buyer",
+   "signal": "asks_about_price",
+   "label": false,
+   "text": "I already got the quote, thanks"
+  },
+  {
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "I'll have the sales team email the payment options."
+  },
+  {
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The 3-row Highlander fits 8 people."
+  },
+  {
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "It's a 2019 model with a 3-year powertrain warranty."
+  },
+  {
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The 2022 RAV4 comes with 18-inch wheels."
+  },
+  {
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The GLC 300 has a 2.0L turbo engine."
+  },
+  {
+   "family": "price_lookalike",
+   "side": "ai",
+   "signal": "quotes_price",
+   "label": false,
+   "text": "The towing capacity on the Ram 1500 is 11,000 lbs."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "whatever works i guess"
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your inquiry has been logged. Reference number 4471. Await further correspondence."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "This chat will now close. Reopen a new session for other topics."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "As previously stated, the information is on our website."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "That's covered in the brochure you obviously didn't read."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Fine. Come in or don't."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your request has been received and will be processed in the order it was received."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "We already told you the price. Check your email."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Status update: inquiry #55812 remains open. Estimated response time: 3 to 5 business days."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your feedback is noted. No changes will be made at this time."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Customer query acknowledged. Vehicle data transmission complete."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Kindly refrain from sending multiple messages. One response will be issued."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "idk man, just come in i guess"
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "The system indicates your eligibility is under evaluation. Await notification."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your request has been logged under category: general. A representative may contact you."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Your message has been classified as a general inquiry and placed in queue position 12."
+  },
+  {
+   "family": "tone_bad",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": true,
+   "text": "Automated reply: the requested information cannot be provided via this channel. Please consult the dealership website."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for bearing with us while we sort out the paperwork!"
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "I appreciate you letting me know you went with another dealer. Best of luck!"
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "We appreciate you taking the time to fill out the survey, it really helps."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for your understanding while our system was down this morning."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Happy Friday! Let me know if there's anything I can help with before the weekend."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Happy to resend the brochure if it didn't come through."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Understood, we'll hold off on any more messages until you reach out."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for the heads up that you'll be out of town next week."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for checking in! Nothing new on our end yet, but I'll update you as soon as there is."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Absolutely no problem if you'd rather think it over with your family."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "We appreciate your feedback, it helps us do better."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No pressure at all, just reach out whenever you're ready."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Of course! It's smart to have your mechanic look it over before deciding."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Great choice, that trim has been a customer favourite."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No worries if the timing doesn't work, we can always find another day."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Congrats on the new job! Let us know if you'd like to talk about a commuter car."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Glad I could help! Have a great rest of your day."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "I'll keep an eye out for a hybrid in your price range and let you know."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Just a friendly heads up, the parking lot is being repaved Thursday."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "I hope your family enjoys the new car for many years."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks so much for your patience while we look into this!"
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "That sounds like a great plan, let us know how it goes."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No worries about missing the call. Whenever you have a minute, just reply here."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "It's completely okay to say no, we appreciate you considering us."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "No problem at all, we can revisit this next month."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Just so you know, the service desk closes at 6 today."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thanks for sticking with us through the delays on the order."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Thank you for your patience, I really appreciate it."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "Hope the drive home went smoothly yesterday."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "That makes sense. Let me know if you'd like information on other options."
+  },
+  {
+   "family": "tone_ok",
+   "side": "ai",
+   "signal": "off_tone",
+   "label": false,
+   "text": "So sorry about the wait on the phone earlier today! I'm happy to answer anything here instead."
+  }
+ ]
+}
