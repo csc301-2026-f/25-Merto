@@ -14,6 +14,7 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
   const [all, setAll] = useState<RunAllResult | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string>();
+  const [includeLive, setIncludeLive] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function runOne(scenarioId: string) {
@@ -31,6 +32,10 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
   }
 
   function runEvery(names: string[]) {
+    // Every scenario is one live, billed call for a live agent, so ask before running them all.
+    const liveCount = names.filter((name) => agents.find((known) => known.name === name)?.live).length;
+    if (liveCount > 0 && !window.confirm(
+      `This makes ${liveCount * scenarios.length} live model calls, each billed by the provider. Continue?`)) return;
     setError(undefined);
     setBusy("all");
     startTransition(async () => {
@@ -50,6 +55,9 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
   }
 
   const selected = agents.find((known) => known.name === agent);
+  const hasLiveAgent = agents.some((known) => known.live);
+  // "Compare all agents" leaves a live agent out unless it is asked for.
+  const comparing = agents.filter((known) => includeLive || !known.live).map((known) => known.name);
 
   return (
     <div className="space-y-6">
@@ -85,15 +93,31 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
           {agents.length > 1 && (
             <button
               type="button"
-              disabled={pending}
-              onClick={() => runEvery(agents.map((known) => known.name))}
+              disabled={pending || comparing.length < 2}
+              onClick={() => runEvery(comparing)}
               className="rounded border-2 px-3 py-1.5 text-sm font-semibold disabled:opacity-50"
             >
               Compare all agents
             </button>
           )}
+          {hasLiveAgent && (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={includeLive}
+                onChange={(event) => setIncludeLive(event.target.checked)}
+                disabled={pending}
+              />
+              Include the live model in the comparison
+            </label>
+          )}
         </div>
         {selected && <p className="text-sm opacity-70">{selected.description}</p>}
+        {selected?.live && (
+          <p role="note" className="text-sm font-semibold">
+            This agent calls a language model live. Each run is billed by the provider and counts toward an hourly limit.
+          </p>
+        )}
         {error && (
           <p role="alert" className="text-sm text-red-600">
             {error}

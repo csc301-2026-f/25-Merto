@@ -105,19 +105,20 @@ Drafts now use the customer's recent messages, vehicle interest, appointments, a
 
 ### Run scenario checks (US13)
 
-1. Sign in as `karen` and open **Scenarios** in the sidebar. The page lists seven scenarios from the Merto brief, each with the store's AI mode and a **What is checked** list.
-2. Open **A visit is requested, not booked (Deal J)** and click **Run with careful**. The scorecard shows **Passed** with 7 of 7 checks: the agent tells the buyer a person will confirm the visit, and the run log shows the visit recorded as a request, never as booked.
-3. Choose `eager` in the **Agent** menu at the top and click **Run with eager** on the same scenario. The scorecard shows **Failed** with 4 of 7 checks: the agent told the buyer "You're all set for Monday at 10 am!", and the rule flags that exact message as appointment certainty.
-4. Click **Compare all agents** to run all seven scenarios for both agents. A table lines up the results: `careful` passes all seven scenarios and `eager` passes none.
+1. Sign in as `karen` and open **Scenarios** in the sidebar. The page lists eleven scenarios, each with the store's AI mode and a **What is checked** list. Seven come from the Merto brief; four are judgement scenarios where several responses are acceptable (a vague visit time, "not right now", an upset buyer, a price question and a visit request in one message).
+2. Open **A visit is requested, not booked (Deal J)** and click **Run with careful**. The scorecard shows **Passed** with 8 of 8 checks: the agent tells the buyer a person will confirm the visit, and the run log shows the visit recorded as a request, never as booked, at the time the buyer asked for.
+3. Choose `eager` in the **Agent** menu at the top and click **Run with eager** on the same scenario. The scorecard shows **Failed** with 5 of 8 checks: the agent told the buyer "You're all set for Monday at 10 am!", and the rule flags that exact message as appointment certainty.
+4. Click **Compare all agents** to run all eleven scenarios for both agents. A table lines up the results: `careful` passes all eleven scenarios and `eager` passes none.
+5. Optional, off by default: a live AI model can be compared too. In `backend/.env`, set `SCENARIO_AI_LIVE=true`, a model name, and a key (or a local model address, which needs no key), then restart the backend. A `model` agent appears; running it calls the model once per scenario, and the scorecard shows the model name, prompt version, and token use. See `backend/README.md` for the settings.
 
-Every run is reset afterwards, so nothing is saved and no customer is contacted. The two agents are rule-based stand-ins, so no AI model is called, and the scores come from fixed rules: the same scenario always gives the same result. Only the General Manager can use this page. Scenario times are set in UTC, so the run log shows the requested visit shifted into Toronto time.
+Every run is reset afterwards, so nothing is saved and no customer is contacted. By default the two agents are rule-based stand-ins, so no AI model is called, and the scores come from fixed rules: the same scenario always gives the same result. The `model` agent is the only part that calls a model, and the checks that score it are still fixed rules. Only the General Manager can use this page. Scenario times are set in UTC, so the run log shows the requested visit shifted into Toronto time.
 
 ### Current limitations
 
 - Emails, SMS messages, and calls are simulated; no real customers are contacted. Scheduling a follow-up for later is not implemented.
 - AI reply generation requires `GROQ_API_KEY` on the backend and is subject to provider quotas. Conversation evaluation is separate: it uses deterministic rules by default, optionally MPNet, and runs when a manager triggers it.
 - The app uses the team's Supabase database and fictional scenarios rather than a live Merto API.
-- Scenario checks use fixed rules and two rule-based sample agents. They judge wording and behavior only, do not measure reply speed, and do not call an AI model.
+- Scenario checks use fixed rules. They judge wording and behavior only and do not measure reply speed. The two built-in agents are rule-based; a live AI model agent is optional and off by default, so the app and its tests run without any paid key. The model is told the store's rules in its prompt, so a pass shows it follows given rules, not that it knows car sales itself.
 
 ## Local Development Instructions
 

@@ -57,6 +57,12 @@ export function ScenarioScorecard({ card }: { card: Scorecard }) {
       <div className="flex flex-wrap items-center gap-2">
         <VerdictBadge verdict={summary.verdict} />
         <span className="font-semibold">Agent: {card.agent.name}</span>
+        {card.agent.model && (
+          <span className="rounded border px-2 py-0.5 text-xs">
+            {card.agent.model.id} · {card.agent.model.source} · prompt {card.agent.model.promptVersion} ·{" "}
+            {card.agent.model.usage.promptTokens + card.agent.model.usage.completionTokens} tokens
+          </span>
+        )}
         <span className="opacity-70">
           {summary.checksPassed} of {summary.checksTotal} checks passed · {summary.flagsRaised}{" "}
           {summary.flagsRaised === 1 ? "flag" : "flags"} · {summary.actionsTaken}{" "}
