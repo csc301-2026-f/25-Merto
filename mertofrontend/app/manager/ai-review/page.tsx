@@ -10,9 +10,10 @@ import { EntryLink } from "@/components/EntryLink";
 import { demoEvaluatorId, evaluationRequest, type EvaluationEngine, type EvaluationSearchParams, type Metrics, type QueueItem, type SecondReviewItem } from "@/lib/evaluation";
 
 import { RunEvaluation } from "../run-evaluation";
-import { ReviewLearningDemo } from "@/components/ReviewLearningDemo";
+import { ReviewLearningDemo, ReviewLearningReplay } from "@/components/ReviewLearningDemo";
 import { SecondReviewQueue } from "@/components/SecondReviewQueue";
-import type { ReviewLearningStatus } from "@/lib/review-learning";
+import type { ReviewLearningReplayData, ReviewLearningStatus } from "@/lib/review-learning";
+import recordedLearningRun from "@/lib/review-learning-replay.json";
 
 
 function labelFor(key: string) {
@@ -102,8 +103,10 @@ async function AiReviewPage({ searchParams }: { searchParams: EvaluationSearchPa
   }
   if (requested && engine?.id !== requested) return <p>Could not load the selected evaluator. Refresh this page.</p>;
   const context = evaluationRequest(engine?.id);
-  // The review-learning demo exists only in the local MPNet sandbox.
+  // The review-learning demo runs live only in the local MPNet sandbox; the
+  // hosted site, which cannot refit the classifier, replays a recorded run.
   const learningDemo = engine?.scope === "local" && engine.id === "mpnet";
+  const learningReplay = engine?.scope === "hosted" && engine.id === "mpnet";
   const [metrics, queue, secondReviews, learning] = await Promise.all([
     loadJson<Metrics>("/api/ai-evaluation/metrics", context),
     loadJson<QueueItem[]>("/api/ai-flags/queue", context),
@@ -160,6 +163,8 @@ async function AiReviewPage({ searchParams }: { searchParams: EvaluationSearchPa
           </div>
         </Card>
       )}
+
+      {learningReplay && <ReviewLearningReplay replay={recordedLearningRun as unknown as ReviewLearningReplayData} />}
 
       {secondReviews && secondReviews.length > 0 && (
         <div id="second-opinions">

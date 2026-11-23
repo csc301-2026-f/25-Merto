@@ -1,4 +1,5 @@
-// Local demo only: simulated GM reviews and a classifier refit from them.
+// Simulated GM reviews and a classifier refit from them: run live in the local
+// demo, replayed from a recorded run on the hosted site.
 export type Counts = { correct: number; total: number; falsePositives?: number; missed?: number };
 
 // The model scores wording signals; the CRM shows the flag type each one raises.
@@ -60,4 +61,19 @@ export type RecheckResult = {
   dismissed: Pair;
   missed: Pair;
   heldOut: { confirmed: Pair; dismissed: Pair; missed: Pair };
+};
+
+// One recorded run of the local demo, replayed on the hosted site, where the
+// classifier cannot be refit. backend/scripts/record-learning-replay.ts writes it.
+type RecordedStage = { status: ReviewLearningStatus; recheck: RecheckResult };
+export type ReviewLearningReplayData = {
+  recordedAt: string;
+  start: { status: ReviewLearningStatus };
+  simulate: SimulationResult;
+  secondOpinionQueue: import("@/lib/evaluation").SecondReviewItem[];
+  afterSimulate: RecordedStage;
+  secondOpinions: { agreed: number; disagreed: number };
+  afterSecondOpinions: RecordedStage;
+  retrain: RetrainResult;
+  afterRetrain: RecordedStage;
 };
