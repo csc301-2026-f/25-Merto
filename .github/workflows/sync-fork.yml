@@ -14,6 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - run: gh repo sync jasonnn404/25-Merto --source csc301-2026-f/25-Merto --branch main
+      - name: Sync main for production
+        run: gh repo sync jasonnn404/25-Merto --source csc301-2026-f/25-Merto --branch main
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Sync dev for Vercel Preview
+        if: ${{ !cancelled() }}
+        run: gh repo sync jasonnn404/25-Merto --source csc301-2026-f/25-Merto --branch dev
         env:
           GH_TOKEN: ${{ github.token }}

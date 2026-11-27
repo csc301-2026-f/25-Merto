@@ -128,19 +128,43 @@ repository:
   `BACKEND_PROTECTION_BYPASS` if the backend has Deployment Protection on.
 - Model service: `MERTO_MODEL_TOKEN` and `VERCEL_SUPPORT_LARGE_FUNCTIONS=1`.
 
-### How a change reaches production
+### How changes reach Vercel
 
 Vercel's free plan cannot deploy from an organization repository, so the Vercel
 projects are on a team member's personal account and deploy from the fork
 [jasonnn404/25-Merto](https://github.com/jasonnn404/25-Merto). The
-[`sync-fork.yml`](.github/workflows/sync-fork.yml) workflow runs on the fork
-every 15 minutes, copies the latest `main` from this repository, and Vercel
-deploys each new commit. A merge to `main` is therefore live within about 15
-minutes plus the build time.
+[`sync-fork.yml`](.github/workflows/sync-fork.yml) workflow runs on the fork and
+syncs `main` to `main` and `dev` to `dev`. Vercel deploys updates to `main` as
+Production and updates to `dev` as Preview. The workflow is scheduled every
+15 minutes. GitHub can delay scheduled jobs, and Vercel adds build time. The
+fork owner can also run **Sync fork from org repo** from the fork's Actions tab.
 
 GitHub's built-in token cannot sync commits that change files in
-`.github/workflows/`. After such a change is merged, the fork owner has to click
-**Sync fork** on GitHub once.
+`.github/workflows/`. After such a change is merged, the fork owner has to sync
+the affected branch manually once. The scheduled workflow runs from the fork's
+default branch, `main`.
+
+### Development deployment
+
+Create a `dev` branch in the team repository. Before creating the matching
+branch in the fork, configure the Vercel projects for Preview:
+
+1. Provision a separate Supabase project for development. Apply the files in
+   `supabase/migrations` in filename order, followed by the fictional data in
+   `supabase/seed` in filename order.
+2. Set the backend's Preview `DATABASE_URL` to the development database. Set the
+   frontend's Preview `BACKEND_URL` to the backend's `dev` branch URL. If that
+   backend uses Deployment Protection, configure the frontend's server-side
+   Preview `BACKEND_PROTECTION_BYPASS` for the backend project.
+3. Create the fork's `dev` branch from the team repository's `dev` commit. Push
+   a follow-up commit to the team's `dev` branch and verify the fork sync and
+   both Preview deployments pick up that commit. Find the branch URLs in the
+   Vercel deployment details for the frontend and backend.
+4. Check the backend's `/health` endpoint, then sign in to the Preview frontend
+   and open a seeded deal. Use an account with access to the Preview if Vercel
+   Authentication is enabled.
+
+### Production database rollout
 
 Database migrations are not applied by any workflow. Apply new files in
 `supabase/migrations` to the hosted database by hand, following
