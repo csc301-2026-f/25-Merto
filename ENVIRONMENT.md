@@ -166,7 +166,7 @@ and every push to `main`. It has three jobs that run at the same time:
 | Job | Commands |
 | --- | --- |
 | Backend | `npm ci`, `npm run typecheck`, `npm test` in `backend/` |
-| Frontend | `npm ci`, `npm run lint`, `npm run build` in `mertofrontend/` |
+| Frontend | `npm ci`, `npm run lint`, `npm test`, `npm run build` in `mertofrontend/` |
 | Database | `npm ci`, `npm test` in `supabase/tests/` |
 
 The results appear at the bottom of the pull request and in the repository's
@@ -198,7 +198,7 @@ Run these from the repository root before you open a pull request:
 
 ```sh
 (cd backend && npm ci && npm run typecheck && npm test)
-(cd mertofrontend && npm ci && npm run lint && npm run build)
+(cd mertofrontend && npm ci && npm run lint && npm test && npm run build)
 (cd supabase/tests && npm ci && npm test)
 ```
 
