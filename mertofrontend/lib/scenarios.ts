@@ -58,6 +58,8 @@ export type AgentRun = {
     flagsRaised: number;
   };
   scorecards: Scorecard[];
+  // Scenarios with no scorecard: the live model failed or was skipped after an earlier error.
+  errors: { scenario: string; brief: string; status: number | null; message: string }[];
 };
 
 // POST /api/scenario-runs. `comparison` is null unless two or more agents ran.
@@ -67,7 +69,7 @@ export type RunAllResult = {
     | {
         scenario: string;
         brief: string;
-        results: { agent: string; verdict: "pass" | "fail"; checksPassed: number; checksTotal: number }[];
+        results: { agent: string; verdict: "pass" | "fail" | "error"; checksPassed: number; checksTotal: number }[];
       }[]
     | null;
 };

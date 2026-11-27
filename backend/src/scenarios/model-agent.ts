@@ -102,20 +102,21 @@ export async function runModelAgent(client: ModelClient, context: AgentContext):
 // At most `max` live runs in any rolling hour, so a stuck button cannot spend the budget.
 export function hourlyLimiter(max: number, now: () => number = Date.now) {
   const stamps: number[] = [];
-  return () => {
+  // Reserves `count` runs at once, or none: a batch is refused before it makes its first call.
+  return (count = 1) => {
     const cutoff = now() - 3_600_000;
     while (stamps.length > 0 && stamps[0] <= cutoff) stamps.shift();
-    if (stamps.length >= max) {
-      throw new HttpError(429, `Live model runs are limited to ${max} per hour. Please try again later.`);
+    if (stamps.length + count > max) {
+      throw new HttpError(429, `Live model runs are limited to ${max} per hour${count > 1 ? `, and this needs ${count}` : ''}. Please try again later.`);
     }
-    stamps.push(now());
+    for (let i = 0; i < count; i += 1) stamps.push(now());
   };
 }
 
 export interface ModelAgentRuntime {
   client: ModelClient;
   maxPerHour: number;
-  take(): void; // counts one live call, or throws 429
+  take(count?: number): void; // counts live calls (one by default), or throws 429
 }
 
 export function createModelAgentRuntime(client: ModelClient, maxPerHour: number, now?: () => number): ModelAgentRuntime {
@@ -138,7 +139,8 @@ export function isLocalUrl(url: string | undefined): boolean {
 export function modelAgentFromEnv(env: NodeJS.ProcessEnv = process.env): ModelAgentRuntime | undefined {
   if (env.SCENARIO_AI_LIVE !== 'true') return undefined;
   const baseUrl = env.MODEL_AGENT_BASE_URL?.trim() || undefined;
-  const apiKey = (env.MODEL_AGENT_API_KEY ?? env.OPENAI_API_KEY ?? '').trim();
+  // `||`, not `??`: .env.example leaves MODEL_AGENT_API_KEY empty, and an empty string must fall back.
+  const apiKey = env.MODEL_AGENT_API_KEY?.trim() || env.OPENAI_API_KEY?.trim() || '';
   const model = (env.MODEL_AGENT_MODEL ?? '').trim();
   if (!model || (!apiKey && !isLocalUrl(baseUrl))) return undefined;
   const reasoning = env.MODEL_AGENT_REASONING === 'true' ? true : env.MODEL_AGENT_REASONING === 'false' ? false : undefined;

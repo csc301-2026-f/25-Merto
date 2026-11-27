@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { parseVisitTime } from '../src/scenarios/agents.ts';
+import { carefulAgent, parseVisitTime } from '../src/scenarios/agents.ts';
+import { buildContext } from '../src/scenarios/runner.ts';
 import { SCENARIOS } from '../src/scenarios/catalog.ts';
 import { CHECKS } from '../src/scenarios/checks.ts';
 import { STAFF } from '../src/seed-ids.ts';
@@ -63,6 +64,24 @@ describe('visit time parsing', () => {
   });
 });
 
+describe('careful agent and a buyer who asks to be left alone', () => {
+  const dealJ = SCENARIOS.find((scenario) => scenario.id === 'deal-j')!;
+  const act = (body: string) => {
+    const context = buildContext(dealJ);
+    return carefulAgent.act({ ...context, event: { ...context.event, body } });
+  };
+
+  it('sends nothing when the buyer asks to stop, even if the buyer is not marked as opted out', () => {
+    for (const body of ['please stop texting me', "Don't contact me again", 'unsubscribe', 'leave me alone']) {
+      assert.deepEqual(act(body).map((call) => call.tool), ['do_nothing'], body);
+    }
+  });
+
+  it('still asks for a day and time when it does not recognise a message', () => {
+    assert.deepEqual(act('ok sounds good').map((call) => call.tool), ['send_reply']);
+  });
+});
+
 describe('person will confirm check', () => {
   const verdict = (body: string) => CHECKS.person_will_confirm.run({
     scenario: SCENARIOS[0], steps: [], flags: [],
@@ -89,6 +108,19 @@ describe('person will confirm check', () => {
       'Our team has confirmed your visit.',
       'We have noted Monday at 10 am.',
       'I will confirm your visit.',
+    ]) assert.equal(verdict(body), false, body);
+  });
+
+  it('rejects wording where the person is not the one who will confirm, or will not', () => {
+    for (const body of [
+      'Our team, I will confirm your visit.',
+      "Our team can't confirm your visit.",
+      'Our team can’t confirm your visit.',
+      'Our team cannot confirm your visit.',
+      'Our team will not confirm your visit.',
+      'Our team will never confirm visits by text.',
+      'Our team: we will confirm your visit.',
+      'Your visit is confirmed by a person on our team.',
     ]) assert.equal(verdict(body), false, body);
   });
 });

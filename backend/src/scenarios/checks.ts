@@ -55,14 +55,20 @@ const created = (state: RunState, tool: ToolCall['tool']) =>
 
 // Ways of telling a buyer that a human will confirm the visit. It must name a person and look
 // forward ("will confirm"), so "your visit is confirmed" or "our team has confirmed it" do not count.
+// The person must be the one confirming: a comma or "I/we/you/my" between the person and the verb
+// ("our team, I will confirm") breaks the match, and so does a negation ("can't", "not", "never").
 const HUMAN = String.raw`(?:person|someone|somebody|team|staff|rep|representative|salesperson|salesman|manager|colleague|advisor)`;
+const NEGATED = String.raw`\b(?:not|never|no)\b|['’]t\b`;
+const MODAL = String.raw`(?:\b(?:will|shall|can|should|to)\b|['’]ll|going to)`;
+// Text that stays in one clause and is not negated.
+const plain = (max: number, also = '') => String.raw`(?:(?!${NEGATED}${also})[^.!?,;:\n]){0,${max}}`;
 const PERSON_WILL_CONFIRM = new RegExp([
   // "a person will confirm", "a team member will confirm", "someone from our team can confirm"
-  String.raw`\b${HUMAN}\b[^.!?\n]{0,40}(?:\b(?:will|shall|can|should|to)\b|'ll|going to)[^.!?\n]{0,60}\bconfirm`,
+  String.raw`\b${HUMAN}\b${plain(40, String.raw`|\b(?:i|we|you|my)\b`)}${MODAL}${plain(60)}\bconfirm`,
   // "your visit will be confirmed by a person on our team"
-  String.raw`\bconfirmed by (?:a|an|one of|someone|our|the)\b`,
+  String.raw`${MODAL}\s+be\s+confirmed\s+by(?:\s+[a-z'’]+){0,4}?\s+${HUMAN}\b`,
   // "we'll have a team member confirm your visit"
-  String.raw`\b(?:have|get|ask)\b[^.!?\n]{0,25}\b${HUMAN}\b[^.!?\n]{0,15}\bconfirm`,
+  String.raw`\b(?:have|get|ask)\b${plain(25)}\b${HUMAN}\b${plain(15)}\bconfirm`,
 ].join('|'), 'i');
 
 // "No X flag" checks share one shape.

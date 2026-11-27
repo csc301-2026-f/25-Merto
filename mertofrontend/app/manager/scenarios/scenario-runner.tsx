@@ -18,6 +18,9 @@ export function ScenarioRunner({ scenarios, agents }: { scenarios: ScenarioSumma
   const [pending, startTransition] = useTransition();
 
   function runOne(scenarioId: string) {
+    // A live agent is one billed model call, so ask first, as "Run all" does.
+    if (agents.find((known) => known.name === agent)?.live && !window.confirm(
+      "This makes 1 live model call, billed by the provider. Continue?")) return;
     setError(undefined);
     setBusy(scenarioId);
     startTransition(async () => {
@@ -169,11 +172,16 @@ function Totals({ run }: { run: RunAllResult }) {
     <section className="space-y-3 rounded border-2 p-4 text-sm">
       <h3 className="font-semibold">Results for all scenarios</h3>
       <ul className="space-y-1">
-        {run.results.map(({ agent, totals }) => (
+        {run.results.map(({ agent, totals, errors }) => (
           <li key={agent}>
             <span className="font-semibold">{agent}</span>: {totals.scenariosPassed} of {totals.scenariosTotal}{" "}
             scenarios passed · {totals.checksPassed} of {totals.checksTotal} checks · {totals.flagsRaised}{" "}
             {totals.flagsRaised === 1 ? "flag" : "flags"}
+            {errors.length > 0 && (
+              <p role="alert" className="text-red-600">
+                {errors.length} {errors.length === 1 ? "scenario" : "scenarios"} did not run: {errors[0].message}
+              </p>
+            )}
           </li>
         ))}
       </ul>

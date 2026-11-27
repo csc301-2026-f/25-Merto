@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { HttpError } from '../src/errors.ts';
 import { SCENARIOS } from '../src/scenarios/catalog.ts';
 import { CHECKS } from '../src/scenarios/checks.ts';
 import {
@@ -245,6 +246,14 @@ describe('live call limits and configuration', () => {
     assert.doesNotThrow(take);
   });
 
+  it('reserves a whole batch or none of it', () => {
+    const take = hourlyLimiter(5, () => 1_000_000);
+    take(3);
+    assert.throws(() => take(3), (error: any) => error.status === 429 && /needs 3/.test(error.message));
+    assert.doesNotThrow(() => take(2), 'the refused batch used nothing');
+    assert.throws(() => take(), (error: any) => error.status === 429);
+  });
+
   it('stays off unless it is switched on and has a key and a model', () => {
     assert.equal(modelAgentFromEnv({}), undefined);
     assert.equal(modelAgentFromEnv({ OPENAI_API_KEY: 'k', MODEL_AGENT_MODEL: 'm' }), undefined, 'not switched on');
@@ -269,6 +278,11 @@ describe('live call limits and configuration', () => {
     assert.equal(on?.client.model, 'm');
     assert.equal(on?.maxPerHour, 30);
     assert.equal(modelAgentFromEnv({ SCENARIO_AI_LIVE: 'true', MODEL_AGENT_API_KEY: 'k', MODEL_AGENT_MODEL: 'm', MODEL_AGENT_MAX_PER_HOUR: '5' })?.maxPerHour, 5);
+    // .env.example ships MODEL_AGENT_API_KEY= (empty), which must not hide OPENAI_API_KEY.
+    for (const empty of ['', '   ']) {
+      assert.ok(modelAgentFromEnv({ SCENARIO_AI_LIVE: 'true', MODEL_AGENT_API_KEY: empty, OPENAI_API_KEY: 'k', MODEL_AGENT_MODEL: 'm' }), JSON.stringify(empty));
+    }
+    assert.equal(modelAgentFromEnv({ SCENARIO_AI_LIVE: 'true', MODEL_AGENT_API_KEY: '', OPENAI_API_KEY: '', MODEL_AGENT_MODEL: 'm' }), undefined);
     assert.equal(modelAgentFromEnv({ SCENARIO_AI_LIVE: 'true', OPENAI_API_KEY: 'k', MODEL_AGENT_MODEL: 'm', MODEL_AGENT_MAX_PER_HOUR: 'many' })?.maxPerHour, 30);
   });
 });
@@ -385,6 +399,60 @@ describe('model agent with a low hourly limit', () => {
     assert.equal(third.status, 429);
     assert.match(third.body.error, /limited to 2 per hour/);
     assert.equal(fake.seen.length, 2);
+  });
+});
+
+describe('"run all" with the model agent when the limit is too low', () => {
+  const fake = fakeClient([goodVisitReply]);
+  const api = useApi({ modelAgent: createModelAgentRuntime(fake.client, SCENARIOS.length - 1) });
+
+  it('is refused before any call is made, and the limit is not used up', async () => {
+    const { status, body } = await api.call(STAFF.karen, 'POST', '/api/scenario-runs', { agents: ['careful', 'model'] });
+    assert.equal(status, 429);
+    assert.match(body.error, /limited to 10 per hour, and this needs 11/);
+    assert.equal(fake.seen.length, 0);
+    assert.equal((await api.call(STAFF.karen, 'POST', '/api/scenarios/deal-j/runs', { agent: 'model' })).status, 200);
+  });
+});
+
+describe('"run all" with the model agent when a scenario fails partway', () => {
+  const runAll = (api: ReturnType<typeof useApi>) =>
+    api.call(STAFF.karen, 'POST', '/api/scenario-runs', { agents: ['careful', 'model'] });
+
+  describe('one unusable answer', () => {
+    // Call 1 is good; calls 2 and 3 (the answer and its one retry) are not JSON; the rest are good.
+    const fake = fakeClient([goodVisitReply, 'not json', 'not json', goodVisitReply]);
+    const api = useApi({ modelAgent: createModelAgentRuntime(fake.client, 1000) });
+
+    it('fails only that scenario and keeps the others', async () => {
+      const { status, body } = await runAll(api);
+      assert.equal(status, 200);
+      const model = body.results[1];
+      assert.equal(model.scorecards.length, SCENARIOS.length - 1);
+      assert.deepEqual(model.errors.map((item: { scenario: string; status: number }) => [item.scenario, item.status]),
+        [[SCENARIOS[1].id, 502]]);
+      assert.equal(model.totals.scenariosTotal, SCENARIOS.length);
+      assert.equal(fake.seen.length, SCENARIOS.length + 1);
+      const row = body.comparison[1].results[1];
+      assert.deepEqual([row.verdict, row.checksPassed], ['error', 0]);
+      assert.equal(row.checksTotal, SCENARIOS[1].checks.length);
+    });
+  });
+
+  describe('a provider error', () => {
+    const fake = fakeClient([goodVisitReply, new HttpError(429, 'The model reached its usage limit. Please try again later.')]);
+    const api = useApi({ modelAgent: createModelAgentRuntime(fake.client, 1000) });
+
+    it('keeps what finished and stops calling the model for the rest', async () => {
+      const { status, body } = await runAll(api);
+      assert.equal(status, 200);
+      const model = body.results[1];
+      assert.equal(model.scorecards.length, 1);
+      assert.equal(model.errors.length, SCENARIOS.length - 1);
+      assert.equal(model.errors[0].status, 429);
+      assert.match(model.errors[1].message, /^Not run: .*usage limit/);
+      assert.equal(fake.seen.length, 2, 'no further calls after the provider refused');
+    });
   });
 });
 

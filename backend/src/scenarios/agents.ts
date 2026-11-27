@@ -94,7 +94,9 @@ const ASKS_PRICE = /\b(price|pricing|cost|payments?|monthly|out[- ]the[- ]door|q
 const ASKS_AVAILABILITY = /\b(still (there|here|available)|available|in stock|on the lot)\b/i;
 const MISSED_CALL = /\bmissed call\b/i;
 const NOT_NOW = /\b(not right now|hold off|maybe later|in the new year)\b/i;
-const UPSET = /\b(ridiculous|unacceptable|fed up|nobody (called|replied|got back)|no one (called|replied|got back))\b/i;
+// A buyer asking to be left alone, in any scenario (not only the ones flagged as opted out).
+const STOP_CONTACT = /\b(stop (texting|messaging|calling|emailing|contacting)|(do not|don['’]t) (contact|text|call|email|message)|unsubscribe|leave me alone|remove me|opt(ing)? out)\b/i;
+const UPSET =/\b(ridiculous|unacceptable|fed up|nobody (called|replied|got back)|no one (called|replied|got back))\b/i;
 
 const replyChannel = (context: AgentContext): 'email' | 'sms' => context.buyer.preferredChannel;
 const firstName = (context: AgentContext) => context.buyer.name.split(' ')[0];
@@ -116,6 +118,9 @@ export const carefulAgent: Agent = {
     }
     if (event.actorType === 'system') {
       return [{ tool: 'do_nothing', reason: 'A person decides this follow-up.' }];
+    }
+    if (STOP_CONTACT.test(event.body)) {
+      return [{ tool: 'do_nothing', reason: `${buyer.name} asked us to stop contacting them, so nothing is sent.` }];
     }
     const channel = replyChannel(context);
     if (MISSED_CALL.test(event.body)) {
