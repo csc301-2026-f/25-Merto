@@ -48,7 +48,7 @@ export function DealTasks({ dealId, tasks, canAdd }: { dealId: string; tasks: Ta
               disabled={pending} className="rounded border-2 px-2 py-1" />
           </div>
           <button type="submit" disabled={pending || !title.trim()}
-            className="rounded border-2 px-3 py-1 text-sm font-semibold disabled:opacity-50">
+            className="inline-flex items-center rounded-lg px-4 py-2 font-semibold text-zinc-950 bg-[#d5bd91] hover:bg-[#e3cda6] disabled:opacity-50">
             {pending ? "Adding…" : "Add task"}
           </button>
           {error && <p role="alert" className="w-full text-xs text-red-600">{error}</p>}

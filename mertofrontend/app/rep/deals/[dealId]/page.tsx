@@ -38,9 +38,16 @@ async function RepRecord({ params }: { params: Params }) {
 export default function Page({ params }: { params: Params }) {
   return (
     <div className="space-y-4">
-      <Link href="/rep" className="underline">
-        ← Home
-      </Link>
+      <div className="flex ">
+
+        <Link
+          href="/rep/my-book"
+          className="inline-flex items-center rounded-lg px-4 py-2 font-semibold text-zinc-950 bg-[#d5bd91] hover:bg-[#e3cda6]"
+        >
+          ← Back to My Book
+        </Link>
+
+      </div>
       <Suspense fallback={<p>Loading…</p>}>
         <RepRecord params={params} />
       </Suspense>

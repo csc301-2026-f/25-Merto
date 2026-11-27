@@ -128,37 +128,6 @@ async function RepDashboard() {
           </ul>
         )}
       </Card>
-
-      <Card title="My customers" count={deals?.length}>
-        {deals === null ? (
-          <p>Couldn&apos;t load your customers.</p>
-        ) : deals.length === 0 ? (
-          <p className="font-semibold">None right now</p>
-        ) : (
-          <ul className="space-y-3">
-            {deals.map((deal) => (
-              <li key={deal.dealId}>
-                <EntryLink
-                  href={`/rep/deals/${deal.dealId}`}
-                  title={
-                    <>
-                      {deal.buyer}{" "}
-                      <span className="font-normal opacity-70">
-                        ({deal.vehicleInterest})
-                      </span>
-                    </>
-                  }
-                  aside=""
-                >
-                  <p className="opacity-70">
-                    {label(deal.stage)} · from {label(deal.source)}
-                  </p>
-                </EntryLink>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
     </div>
   );
 }
