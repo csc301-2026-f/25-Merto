@@ -1,17 +1,19 @@
 import express from 'express';
 import { currentStaff } from '../auth.ts';
 import type { Database } from '../db.ts';
+import type { ModelAgentRuntime } from './model-agent.ts';
 import * as scenarios from './service.ts';
 
 const asObject = (body: unknown): Record<string, unknown> =>
   typeof body === 'object' && body !== null && !Array.isArray(body) ? body as Record<string, unknown> : {};
 
 // REST endpoints for US13. app.ts has already identified the caller. Runs are rolled back.
-export function scenarioRoutes(db: Database) {
+// `modelAgent` is set only when live model calls are configured (see model-agent.ts).
+export function scenarioRoutes(db: Database, modelAgent?: ModelAgentRuntime) {
   const router = express.Router();
 
   router.get('/scenarios', (_req, res) => {
-    res.json(scenarios.listScenarios(currentStaff(res)));
+    res.json(scenarios.listScenarios(currentStaff(res), modelAgent));
   });
 
   router.get('/scenarios/:scenarioId', (req, res) => {
@@ -19,11 +21,11 @@ export function scenarioRoutes(db: Database) {
   });
 
   router.post('/scenarios/:scenarioId/runs', async (req, res) => {
-    res.json(await scenarios.runOne(db, currentStaff(res), req.params.scenarioId, asObject(req.body)));
+    res.json(await scenarios.runOne(db, currentStaff(res), req.params.scenarioId, asObject(req.body), modelAgent));
   });
 
   router.post('/scenario-runs', async (req, res) => {
-    res.json(await scenarios.runAll(db, currentStaff(res), asObject(req.body)));
+    res.json(await scenarios.runAll(db, currentStaff(res), asObject(req.body), modelAgent));
   });
 
   return router;

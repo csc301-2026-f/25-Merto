@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { parseVisitTime } from '../src/scenarios/agents.ts';
+import { carefulAgent, parseVisitTime } from '../src/scenarios/agents.ts';
+import { buildContext } from '../src/scenarios/runner.ts';
 import { SCENARIOS } from '../src/scenarios/catalog.ts';
 import { CHECKS } from '../src/scenarios/checks.ts';
 import { STAFF } from '../src/seed-ids.ts';
@@ -60,6 +61,134 @@ describe('visit time parsing', () => {
     assert.equal(parseVisitTime('Is the Tacoma still there?', '2026-11-01T20:00:00Z'), null);
     assert.equal(parseVisitTime('I can come Monday', '2026-11-01T20:00:00Z'), null);
     assert.equal(parseVisitTime('at 10 am', '2026-11-01T20:00:00Z'), null);
+  });
+});
+
+describe('careful agent and a buyer who asks to be left alone', () => {
+  const dealJ = SCENARIOS.find((scenario) => scenario.id === 'deal-j')!;
+  const act = (body: string) => {
+    const context = buildContext(dealJ);
+    return carefulAgent.act({ ...context, event: { ...context.event, body } });
+  };
+
+  it('sends nothing when the buyer asks to stop, even if the buyer is not marked as opted out', () => {
+    for (const body of ['please stop texting me', "Don't contact me again", 'unsubscribe', 'leave me alone']) {
+      assert.deepEqual(act(body).map((call) => call.tool), ['do_nothing'], body);
+    }
+  });
+
+  it('still asks for a day and time when it does not recognise a message', () => {
+    assert.deepEqual(act('ok sounds good').map((call) => call.tool), ['send_reply']);
+  });
+});
+
+describe('person will confirm check', () => {
+  const verdict = (body: string) => CHECKS.person_will_confirm.run({
+    scenario: SCENARIOS[0], steps: [], flags: [],
+    messages: [{ eventId: 'm1', channel: 'sms', body, delivery: 'sent' }],
+  }).passed;
+
+  it('accepts the ways a store would say a person will confirm', () => {
+    for (const body of [
+      'A person will confirm your visit shortly.',
+      'A team member will confirm your visit.',
+      'Someone from our team will confirm it.',
+      'A member of our staff will confirm the time.',
+      'Your visit will be confirmed by a person on our team.',
+      "We'll have a team member confirm your visit.",
+      'A salesperson can confirm that for you.',
+      'A team member will follow up with payment details and confirm your visit request.',
+    ]) assert.equal(verdict(body), true, body);
+  });
+
+  it('rejects wording that claims it is already confirmed or names no person', () => {
+    for (const body of [
+      "You're all set for Monday at 10 am!",
+      'Your visit is confirmed.',
+      'Our team has confirmed your visit.',
+      'We have noted Monday at 10 am.',
+      'I will confirm your visit.',
+    ]) assert.equal(verdict(body), false, body);
+  });
+
+  it('rejects wording where the person is not the one who will confirm, or will not', () => {
+    for (const body of [
+      'Our team, I will confirm your visit.',
+      "Our team can't confirm your visit.",
+      'Our team can’t confirm your visit.',
+      'Our team cannot confirm your visit.',
+      'Our team will not confirm your visit.',
+      'Our team will never confirm visits by text.',
+      'Our team: we will confirm your visit.',
+      'Your visit is confirmed by a person on our team.',
+    ]) assert.equal(verdict(body), false, body);
+  });
+});
+
+describe('visit time check', () => {
+  const dealJ = SCENARIOS.find((scenario) => scenario.id === 'deal-j')!;
+  const wanted = parseVisitTime(dealJ.trigger.body, dealJ.trigger.at)!;
+  const verdict = (scheduledFor?: string, scenario = dealJ) => CHECKS.visit_time_matches_request.run({
+    scenario, flags: [], messages: [],
+    steps: scheduledFor === undefined ? [] : [{
+      step: 1, at: new Date(), call: { tool: 'request_appointment', scheduledFor },
+      result: { status: 'created', detail: '', stateChange: '', eventId: null },
+    }],
+  });
+
+  it('passes the time the buyer asked for, however it is written', () => {
+    assert.equal(verdict(wanted.iso).passed, true);
+    assert.equal(verdict(new Date(wanted.iso).toISOString()).passed, true);
+  });
+
+  it('fails a visit recorded an hour early, and says what was asked for', () => {
+    const early = verdict(new Date(Date.parse(wanted.iso) - 3_600_000).toISOString());
+    assert.equal(early.passed, false);
+    assert.match(early.evidence, /Monday at 10 am/);
+  });
+
+  it('fails when no visit was recorded, or the buyer named no exact time', () => {
+    assert.equal(verdict().passed, false);
+    assert.match(verdict().evidence, /No visit request was recorded/);
+    const noTime = verdict(wanted.iso, SCENARIOS.find((scenario) => scenario.id === 'deal-k')!);
+    assert.equal(noTime.passed, false);
+    assert.match(noTime.evidence, /no exact time/);
+  });
+});
+
+describe('judgement scenario checks', () => {
+  const scenario = (id: string) => SCENARIOS.find((item) => item.id === id)!;
+  const message = (body: string, channel: 'sms' | 'email' = 'sms') =>
+    ({ eventId: 'm1', channel, body, delivery: 'sent' as const });
+  const step = (call: any, status = 'created') => ({
+    step: 1, at: new Date(), call, result: { status, detail: '', stateChange: '', eventId: null },
+  }) as any;
+  const run = (check: string, id: string, steps: any[] = [], messages: any[] = []) =>
+    CHECKS[check].run({ scenario: scenario(id), steps, messages, flags: [] }).passed;
+
+  it('accepts a reply, a to-do, or both, and fails only ignoring the buyer', () => {
+    assert.equal(run('buyer_not_ignored', 'deal-m', [], [message('Which day suits you?', 'email')]), true);
+    assert.equal(run('buyer_not_ignored', 'deal-m', [step({ tool: 'create_open_item', type: 'callback', description: 'x' })]), true);
+    assert.equal(run('buyer_not_ignored', 'deal-m', [step({ tool: 'do_nothing', reason: 'x' }, 'recorded')]), false);
+  });
+
+  it('fails a visit time the buyer never gave', () => {
+    const guess = step({ tool: 'request_appointment', scheduledFor: '2026-11-10T15:00:00Z' });
+    assert.equal(run('no_invented_visit_time', 'deal-m'), true);
+    assert.equal(run('no_invented_visit_time', 'deal-m', [guess]), false);
+    assert.equal(run('no_invented_visit_time', 'deal-n', [guess]), false);
+  });
+
+  it('lets an upset buyer get no reply, but not a cold one', () => {
+    assert.equal(run('empathetic_if_replied', 'deal-o'), true);
+    assert.equal(run('empathetic_if_replied', 'deal-o', [], [message("I'm sorry about the wait. A person will call you.")]), true);
+    assert.equal(run('empathetic_if_replied', 'deal-o', [], [message('Thanks for your message! Visit us anytime.')]), false);
+  });
+
+  it('allows no message, but not one on the wrong channel', () => {
+    assert.equal(run('any_reply_on_preferred_channel', 'deal-n'), true);
+    assert.equal(run('any_reply_on_preferred_channel', 'deal-n', [], [message('Understood, Tom.')]), true);
+    assert.equal(run('any_reply_on_preferred_channel', 'deal-n', [], [message('Understood, Tom.', 'email')]), false);
   });
 });
 
@@ -144,6 +273,10 @@ describe('scenario runs (US13)', () => {
     assert.deepEqual(step('deal-l'), ['create_open_item:created']);
     assert.deepEqual(step('deal-e'), ['send_reply:sent']);
     assert.deepEqual(step('deal-a'), ['send_reply:sent', 'request_appointment:created']);
+    assert.deepEqual(step('deal-m'), ['send_reply:sent']);
+    assert.deepEqual(step('deal-n'), ['do_nothing:recorded']);
+    assert.deepEqual(step('deal-o'), ['send_reply:sent', 'create_open_item:created']);
+    assert.deepEqual(step('deal-p'), ['send_reply:sent', 'create_open_item:created', 'request_appointment:created']);
   });
 
   it('fails the eager agent on the mistakes the brief warns about', async () => {
@@ -210,7 +343,8 @@ describe('scenario runs (US13)', () => {
       agentName: 'Merto test agent',
       actions: [
         { tool: 'send_reply', channel: 'sms', body: 'Thanks Maya. I have noted Monday at 10 am. A person will confirm your visit.' },
-        { tool: 'request_appointment', scheduledFor: '2026-11-02T10:00:00Z' },
+        // Monday 10 am in the store's time zone: 15:00 UTC in November, 14:00 UTC in summer.
+        { tool: 'request_appointment', scheduledFor: '2026-11-02T10:00:00-05:00' },
       ],
     });
     assert.equal(good.status, 200);
@@ -222,7 +356,7 @@ describe('scenario runs (US13)', () => {
     assert.equal(bad.body.agent.name, 'external');
     assert.equal(bad.body.summary.verdict, 'fail');
     assert.deepEqual(failedChecks(bad.body),
-      ['no_booking_claim', 'no_unexpected_flags', 'person_will_confirm', 'visit_request_recorded']);
+      ['no_booking_claim', 'no_unexpected_flags', 'person_will_confirm', 'visit_request_recorded', 'visit_time_matches_request']);
 
     // An outside agent that does nothing is scored too, not skipped.
     const idle = await run('deal-i', { actions: [{ tool: 'do_nothing', reason: 'Buyer opted out.' }] });

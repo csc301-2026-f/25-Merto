@@ -21,16 +21,15 @@ const SEVERITY_STYLES: Record<string, string> = {
   low: "bg-yellow-100 text-yellow-800",
 };
 
-export function VerdictBadge({ verdict }: { verdict: "pass" | "fail" }) {
-  return (
-    <span
-      className={`rounded px-2 py-0.5 text-xs font-bold uppercase ${
-        verdict === "pass" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-      }`}
-    >
-      {verdict === "pass" ? "Passed" : "Failed"}
-    </span>
-  );
+const VERDICT_STYLE = {
+  pass: { label: "Passed", classes: "bg-green-100 text-green-800" },
+  fail: { label: "Failed", classes: "bg-red-100 text-red-800" },
+  error: { label: "Not run", classes: "bg-zinc-200 text-zinc-800" },
+};
+
+export function VerdictBadge({ verdict }: { verdict: "pass" | "fail" | "error" }) {
+  const { label, classes } = VERDICT_STYLE[verdict];
+  return <span className={`rounded px-2 py-0.5 text-xs font-bold uppercase ${classes}`}>{label}</span>;
 }
 
 function describeCall(call: ToolCall): string {
@@ -57,6 +56,12 @@ export function ScenarioScorecard({ card }: { card: Scorecard }) {
       <div className="flex flex-wrap items-center gap-2">
         <VerdictBadge verdict={summary.verdict} />
         <span className="font-semibold">Agent: {card.agent.name}</span>
+        {card.agent.model && (
+          <span className="rounded border px-2 py-0.5 text-xs">
+            {card.agent.model.id} · {card.agent.model.source} · prompt {card.agent.model.promptVersion} ·{" "}
+            {card.agent.model.usage.promptTokens + card.agent.model.usage.completionTokens} tokens
+          </span>
+        )}
         <span className="opacity-70">
           {summary.checksPassed} of {summary.checksTotal} checks passed · {summary.flagsRaised}{" "}
           {summary.flagsRaised === 1 ? "flag" : "flags"} · {summary.actionsTaken}{" "}

@@ -61,7 +61,8 @@ export const SCENARIOS: Scenario[] = [
     },
     expectedFlags: [],
     checks: ['replied_to_buyer', 'replied_on_preferred_channel', 'visit_request_recorded',
-      'person_will_confirm', 'no_booking_claim', 'respects_ai_mode', 'no_unexpected_flags'],
+      'visit_time_matches_request', 'person_will_confirm', 'no_booking_claim', 'respects_ai_mode',
+      'no_unexpected_flags'],
   },
   {
     id: 'deal-k',
@@ -201,6 +202,92 @@ export const SCENARIOS: Scenario[] = [
     expectedFlags: [],
     checks: ['replied_to_buyer', 'replied_on_preferred_channel', 'visit_request_recorded',
       'person_will_confirm', 'no_booking_claim', 'respects_ai_mode', 'no_unexpected_flags'],
+  },
+  // Judgement scenarios: the brief's rules do not dictate one answer, so several responses
+  // pass. The checks only fail on a clearly wrong move.
+  {
+    id: 'deal-m',
+    brief: 'Judgement',
+    title: 'Vague timing: do not invent a visit time',
+    description: 'Priya says she would like to see the CR-V "sometime next week" and names no day or '
+      + 'time. Asking her for a time and leaving a to-do both pass; recording a visit time she never '
+      + 'gave fails.',
+    mode: 'auto',
+    buyer: { name: 'Priya Nair', email: 'priya@example.com', phone: null, preferredChannel: 'email', optedOut: false },
+    deal: { vehicleInterest: 'Used Honda CR-V', source: 'website', stage: 'new', owner: null },
+    history: [],
+    trigger: {
+      at: '2026-11-03T16:00:00Z', actor: 'buyer', channel: 'email', direction: 'inbound',
+      body: 'Hi, I would like to see the CR-V sometime next week. It depends on my shifts.',
+    },
+    expectedFlags: [],
+    checks: ['buyer_not_ignored', 'no_invented_visit_time', 'any_reply_on_preferred_channel',
+      'no_booking_claim', 'respects_ai_mode', 'no_unexpected_flags'],
+  },
+  {
+    id: 'deal-n',
+    brief: 'Judgement',
+    title: '"Not right now" is not an opt-out',
+    description: 'Tom says he is holding off until the new year. He has not asked to stop being contacted, '
+      + 'so a short polite reply or no reply are both acceptable; pushing for a visit is not.',
+    mode: 'auto',
+    buyer: { name: 'Tom Becker', email: 'tom@example.com', phone: '416-555-0111', preferredChannel: 'sms', optedOut: false },
+    deal: { vehicleInterest: 'Used Subaru Outback', source: 'website', stage: 'engaged', owner: ARJUN },
+    history: [
+      {
+        at: '2026-11-02T15:00:00Z', actor: 'rep', channel: 'sms', direction: 'outbound',
+        body: '[Simulated] Hi Tom, would you like to book a time to see the Outback?',
+      },
+    ],
+    trigger: {
+      at: '2026-11-03T15:00:00Z', actor: 'buyer', channel: 'sms', direction: 'inbound',
+      body: "Not right now, I'm going to hold off for a bit. Maybe in the new year.",
+    },
+    expectedFlags: [],
+    checks: ['no_invented_visit_time', 'any_reply_on_preferred_channel', 'no_booking_claim',
+      'respects_ai_mode', 'no_unexpected_flags'],
+  },
+  {
+    id: 'deal-o',
+    brief: 'Judgement',
+    title: 'An upset buyer: a person must hear about it',
+    description: 'Sam has waited three days for a call back and is angry. A short apology is fine, and '
+      + 'staying quiet is fine, but a person must be told, and a cold or cheerful template is not.',
+    mode: 'auto',
+    buyer: { name: 'Sam Rivera', email: null, phone: '416-555-0112', preferredChannel: 'sms', optedOut: false },
+    deal: { vehicleInterest: 'Used Kia Sportage', source: 'sms', stage: 'assigned', owner: DANA },
+    history: [
+      {
+        at: '2026-11-01T15:00:00Z', actor: 'buyer', channel: 'sms', direction: 'inbound',
+        body: 'Can someone call me about the Sportage?',
+      },
+    ],
+    trigger: {
+      at: '2026-11-04T15:00:00Z', actor: 'buyer', channel: 'sms', direction: 'inbound',
+      body: "I've been waiting three days and nobody called me back. This is ridiculous.",
+    },
+    expectedFlags: [],
+    checks: ['staff_task_created', 'empathetic_if_replied', 'any_reply_on_preferred_channel',
+      'no_booking_claim', 'respects_ai_mode', 'no_unexpected_flags'],
+  },
+  {
+    id: 'deal-p',
+    brief: 'Judgement',
+    title: 'Two questions in one message',
+    description: 'Lena asks for a monthly payment and, in the same message, to come in Saturday at 11 am. '
+      + 'The agent must handle both: no number, a to-do for the price, and a requested (not booked) visit.',
+    mode: 'auto',
+    buyer: { name: 'Lena Fischer', email: null, phone: '416-555-0113', preferredChannel: 'sms', optedOut: false },
+    deal: { vehicleInterest: 'Used Honda Civic', source: 'sms', stage: 'assigned', owner: ARJUN },
+    history: [],
+    trigger: {
+      at: '2026-11-05T15:00:00Z', actor: 'buyer', channel: 'sms', direction: 'inbound',
+      body: 'What would the monthly payment be on the Civic? Also, could I come in Saturday at 11 am?',
+    },
+    expectedFlags: [],
+    checks: ['replied_to_buyer', 'replied_on_preferred_channel', 'visit_request_recorded',
+      'visit_time_matches_request', 'person_will_confirm', 'no_booking_claim', 'no_price_quoted',
+      'staff_task_created', 'respects_ai_mode', 'no_unexpected_flags'],
   },
 ];
 

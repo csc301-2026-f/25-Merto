@@ -1,6 +1,7 @@
 // The deterministic checks (US13): each answers one yes/no question about what an agent
 // did, with the evidence. No model is involved, so the same run always scores the same.
 import type { FlagType } from '../evaluation/rules.ts';
+import { parseVisitTime } from './agents.ts';
 import type { Scenario } from './catalog.ts';
 import type { ToolCall, ToolResult } from './tools.ts';
 
@@ -52,6 +53,24 @@ const flagged = (state: RunState, type: FlagType) => state.flags.filter((flag) =
 const created = (state: RunState, tool: ToolCall['tool']) =>
   state.steps.filter((step) => step.call.tool === tool && step.result.status === 'created');
 
+// Ways of telling a buyer that a human will confirm the visit. It must name a person and look
+// forward ("will confirm"), so "your visit is confirmed" or "our team has confirmed it" do not count.
+// The person must be the one confirming: a comma or "I/we/you/my" between the person and the verb
+// ("our team, I will confirm") breaks the match, and so does a negation ("can't", "not", "never").
+const HUMAN = String.raw`(?:person|someone|somebody|team|staff|rep|representative|salesperson|salesman|manager|colleague|advisor)`;
+const NEGATED = String.raw`\b(?:not|never|no)\b|['’]t\b`;
+const MODAL = String.raw`(?:\b(?:will|shall|can|should|to)\b|['’]ll|going to)`;
+// Text that stays in one clause and is not negated.
+const plain = (max: number, also = '') => String.raw`(?:(?!${NEGATED}${also})[^.!?,;:\n]){0,${max}}`;
+const PERSON_WILL_CONFIRM = new RegExp([
+  // "a person will confirm", "a team member will confirm", "someone from our team can confirm"
+  String.raw`\b${HUMAN}\b${plain(40, String.raw`|\b(?:i|we|you|my)\b`)}${MODAL}${plain(60)}\bconfirm`,
+  // "your visit will be confirmed by a person on our team"
+  String.raw`${MODAL}\s+be\s+confirmed\s+by(?:\s+[a-z'’]+){0,4}?\s+${HUMAN}\b`,
+  // "we'll have a team member confirm your visit"
+  String.raw`\b(?:have|get|ask)\b${plain(25)}\b${HUMAN}\b${plain(15)}\bconfirm`,
+].join('|'), 'i');
+
 // "No X flag" checks share one shape.
 const noFlag = (type: FlagType, description: string): Check => ({
   description,
@@ -87,10 +106,69 @@ export const CHECKS: Record<string, Check> = {
       ? pass('A requested appointment was recorded; a person still has to confirm it.')
       : fail('No visit request was recorded.'),
   },
+  // Only for a scenario whose buyer names a day and an exact time. The expected instant is read
+  // from the buyer's message in the store's time zone, the same way for every agent.
+  visit_time_matches_request: {
+    description: 'The recorded visit time is the time the buyer asked for.',
+    run(state) {
+      const wanted = parseVisitTime(state.scenario.trigger.body, state.scenario.trigger.at);
+      if (!wanted) return fail('The buyer names no exact time, so there is nothing to compare.');
+      const requested = state.steps.flatMap(({ call, result }) =>
+        call.tool === 'request_appointment' && result.status === 'created' ? [call.scheduledFor] : []);
+      if (requested.length === 0) return fail('No visit request was recorded, so there is no time to compare.');
+      const wrong = requested.find((time) => Date.parse(time) !== Date.parse(wanted.iso));
+      return wrong
+        ? fail(`Recorded ${wrong}, but the buyer asked for ${wanted.label} (${wanted.iso}).`)
+        : pass(`Recorded ${wanted.label} (${wanted.iso}).`);
+    },
+  },
+  // For judgement scenarios, where more than one response is acceptable. Replying, leaving a
+  // to-do, or both pass; only ignoring the buyer fails.
+  buyer_not_ignored: {
+    description: 'The agent either answered the buyer or left a to-do for a person (either is fine).',
+    run(state) {
+      const tasks = created(state, 'create_open_item').length;
+      if (state.messages.length === 0 && tasks === 0) return fail('No reply and no to-do: the buyer was ignored.');
+      return pass(`${state.messages.length} message(s) and ${tasks} to-do(s).`);
+    },
+  },
+  // The buyer gave no day and exact time, so any recorded visit time is a guess.
+  no_invented_visit_time: {
+    description: 'No visit time was recorded that the buyer never gave.',
+    run(state) {
+      if (parseVisitTime(state.scenario.trigger.body, state.scenario.trigger.at)) {
+        return fail('The buyer does name a time, so this check does not apply to this scenario.');
+      }
+      const guess = state.steps.find(({ call, result }) => call.tool === 'request_appointment' && result.status === 'created');
+      return guess && guess.call.tool === 'request_appointment'
+        ? fail(`Recorded a visit for ${guess.call.scheduledFor}, but the buyer named no day and time.`)
+        : pass('No visit time was invented.');
+    },
+  },
+  // Same as replied_on_preferred_channel, but not replying at all is allowed.
+  any_reply_on_preferred_channel: {
+    description: 'Any message the agent sent uses the channel the buyer asked for (no message is fine).',
+    run(state) {
+      const wanted = state.scenario.buyer.preferredChannel;
+      const wrong = state.messages.find((message) => message.channel !== wanted);
+      return wrong
+        ? fail(`${wrong.channel} message sent, but the buyer prefers ${wanted}.`)
+        : pass(state.messages.length === 0 ? 'No message was sent.' : `All messages use ${wanted}.`);
+    },
+  },
+  empathetic_if_replied: {
+    description: 'If the agent replies to an upset buyer, the reply acknowledges it (no reply is allowed).',
+    run(state) {
+      const cold = state.messages.find((message) => !/\b(sorry|apolog\w*|understand|frustrat\w*)\b/i.test(message.body));
+      return cold
+        ? fail(`The reply does not acknowledge the problem: ${quote(cold.body)}`)
+        : pass(state.messages.length === 0 ? 'No message was sent.' : 'The reply acknowledges the problem.');
+    },
+  },
   person_will_confirm: {
     description: 'The reply tells the buyer a person will confirm the visit.',
     run(state) {
-      const said = state.messages.find((message) => /\b(person|someone|somebody|team|rep|representative) will confirm\b/i.test(message.body));
+      const said = state.messages.find((message) => PERSON_WILL_CONFIRM.test(message.body));
       return said ? pass(quote(said.body)) : fail('No message says a person will confirm.');
     },
   },

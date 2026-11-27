@@ -12,6 +12,7 @@ import { followUpRoutes } from './follow-up/routes.ts';
 import { openItemRoutes } from './open-items/routes.ts';
 import { replyDraftRoutes } from './reply-drafts/routes.ts';
 import { appointmentRoutes } from './appointments/routes.ts';
+import type { ModelAgentRuntime } from './scenarios/model-agent.ts';
 import { scenarioRoutes } from './scenarios/routes.ts';
 import { taskRoutes } from './tasks/routes.ts';
 
@@ -19,6 +20,8 @@ export interface AppOptions {
   evaluationEngine?: EvaluationEngine;
   evaluationContext?: EvaluationContextProvider;
   replyGenerator?: ReplyGenerator;
+  // A live model for the scenario checks (US13). Leave unset to keep model calls off.
+  modelAgent?: ModelAgentRuntime;
   // Shared password for POST /auth/login. Leave unset to turn sign-in off.
   devLoginPassword?: string;
   // Local demo only: extra /api routes, behind the same staff check.
@@ -44,7 +47,7 @@ export function createApp(db: Database, options: AppOptions = {}) {
   // Every /api route needs X-Staff-Id; look the caller up once per request.
   // Assignment routes come before deal routes so /deals/unassigned is not a deal ID.
   app.use('/api', requireStaff(db), meRoutes(), ...(options.demoRoutes ? [options.demoRoutes] : []), evaluationRoutes(db, options.evaluationEngine, options.evaluationContext), assignmentRoutes(db),
-    followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), scenarioRoutes(db), taskRoutes(db), dealRoutes(db));
+    followUpRoutes(db), replyDraftRoutes(db, options.replyGenerator), openItemRoutes(db), appointmentRoutes(db), scenarioRoutes(db, options.modelAgent), taskRoutes(db), dealRoutes(db));
   app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found.' });
   });
