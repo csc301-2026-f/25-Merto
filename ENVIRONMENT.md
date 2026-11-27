@@ -146,23 +146,45 @@ default branch, `main`.
 
 ### Development deployment
 
-Create a `dev` branch in the team repository. Before creating the matching
-branch in the fork, configure the Vercel projects for Preview:
+Open feature pull requests into `dev`. After review and passing CI, merge and
+verify the result on Preview. To release, open a `dev` → `main` pull request and
+use a merge commit after review and passing CI. If a hotfix goes directly to
+`main`, merge `main` back into `dev` through a pull request.
+
+| Part | Vercel `dev` branch URL |
+| --- | --- |
+| Frontend | [Dev sign-in](https://25-merto-git-dev-jasonnn404s-projects.vercel.app/login) |
+| Backend | [Dev health endpoint](https://25-merto-backend-git-dev-jasonnn404s-projects.vercel.app/health) |
+
+The branch URLs become usable after the first successful Preview deployments.
+For course review, the deployer should create a Vercel Shareable Link for the
+frontend and give it and the dev demo sign-in credentials directly to the TA.
+Shareable Links provide access without a Vercel account. Keep the Shareable Link
+and password out of the public repository.
+
+To set up or restore the environment:
 
 1. Provision a separate Supabase project for development. Apply the files in
    `supabase/migrations` in filename order, followed by the fictional data in
-   `supabase/seed` in filename order.
-2. Set the backend's Preview `DATABASE_URL` to the development database. Set the
-   frontend's Preview `BACKEND_URL` to the backend's `dev` branch URL. If that
-   backend uses Deployment Protection, configure the frontend's server-side
-   Preview `BACKEND_PROTECTION_BYPASS` for the backend project.
-3. Create the fork's `dev` branch from the team repository's `dev` commit. Push
-   a follow-up commit to the team's `dev` branch and verify the fork sync and
-   both Preview deployments pick up that commit. Find the branch URLs in the
-   Vercel deployment details for the frontend and backend.
-4. Check the backend's `/health` endpoint, then sign in to the Preview frontend
-   and open a seeded deal. Use an account with access to the Preview if Vercel
-   Authentication is enabled.
+   `supabase/seed` in filename order. Keep the existing production database URL
+   and frontend backend URL scoped to Production.
+2. Ensure `dev` exists in the team repository and Jason’s fork. For a new fork,
+   create its `dev` branch from the upstream `dev` commit. Vercel needs to see
+   that branch before saving branch-scoped variables.
+3. On the backend, scope `DATABASE_URL` and a separate `DEV_LOGIN_PASSWORD` to
+   the `dev` Preview branch. Use the dev Supabase connection URL and a dev demo
+   password. Set a Preview `GROQ_API_KEY` for reply generation and match
+   `DEALERSHIP_TIME_ZONE` with the frontend’s `NEXT_PUBLIC_DEALERSHIP_TIME_ZONE`
+   if overriding the default `America/Toronto`.
+4. On the frontend, set `BACKEND_URL` to the dev backend origin. If the backend
+   has Deployment Protection, set the frontend’s server-side
+   `BACKEND_PROTECTION_BYPASS` to the backend’s automation bypass secret. Scope
+   both to the `dev` Preview branch.
+5. Merge a follow-up change into the team's `dev` branch. Verify the fork sync
+   and both Preview deployments pick up the same commit. Check `/health`, sign
+   in, open a seeded deal, and verify the TA’s Shareable Link in a signed-out
+   browser. Apply any new migrations to the dev database before deploying code
+   that depends on them.
 
 ### Production database rollout
 
@@ -185,7 +207,7 @@ For the flag resolution rollout on the shared database:
 ### `ci.yml`
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every pull request
-and every push to `main`. It has three jobs that run at the same time:
+and every push to `main` or `dev`. It has three jobs that run at the same time:
 
 | Job | Commands |
 | --- | --- |
@@ -213,8 +235,7 @@ artifact. It uses a placeholder token, not a real secret.
 
 ### `sync-fork.yml`
 
-Runs only on the fork, not in this repository. See
-[How a change reaches production](#how-a-change-reaches-production).
+Runs only on the fork. See [How changes reach Vercel](#how-changes-reach-vercel).
 
 ### Run the CI checks locally
 

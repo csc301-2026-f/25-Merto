@@ -156,9 +156,9 @@ The general Github Workflow is outlined as follows:
 1. Create branch, checkout locally
 2. Write code and commit frequently
 3. When the entire task is complete, push branch to remote
-4. Submit a Pull Request to be reviewed by another team member
-5. Discuss the changes made. If there are no issues, merge
-6. Re-build application
+4. Open a pull request into `dev` for review by another team member.
+5. After approval and passing CI, merge into `dev`. Verify the change on Vercel Preview.
+6. When `dev` is ready to release, open a pull request from `dev` into `main`. After review and passing CI, merge it with a merge commit to preserve branch history. The fork sync deploys it to Production.
 
 ## Non-Functional Requirements
 
