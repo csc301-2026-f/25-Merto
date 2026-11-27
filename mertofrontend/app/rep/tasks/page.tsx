@@ -25,7 +25,7 @@ async function Tasks({ searchParams }: { searchParams: SearchParams }) {
             key={value}
             href={value === "open" ? "/rep/tasks" : `/rep/tasks?status=${value}`}
             aria-current={value === status ? "page" : undefined}
-            className={`rounded-md border-2 px-3 py-1 font-semibold ${value === status ? "bg-current/10" : "opacity-70"}`}
+            className={`rounded-lg border px-3 py-1 text-sm transition-colors border-zinc-300 hover:bg-zinc-200 dark:border-zinc-600 dark:hover:bg-zinc-700 ${value === status ? "bg-current/10" : "opacity-70"}`}
           >
             {TAB_LABELS[value]}
           </Link>
