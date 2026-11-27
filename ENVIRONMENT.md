@@ -153,7 +153,7 @@ use a merge commit after review and passing CI. If a hotfix goes directly to
 
 | Part | Vercel `dev` branch URL |
 | --- | --- |
-| Frontend | [Dev sign-in](https://25-merto-git-dev-jasonnn404s-projects.vercel.app/login) |
+| Frontend | [Dev sign-in](https://merto-d4.vercel.app/login) |
 | Backend | [Dev health endpoint](https://25-merto-backend-git-dev-jasonnn404s-projects.vercel.app/health) |
 
 The branch URLs become usable after the first successful Preview deployments.
