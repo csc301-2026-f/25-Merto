@@ -156,11 +156,11 @@ use a merge commit after review and passing CI. If a hotfix goes directly to
 | Frontend | [Dev sign-in](https://merto-d4.vercel.app/login) |
 | Backend | [Dev health endpoint](https://25-merto-backend-git-dev-jasonnn404s-projects.vercel.app/health) |
 
-The branch URLs become usable after the first successful Preview deployments.
-For course review, the deployer should create a Vercel Shareable Link for the
-frontend and give it and the dev demo sign-in credentials directly to the TA.
-Shareable Links provide access without a Vercel account. Keep the Shareable Link
-and password out of the public repository.
+Vercel Authentication protects both branch URLs. For course review, send the
+TA the frontend's Vercel Shareable Link and dev demo credentials privately.
+The Shareable Link opens the Merto sign-in page without a Vercel account. The
+TA then signs in with the dev demo credentials. Keep the Shareable Link and
+password out of the public repository.
 
 To set up or restore the environment:
 
