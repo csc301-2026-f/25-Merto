@@ -141,7 +141,14 @@ The team uses Next.js and React with TypeScript for the frontend, a TypeScript/E
 
 The frontend and Express backend are deployed on Vercel, with PostgreSQL hosted on Supabase. The frontend connects to the backend through server-side requests, and the backend connects to the hosted database. Users access the application through the frontend link above.
 
-The [fork sync workflow](.github/workflows/sync-fork.yml) mirrors the team's `main` and `dev` branches to the corresponding branches in Jason's fork, `jasonnn404/25-Merto`. The fork runs the workflow on a 15-minute schedule and supports manual runs. Vercel uses `main` for [Production](https://25-merto.vercel.app/login) and `dev` for [Preview](ENVIRONMENT.md#development-deployment). GitHub can delay scheduled runs. See the [deployment guide](ENVIRONMENT.md#deployed-app) for branch setup, configuration, and verification.
+Vercel automatically deploys the frontend and backend to two environments:
+
+| Environment | Source branch | Frontend | Access |
+| --- | --- | --- | --- |
+| Development (Vercel Preview) | `dev` | [Dev preview](https://merto-d4.vercel.app?_vercel_share=1IR3ItfqSFotKw7BLQNCUTI4vcxd29OS) | Merto dev demo sign-in |
+| Production (release) | `main` | [Production sign-in](https://25-merto.vercel.app/login) | Merto demo sign-in |
+
+The [fork sync workflow](.github/workflows/sync-fork.yml) mirrors the team's `main` and `dev` branches to the corresponding branches in Jason's fork, `jasonnn404/25-Merto`. Vercel deploys when those branches update. The fork runs the workflow on a 15-minute schedule and supports manual runs. GitHub can delay scheduled runs. See the [deployment guide](ENVIRONMENT.md#deployed-app) for branch setup, configuration, and verification.
 
 To reproduce the deployment:
 

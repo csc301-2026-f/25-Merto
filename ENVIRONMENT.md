@@ -156,11 +156,8 @@ use a merge commit after review and passing CI. If a hotfix goes directly to
 | Frontend | [Dev sign-in](https://merto-d4.vercel.app/login) |
 | Backend | [Dev health endpoint](https://25-merto-backend-git-dev-jasonnn404s-projects.vercel.app/health) |
 
-Vercel Authentication protects both branch URLs. For course review, send the
-TA the frontend's Vercel Shareable Link and dev demo credentials privately.
-The Shareable Link opens the Merto sign-in page without a Vercel account. The
-TA then signs in with the dev demo credentials. Keep the Shareable Link and
-password out of the public repository.
+Vercel Authentication protects both branch URLs. After opening the frontend
+with authorized Vercel access, sign in with the dev demo credentials.
 
 To set up or restore the environment:
 
@@ -182,9 +179,8 @@ To set up or restore the environment:
    both to the `dev` Preview branch.
 5. Merge a follow-up change into the team's `dev` branch. Verify the fork sync
    and both Preview deployments pick up the same commit. Check `/health`, sign
-   in, open a seeded deal, and verify the TA’s Shareable Link in a signed-out
-   browser. Apply any new migrations to the dev database before deploying code
-   that depends on them.
+   in to the frontend, and open a seeded deal. Apply any new migrations to the
+   dev database before deploying code that depends on them.
 
 ### Production database rollout
 
