@@ -128,19 +128,65 @@ repository:
   `BACKEND_PROTECTION_BYPASS` if the backend has Deployment Protection on.
 - Model service: `MERTO_MODEL_TOKEN` and `VERCEL_SUPPORT_LARGE_FUNCTIONS=1`.
 
-### How a change reaches production
+### How changes reach Vercel
 
 Vercel's free plan cannot deploy from an organization repository, so the Vercel
 projects are on a team member's personal account and deploy from the fork
 [jasonnn404/25-Merto](https://github.com/jasonnn404/25-Merto). The
-[`sync-fork.yml`](.github/workflows/sync-fork.yml) workflow runs on the fork
-every 15 minutes, copies the latest `main` from this repository, and Vercel
-deploys each new commit. A merge to `main` is therefore live within about 15
-minutes plus the build time.
+[`sync-fork.yml`](.github/workflows/sync-fork.yml) workflow runs on the fork and
+syncs `main` to `main` and `dev` to `dev`. Vercel deploys updates to `main` as
+Production and updates to `dev` as Preview. The workflow is scheduled every
+15 minutes. GitHub can delay scheduled jobs, and Vercel adds build time. The
+fork owner can also run **Sync fork from org repo** from the fork's Actions tab.
 
 GitHub's built-in token cannot sync commits that change files in
-`.github/workflows/`. After such a change is merged, the fork owner has to click
-**Sync fork** on GitHub once.
+`.github/workflows/`. After such a change is merged, the fork owner has to sync
+the affected branch manually once. The scheduled workflow runs from the fork's
+default branch, `main`.
+
+### Development deployment
+
+Open feature pull requests into `dev`. After review and passing CI, merge and
+verify the result on Preview. To release, open a `dev` → `main` pull request and
+use a merge commit after review and passing CI. If a hotfix goes directly to
+`main`, merge `main` back into `dev` through a pull request.
+
+| Part | Vercel `dev` branch URL |
+| --- | --- |
+| Frontend | [Dev sign-in](https://merto-d4.vercel.app/login) |
+| Backend | [Dev health endpoint](https://25-merto-backend-git-dev-jasonnn404s-projects.vercel.app/health) |
+
+Vercel Authentication protects both branch URLs. For course review, send the
+TA the frontend's Vercel Shareable Link and dev demo credentials privately.
+The Shareable Link opens the Merto sign-in page without a Vercel account. The
+TA then signs in with the dev demo credentials. Keep the Shareable Link and
+password out of the public repository.
+
+To set up or restore the environment:
+
+1. Provision a separate Supabase project for development. Apply the files in
+   `supabase/migrations` in filename order, followed by the fictional data in
+   `supabase/seed` in filename order. Keep the existing production database URL
+   and frontend backend URL scoped to Production.
+2. Ensure `dev` exists in the team repository and Jason’s fork. For a new fork,
+   create its `dev` branch from the upstream `dev` commit. Vercel needs to see
+   that branch before saving branch-scoped variables.
+3. On the backend, scope `DATABASE_URL` and a separate `DEV_LOGIN_PASSWORD` to
+   the `dev` Preview branch. Use the dev Supabase connection URL and a dev demo
+   password. Set a Preview `GROQ_API_KEY` for reply generation and match
+   `DEALERSHIP_TIME_ZONE` with the frontend’s `NEXT_PUBLIC_DEALERSHIP_TIME_ZONE`
+   if overriding the default `America/Toronto`.
+4. On the frontend, set `BACKEND_URL` to the dev backend origin. If the backend
+   has Deployment Protection, set the frontend’s server-side
+   `BACKEND_PROTECTION_BYPASS` to the backend’s automation bypass secret. Scope
+   both to the `dev` Preview branch.
+5. Merge a follow-up change into the team's `dev` branch. Verify the fork sync
+   and both Preview deployments pick up the same commit. Check `/health`, sign
+   in, open a seeded deal, and verify the TA’s Shareable Link in a signed-out
+   browser. Apply any new migrations to the dev database before deploying code
+   that depends on them.
+
+### Production database rollout
 
 Database migrations are not applied by any workflow. Apply new files in
 `supabase/migrations` to the hosted database by hand, following
@@ -161,7 +207,7 @@ For the flag resolution rollout on the shared database:
 ### `ci.yml`
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every pull request
-and every push to `main`. It has three jobs that run at the same time:
+and every push to `main` or `dev`. It has three jobs that run at the same time:
 
 | Job | Commands |
 | --- | --- |
@@ -189,8 +235,7 @@ artifact. It uses a placeholder token, not a real secret.
 
 ### `sync-fork.yml`
 
-Runs only on the fork, not in this repository. See
-[How a change reaches production](#how-a-change-reaches-production).
+Runs only on the fork. See [How changes reach Vercel](#how-changes-reach-vercel).
 
 ### Run the CI checks locally
 
