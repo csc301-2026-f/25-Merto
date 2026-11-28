@@ -82,6 +82,11 @@ database rather than customer data.
 
 ## Endpoints
 
+The full API reference, with every endpoint, who may call it, its parameters, and its error
+responses, is in [openapi.yaml](openapi.yaml) (OpenAPI 3). Open it in any OpenAPI viewer, for
+example https://editor.swagger.io. The sections below explain the behaviour behind each group of
+endpoints. When you add or change a route, update `openapi.yaml` in the same pull request.
+
 All responses are JSON. Errors are `{ "error": "..." }` with 400 (bad input),
 401 (unknown caller), 403 (role not allowed), 404, or 409 (review not allowed
 from the flag's current status).
@@ -589,7 +594,12 @@ answer and whether the checks passed. It makes real calls, so it is manual and n
 `npm test`. When it is on, `GET /api/scenarios` lists the agent with
 `live: true`, `POST /api/scenarios/:id/runs` accepts `{ "agent": "model" }`, and
 `POST /api/scenario-runs` includes it only when it is named, because every scenario is one
-billed call. Runs are limited to `MODEL_AGENT_MAX_PER_HOUR` (default 30), then return 429.
+billed call. Runs are limited to `MODEL_AGENT_MAX_PER_HOUR` (default 30), then return 429. A
+"run all" that includes the model counts all of its calls before the first one, so a run the limit
+cannot cover is refused with 429 and calls nothing. If one scenario then fails, the others keep
+their scorecards: an unusable answer (502) fails only that scenario, and any other error skips the
+rest. Scenarios without a scorecard are listed in that agent's `errors` and show as `error` in the
+`comparison`.
 The prompt (`src/scenarios/model-agent.ts`, version `us13-agent-v2`) gives the store's
 rules in plain words and names no check or expected result. The model is also handed the
 store's UTC offset at the time of the event, worked out in code, because models misread

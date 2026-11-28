@@ -122,9 +122,9 @@ Every run is reset afterwards, so nothing is saved and no customer is contacted.
 
 ## Local Development Instructions
 
-Requires Node.js 20 or newer. In `backend/`, run `npm install` and then `npm run dev` (API on http://localhost:3001). In a second terminal, do the same in `mertofrontend/` and open http://localhost:3000. Sign in as `karen` (manager) or `dana`, `arjun`, `sofia`, or `tom` (sales representatives); the development password is `test`.
+Requires Node.js 20.19 or newer. In `backend/`, run `npm install` and then `npm run dev` (API on http://localhost:3001). In a second terminal, do the same in `mertofrontend/` and open http://localhost:3000. Sign in as `karen` (manager) or `dana`, `arjun`, `sofia`, or `tom` (sales representatives); the development password is `test`.
 
-Without a `DATABASE_URL`, the backend uses an in-memory database loaded from `supabase/migrations` and `supabase/seed`, so all data resets when the backend restarts. AI conversation flags appear only after an evaluation run: signed in as `karen`, click **Run AI evaluation** on the manager dashboard, and the flagged replies appear under "Flags awaiting review". Running it again only adds flags for new problems. Evaluations are not yet scheduled to run on their own. See the [backend README](backend/README.md) for the full API, tests (`npm test`), and connecting to the team's Supabase database.
+Without a `DATABASE_URL`, the backend uses an in-memory database loaded from `supabase/migrations` and `supabase/seed`, so all data resets when the backend restarts. AI conversation flags appear only after an evaluation run: signed in as `karen`, click **Run AI evaluation** on the manager dashboard, and the flagged replies appear under "Flags awaiting review". Running it again only adds flags for new problems. Evaluations are not yet scheduled to run on their own. See the [backend README](backend/README.md) for the full API, tests (`npm test`), and connecting to the team's Supabase database. The frontend's component tests run with `npm test` in `mertofrontend/` and need no backend.
 
 ## Development requirements
 
@@ -141,7 +141,14 @@ The team uses Next.js and React with TypeScript for the frontend, a TypeScript/E
 
 The frontend and Express backend are deployed on Vercel, with PostgreSQL hosted on Supabase. The frontend connects to the backend through server-side requests, and the backend connects to the hosted database. Users access the application through the frontend link above.
 
-Deployment uses Jason's fork, `jasonnn404/25-Merto`, of the team repository. The [fork sync workflow](.github/workflows/sync-fork.yml) is configured to sync the team's `main` branch into the fork's `main` branch on a 15-minute schedule or a manual run. It only runs in the fork, where scheduled workflows must be enabled. Vercel deploys changes from the connected fork branch; updates depend on a successful sync and deployment and may take longer than 15 minutes.
+Vercel automatically deploys the frontend and backend to two environments:
+
+| Environment | Source branch | Frontend | Access |
+| --- | --- | --- | --- |
+| Development (Vercel Preview) | `dev` | [Dev preview](https://merto-d4.vercel.app?_vercel_share=1IR3ItfqSFotKw7BLQNCUTI4vcxd29OS) | Merto dev demo sign-in |
+| Production (release) | `main` | [Production sign-in](https://25-merto.vercel.app/login) | Merto demo sign-in |
+
+The [fork sync workflow](.github/workflows/sync-fork.yml) mirrors the team's `main` and `dev` branches to the corresponding branches in Jason's fork, `jasonnn404/25-Merto`. Vercel deploys when those branches update. The fork runs the workflow on a 15-minute schedule and supports manual runs. GitHub can delay scheduled runs. See the [deployment guide](ENVIRONMENT.md#deployed-app) for branch setup, configuration, and verification.
 
 To reproduce the deployment:
 
@@ -157,9 +164,9 @@ The general Github Workflow is outlined as follows:
 1. Create branch, checkout locally
 2. Write code and commit frequently
 3. When the entire task is complete, push branch to remote
-4. Submit a Pull Request to be reviewed by another team member
-5. Discuss the changes made. If there are no issues, merge
-6. Re-build application
+4. Open a pull request into `dev` for review by another team member.
+5. After approval and passing CI, merge into `dev`. Verify the change on Vercel Preview.
+6. When `dev` is ready to release, open a pull request from `dev` into `main`. After review and passing CI, merge it with a merge commit to preserve branch history. The fork sync deploys it to Production.
 
 ## Non-Functional Requirements
 

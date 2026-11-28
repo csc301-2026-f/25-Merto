@@ -1,11 +1,11 @@
 # Runs the backend, frontend, and database checks on every pull request and on
-# every push to main. ENVIRONMENT.md explains how to run the same checks locally.
+# every push to main or dev. ENVIRONMENT.md explains how to run the checks locally.
 name: CI
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, dev]
 
 # A newer push to the same branch or pull request cancels the run still in progress.
 concurrency:
@@ -54,6 +54,8 @@ jobs:
           cache-dependency-path: mertofrontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      # Component tests run in jsdom with the server actions mocked, so no backend is needed.
+      - run: npm test
       # The build does not call the backend, so no backend is started here.
       - run: npm run build
 
