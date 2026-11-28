@@ -10,12 +10,21 @@ import type { FlagType } from '../evaluation/rules.ts';
 import type { AgentContext } from './agents.ts';
 import type { Scenario, ScenarioEvent } from './catalog.ts';
 import { CHECKS, type AgentMessage, type ExecutedStep, type RaisedFlag } from './checks.ts';
+import type { ModelUsage } from './model-client.ts';
 import { TOOLS, executeTool, type ToolCall, type ToolWorld } from './tools.ts';
+
+// Which model chose the calls, with the prompt it was given and what the call used.
+export interface ModelRunInfo {
+  id: string;
+  promptVersion: string;
+  source: 'live';
+  usage: ModelUsage;
+}
 
 export interface Scorecard {
   runId: string;
   scenario: { id: string; brief: string; title: string; mode: string };
-  agent: { name: string; kind: 'built-in' | 'external' };
+  agent: { name: string; kind: 'built-in' | 'external' | 'model'; model?: ModelRunInfo };
   ranAt: string;
   // Every tool call in order, with what it changed (the run log).
   steps: { step: number; at: string; call: ToolCall; status: string; detail: string; stateChange: string }[];
@@ -105,8 +114,9 @@ async function loadScenario(tx: Queryable, scenario: Scenario): Promise<ToolWorl
 
 export interface AgentTurn {
   name: string;
-  kind: 'built-in' | 'external';
+  kind: 'built-in' | 'external' | 'model';
   calls: ToolCall[];
+  model?: ModelRunInfo; // set when a model chose the calls
 }
 
 export async function runScenario(db: Database, scenario: Scenario, turn: AgentTurn): Promise<Scorecard> {
@@ -156,7 +166,7 @@ export async function runScenario(db: Database, scenario: Scenario, turn: AgentT
       throw new SandboxReset({
         runId: randomUUID(),
         scenario: { id: scenario.id, brief: scenario.brief, title: scenario.title, mode: scenario.mode },
-        agent: { name: turn.name, kind: turn.kind },
+        agent: { name: turn.name, kind: turn.kind, ...(turn.model ? { model: turn.model } : {}) },
         ranAt: new Date().toISOString(),
         steps: steps.map(({ step, at, call, result }) => ({
           step, at: at.toISOString(), call, status: result.status, detail: result.detail, stateChange: result.stateChange,

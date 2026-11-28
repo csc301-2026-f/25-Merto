@@ -520,8 +520,9 @@ The General Manager can run a predefined scenario and see whether an agent did t
 expected things. A scenario loads a deal at a fixed point in time, hands the agent one
 event, runs the agent's tool calls, scores them with deterministic checks, and returns a
 scorecard. Every run happens inside a database transaction that is rolled back, so
-nothing is saved and no table changed. No AI model is called, so runs are free and
-repeatable. GM only; a rep gets 403.
+nothing is saved and no table changed. The built-in agents call no AI model, so their
+runs are free and repeatable; an optional live model agent is described below. GM only;
+a rep gets 403.
 
 | Method and path | What it does |
 | --- | --- |
@@ -534,7 +535,12 @@ The scenarios come from the brief's section 9: `deal-j` (a visit is requested, n
 booked), `deal-k` (no promise about a vehicle), `deal-c` (a price question goes to a
 person, drafted by email), `deal-i` (nothing after an opt-out), `deal-e` (a missed call
 gets a text back), `deal-l` (AI off: do not reply, leave a to-do), and `deal-a` (a
-late-night lead). Their definitions are in `src/scenarios/catalog.ts`.
+late-night lead). Four more are judgement scenarios, where the rules do not dictate one answer
+and several responses pass: `deal-m` (vague timing: ask or leave a to-do, never invent a visit
+time), `deal-n` ("not right now" is not an opt-out: a short reply or silence, no pushing),
+`deal-o` (an upset buyer: a person must be told, a reply must acknowledge the problem), and
+`deal-p` (a price question and a visit request in one message: handle both). Their definitions
+are in `src/scenarios/catalog.ts`.
 
 **Scorecard.** `steps` is the run log: each tool call in order, its `status` (`sent`,
 `drafted`, `blocked`, `created`, `recorded`), and what it changed. `checks` lists each
@@ -544,9 +550,12 @@ raised on the agent's own messages; a draft counts like a sent message. `summary
 is always `false`.
 
 **Checks.** `replied_to_buyer`, `replied_on_preferred_channel`, `visit_request_recorded`,
-`person_will_confirm`, `no_booking_claim`, `no_availability_promise`, `no_price_quoted`,
-`staff_task_created`, `sent_nothing_after_opt_out`, `respects_ai_mode`, and
-`no_unexpected_flags`. They live in `src/scenarios/checks.ts`.
+`visit_time_matches_request` (the recorded time is the time the buyer asked for, read in the
+store's time zone), `person_will_confirm`, `no_booking_claim`, `no_availability_promise`, `no_price_quoted`,
+`staff_task_created`, `sent_nothing_after_opt_out`, `respects_ai_mode`,
+`no_unexpected_flags`, and, for the judgement scenarios, `buyer_not_ignored` (a reply or a to-do,
+either one), `no_invented_visit_time`, `any_reply_on_preferred_channel` (no reply is allowed),
+and `empathetic_if_replied`. They live in `src/scenarios/checks.ts`.
 
 **Agent tools.** `send_reply` (obeys the store's AI mode: off blocks it, draft-only keeps
 a draft, auto sends it, simulated), `create_open_item`, `request_appointment` (always
@@ -562,6 +571,35 @@ looks like and lets two runs be compared.
 (`context`) and the tool list. The agent decides, then posts its tool calls (at most 10)
 to `POST /api/scenarios/:id/runs` as `actions` and receives the scorecard. Merto's own
 agent can use this without any Merto-specific code here.
+
+**Live model agent (optional).** The `model` agent asks a language model to choose the
+tool calls, then scores them like any other agent. It is off by default, so the core app
+and every test run without a key. To turn it on, set `SCENARIO_AI_LIVE=true`, a key
+(`MODEL_AGENT_API_KEY`, or `OPENAI_API_KEY`), and `MODEL_AGENT_MODEL` in `backend/.env`;
+any OpenAI-compatible server works through `MODEL_AGENT_BASE_URL` (OpenAI, Groq, or a
+local server such as Ollama). Examples: Groq is `https://api.groq.com/openai/v1` with a Groq
+key; a model on this machine is `http://localhost:11434/v1` (Ollama) or
+`http://localhost:1234/v1` (LM Studio), which needs no key because the address is local. A
+local model may be slower, so `MODEL_AGENT_TIMEOUT_MS` raises the 30-second wait, and
+`MODEL_AGENT_REASONING=true|false` overrides the guess (from the model name: o*, gpt-5*,
+gpt-oss) about whether it is a reasoning model. To try a model before relying on it, run
+`npm run check:model` (add `RUNS=3` to repeat): it runs every scenario against whatever
+`backend/.env` points at and reports, per scenario, whether the model returned a usable
+answer and whether the checks passed. It makes real calls, so it is manual and not part of
+`npm test`. When it is on, `GET /api/scenarios` lists the agent with
+`live: true`, `POST /api/scenarios/:id/runs` accepts `{ "agent": "model" }`, and
+`POST /api/scenario-runs` includes it only when it is named, because every scenario is one
+billed call. Runs are limited to `MODEL_AGENT_MAX_PER_HOUR` (default 30), then return 429.
+The prompt (`src/scenarios/model-agent.ts`, version `us13-agent-v2`) gives the store's
+rules in plain words and names no check or expected result. The model is also handed the
+store's UTC offset at the time of the event, worked out in code, because models misread
+the clock in the days around a daylight-saving change; requests carry a fixed `seed`
+(`MODEL_AGENT_SEED`, default 42), which providers treat as best effort. A scorecard from the model
+records `agent.model`: the model, prompt version, source (`live`), and token use. An
+answer that is not valid JSON or not a valid tool call is retried once, then returned as
+a 502 with no scorecard; provider errors become short 429 or 503 messages that never
+include the key. Tests use a fake client and never reach a model. A live model's answers
+can differ between runs, so a score describes that run.
 
 Limits: the checks are fixed rules, not a language-model judge, and a run does not
 measure how long an agent takes to answer. The agent's turn is one step, not a back-and-
