@@ -8,6 +8,7 @@
     "demo": "tsx scripts/demo.ts",
     "demo:model": "node scripts/start-model-demo.mjs",
     "check:hosted": "tsx scripts/check-hosted.ts",
+    "check:model": "tsx scripts/check-model-agent.ts",
     "test": "tsx --test --test-concurrency=1 test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "eval:rules": "tsx scripts/eval-rules.ts",

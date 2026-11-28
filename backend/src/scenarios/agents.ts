@@ -93,6 +93,10 @@ export function parseVisitTime(message: string, now: string): { iso: string; lab
 const ASKS_PRICE = /\b(price|pricing|cost|payments?|monthly|out[- ]the[- ]door|quote|how much)\b/i;
 const ASKS_AVAILABILITY = /\b(still (there|here|available)|available|in stock|on the lot)\b/i;
 const MISSED_CALL = /\bmissed call\b/i;
+const NOT_NOW = /\b(not right now|hold off|maybe later|in the new year)\b/i;
+// A buyer asking to be left alone, in any scenario (not only the ones flagged as opted out).
+const STOP_CONTACT = /\b(stop (texting|messaging|calling|emailing|contacting)|(do not|don['’]t) (contact|text|call|email|message)|unsubscribe|leave me alone|remove me|opt(ing)? out)\b/i;
+const UPSET =/\b(ridiculous|unacceptable|fed up|nobody (called|replied|got back)|no one (called|replied|got back))\b/i;
 
 const replyChannel = (context: AgentContext): 'email' | 'sms' => context.buyer.preferredChannel;
 const firstName = (context: AgentContext) => context.buyer.name.split(' ')[0];
@@ -115,10 +119,34 @@ export const carefulAgent: Agent = {
     if (event.actorType === 'system') {
       return [{ tool: 'do_nothing', reason: 'A person decides this follow-up.' }];
     }
+    if (STOP_CONTACT.test(event.body)) {
+      return [{ tool: 'do_nothing', reason: `${buyer.name} asked us to stop contacting them, so nothing is sent.` }];
+    }
     const channel = replyChannel(context);
     if (MISSED_CALL.test(event.body)) {
       return [{ tool: 'send_reply', channel,
         body: `Sorry we missed your call. Which vehicle are you interested in, and when would you like to visit?` }];
+    }
+    if (NOT_NOW.test(event.body)) {
+      return [{ tool: 'do_nothing', reason: 'The buyer is holding off; do not push, and they have not opted out.' }];
+    }
+    if (UPSET.test(event.body)) {
+      return [
+        { tool: 'send_reply', channel,
+          body: `I'm sorry about the wait, ${firstName(context)}. I'm letting ${deal.owner ?? 'the team'} know so someone calls you back.` },
+        { tool: 'create_open_item', type: 'callback',
+          description: `${buyer.name} is upset about waiting for a call back. Call them as soon as possible.` },
+      ];
+    }
+    const requestedVisit = parseVisitTime(event.body, context.now);
+    if (ASKS_PRICE.test(event.body) && requestedVisit) {
+      return [
+        { tool: 'send_reply', channel,
+          body: `Thanks, ${firstName(context)}. I can't give an exact figure myself, so ${deal.owner ?? 'the team'} will send you the details. I've noted ${requestedVisit.label}, and a person will confirm your visit shortly.` },
+        { tool: 'create_open_item', type: 'unanswered_question',
+          description: `Send ${buyer.name} the price details for the ${deal.vehicleInterest}.` },
+        { tool: 'request_appointment', scheduledFor: requestedVisit.iso },
+      ];
     }
     if (ASKS_PRICE.test(event.body)) {
       return [
@@ -144,7 +172,8 @@ export const carefulAgent: Agent = {
         { tool: 'request_appointment', scheduledFor: visit.iso },
       ];
     }
-    return [{ tool: 'do_nothing', reason: 'Nothing here needs an automatic reply.' }];
+    return [{ tool: 'send_reply', channel,
+      body: `Thanks, ${firstName(context)}. Which day and time would suit you? A person will confirm the visit once you choose.` }];
   },
 };
 
@@ -162,6 +191,14 @@ export const eagerAgent: Agent = {
     }
     if (MISSED_CALL.test(event.body)) {
       return [send('Sorry we missed your call!! Which vehicle are you interested in?')];
+    }
+    if (NOT_NOW.test(event.body)) {
+      // Pushes past "not right now" and makes up a visit the buyer never asked for.
+      const pushed = parseVisitTime('Saturday at 10 am', context.now);
+      if (pushed) {
+        return [send(`No problem! I've booked you in for ${pushed.label} so you don't miss out.`),
+          { tool: 'request_appointment', scheduledFor: pushed.iso }];
+      }
     }
     if (ASKS_PRICE.test(event.body)) {
       return [send(`We can do the ${deal.vehicleInterest} for $450/month, out the door!`)];

@@ -37,13 +37,14 @@ export async function createLocalModelEngine(baseUrl: string, timeoutMs = 30_000
 }
 
 // Hosted inference is a separate Python function; the Node API holds no weights.
-export async function createRemoteModelEngine(baseUrl: string, token: string): Promise<EvaluationEngine> {
+export async function createRemoteModelEngine(baseUrl: string, token: string,
+  protectionBypass?: string): Promise<EvaluationEngine> {
   if (!token.trim()) throw new Error('MERTO_MODEL_TOKEN is required for hosted inference.');
-  return createModelEngine(baseUrl, 90_000, 'mpnet', token);
+  return createModelEngine(baseUrl, 90_000, 'mpnet', token, protectionBypass);
 }
 
 async function createModelEngine(baseUrl: string, timeoutMs: number,
-  model?: 'minilm' | 'bge' | 'mpnet', token?: string): Promise<EvaluationEngine> {
+  model?: 'minilm' | 'bge' | 'mpnet', token?: string, protectionBypass?: string): Promise<EvaluationEngine> {
   const url = new URL(baseUrl);
   const loopback = ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname);
   if ((token ? url.protocol !== 'https:' && !(url.protocol === 'http:' && loopback)
@@ -51,13 +52,18 @@ async function createModelEngine(baseUrl: string, timeoutMs: number,
     || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
     throw new Error('Use a loopback HTTP URL locally, or an HTTPS model-service origin with a server token.');
   }
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  if (protectionBypass) headers.set('x-vercel-protection-bypass', protectionBypass);
   async function request(path: string, body?: unknown, timeout = timeoutMs) {
     try {
       const target = new URL(path, url);
       if (model) target.searchParams.set('model', model);
       const response = await fetch(target, {
         method: body === undefined ? 'GET' : 'POST',
-        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        headers,
+        // Keep the deployment credential on the configured origin.
+        ...(protectionBypass ? { redirect: 'error' } : {}),
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(timeout),
       });
