@@ -54,6 +54,8 @@ jobs:
           cache-dependency-path: mertofrontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      # Component tests run in jsdom with the server actions mocked, so no backend is needed.
+      - run: npm test
       # The build does not call the backend, so no backend is started here.
       - run: npm run build
 
