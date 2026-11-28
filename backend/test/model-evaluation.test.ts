@@ -33,6 +33,10 @@ before(async () => {
     targets.push(target.pathname + target.search);
     authorizations.push(req.headers.authorization);
     protectionBypasses.push(req.headers['x-vercel-protection-bypass']);
+    if (failure === 'redirect' && target.pathname === '/health') {
+      res.writeHead(307, { location: '/unexpected-redirect' });
+      return void res.end();
+    }
     const selectedModel = target.searchParams.get('model');
     const selectedEngine = selectedModel ? { ...metadata.engine, id: selectedModel, name: selectedModel + ' test' } : metadata.engine;
     if (target.pathname === '/health') return void res.end(JSON.stringify({ ...metadata, engine: selectedEngine }));
@@ -90,6 +94,11 @@ describe('model wording through the existing conversation detector', () => {
       assert.ok(targets.includes('/health?model=' + model));
       assert.equal(targets.at(-1), '/predict?model=' + model);
     }
+  });
+  it('does not follow redirects with a deployment-protection credential', async () => {
+    failure = 'redirect';
+    await assert.rejects(createRemoteModelEngine(url, 'verification-token', 'preview-bypass'));
+    assert.deepEqual(targets, ['/health?model=mpnet']);
   });
   it('maps all six signals to existing flag types on the correct reply', async () => {
     const issues = await engine.detect(conversation());
