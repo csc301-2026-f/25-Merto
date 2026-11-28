@@ -3,8 +3,22 @@ import type { AddressInfo } from 'node:net';
 import { it } from 'node:test';
 import { createApp } from '../src/app.ts';
 import { sandboxDatabase } from '../src/sandbox-db.ts';
-import { hostedEvaluationContext } from '../src/evaluation/hosted.ts';
+import { configuredEvaluationContext, hostedEvaluationContext } from '../src/evaluation/hosted.ts';
 import { DEALS, EVENTS, STAFF } from '../src/seed-ids.ts';
+
+it('leaves rules usable if the hosted model token has not been configured', async () => {
+  const db = await sandboxDatabase();
+  try {
+    const provider = configuredEvaluationContext(db, { MERTO_MODEL_URL: 'https://model-preview.example' });
+    assert.ok(provider);
+    assert.equal((await provider('deterministic').engine.status()).ready, true);
+    const model = provider('mpnet').engine;
+    assert.equal((await model.status()).ready, false);
+    await assert.rejects(model.score!('ai', 'Test draft'), /Configure MERTO_MODEL_TOKEN/);
+  } finally {
+    await db.close();
+  }
+});
 
 it('switches hosted MPNet/rules on one database without mixing flags, reviews or metrics', async () => {
   const db = await sandboxDatabase();

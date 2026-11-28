@@ -24,6 +24,7 @@ let failure = '';
 let requests: any[] = [];
 let targets: string[] = [];
 let authorizations: (string | undefined)[] = [];
+let protectionBypasses: (string | string[] | undefined)[] = [];
 
 before(async () => {
   server = createServer(async (req, res) => {
@@ -31,6 +32,11 @@ before(async () => {
     const target = new URL(req.url!, 'http://localhost');
     targets.push(target.pathname + target.search);
     authorizations.push(req.headers.authorization);
+    protectionBypasses.push(req.headers['x-vercel-protection-bypass']);
+    if (failure === 'redirect' && target.pathname === '/health') {
+      res.writeHead(307, { location: '/unexpected-redirect' });
+      return void res.end();
+    }
     const selectedModel = target.searchParams.get('model');
     const selectedEngine = selectedModel ? { ...metadata.engine, id: selectedModel, name: selectedModel + ' test' } : metadata.engine;
     if (target.pathname === '/health') return void res.end(JSON.stringify({ ...metadata, engine: selectedEngine }));
@@ -57,7 +63,7 @@ before(async () => {
   engine = await createLocalModelEngine(url);
 });
 after(() => { server.closeAllConnections(); server.close(); });
-beforeEach(() => { failure = ''; requests = []; targets = []; authorizations = []; });
+beforeEach(() => { failure = ''; requests = []; targets = []; authorizations = []; protectionBypasses = []; });
 
 const at = (n: number) => new Date(Date.UTC(2026, 10, 1, 12, n));
 const event = (id: string, actorType: TimelineEvent['actorType'], direction: TimelineEvent['direction'], body: string, n: number): TimelineEvent =>
@@ -73,6 +79,10 @@ describe('model wording through the existing conversation detector', () => {
     await remote.detect(conversation());
     assert.equal((await remote.status()).id, 'mpnet');
     assert.ok(authorizations.every(value => value === 'Bearer verification-token'));
+    assert.ok(protectionBypasses.every(value => value === undefined));
+    const protectedRemote = await createRemoteModelEngine(url, 'verification-token', 'preview-bypass');
+    await protectedRemote.detect(conversation());
+    assert.deepEqual(protectionBypasses.slice(-2), ['preview-bypass', 'preview-bypass']);
     await assert.rejects(createRemoteModelEngine('http://example.com', 'verification-token'));
     await assert.rejects(createRemoteModelEngine('https://example.com', ''));
   });
@@ -84,6 +94,11 @@ describe('model wording through the existing conversation detector', () => {
       assert.ok(targets.includes('/health?model=' + model));
       assert.equal(targets.at(-1), '/predict?model=' + model);
     }
+  });
+  it('does not follow redirects with a deployment-protection credential', async () => {
+    failure = 'redirect';
+    await assert.rejects(createRemoteModelEngine(url, 'verification-token', 'preview-bypass'));
+    assert.deepEqual(targets, ['/health?model=mpnet']);
   });
   it('maps all six signals to existing flag types on the correct reply', async () => {
     const issues = await engine.detect(conversation());

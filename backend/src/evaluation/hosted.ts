@@ -47,10 +47,12 @@ export function hostedEvaluationContext(db: Database,
 }
 
 export function configuredEvaluationContext(db: Database,
-  env: { MERTO_MODEL_URL?: string; MERTO_MODEL_TOKEN?: string } = process.env) {
+  env: { MERTO_MODEL_URL?: string; MERTO_MODEL_TOKEN?: string; MERTO_MODEL_PROTECTION_BYPASS?: string } = process.env) {
   if (!env.MERTO_MODEL_URL) return undefined;
   const url = env.MERTO_MODEL_URL;
   const token = env.MERTO_MODEL_TOKEN;
-  if (!token) throw new HttpError(503, 'Configure MERTO_MODEL_TOKEN alongside MERTO_MODEL_URL.');
-  return hostedEvaluationContext(db, () => createRemoteModelEngine(url, token));
+  return hostedEvaluationContext(db, async () => {
+    if (!token?.trim()) throw new HttpError(503, 'Configure MERTO_MODEL_TOKEN alongside MERTO_MODEL_URL.');
+    return createRemoteModelEngine(url, token, env.MERTO_MODEL_PROTECTION_BYPASS);
+  });
 }
