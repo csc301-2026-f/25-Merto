@@ -1,0 +1,1337 @@
+openapi: 3.0.3
+info:
+  title: Merto backend API
+  version: 1.0.0
+  description: |
+    REST API of the Merto dealership application (CSC301 Team 25).
+
+    **Reading this file.** Open it in any OpenAPI viewer (for example https://editor.swagger.io, or
+    the Swagger Viewer extension in VS Code). Behaviour that does not fit in a schema (follow-up rules,
+    appointment rules, scenario checks) is described in [README.md](README.md); this file lists every
+    endpoint, who may call it, what it takes, and what it returns.
+
+    **Who is calling.** Every `/api` request names its caller in an `X-Staff-Id` header. The server
+    looks the person up and enforces the role itself (`gm` = General Manager, `rep` = sales
+    representative). The header is a development stand-in for real authentication: anyone who knows a
+    staff ID can act as that person. The frontend gets the ID from `POST /auth/login`.
+
+    **Errors.** Every error is `{ "error": "<message>" }` with 400 (bad input), 401 (unknown caller),
+    403 (role or ownership not allowed), 404 (not found), 409 (conflict with the current state), or 500
+    (a generic message; details are only logged). Unexpected errors never include a stack trace.
+
+    **Not listed.** The `/api/demo/review-learning/*` routes exist only when the local review-learning
+    demo is started and are not part of the application API.
+servers:
+  - url: http://localhost:3001
+    description: Local backend (`npm run dev` in `backend/`)
+  - url: https://25-merto-backend.vercel.app
+    description: Hosted backend (the frontend calls it from the server side)
+tags:
+  - name: Auth
+  - name: Deals
+  - name: Assignment
+  - name: Evaluation
+  - name: Follow-ups
+  - name: Open items
+  - name: Reply drafts
+  - name: Tasks
+  - name: Appointments
+  - name: Scenarios
+security:
+  - StaffId: []
+paths:
+  /health:
+    get:
+      tags: [Auth]
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: The backend is running.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean, example: true }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Development sign-in
+      description: |
+        Returns the staff ID to send as `X-Staff-Id`. The username is a staff email or the part before
+        the `@`; every account shares one password (`DEV_LOGIN_PASSWORD`). Returns 404 when no password
+        is configured (sign-in is turned off).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, example: karen }
+                password: { type: string }
+      responses:
+        '200':
+          description: Signed in.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string, format: uuid, description: The staff ID. }
+                  id: { type: string, format: uuid }
+                  name: { type: string }
+                  role: { $ref: '#/components/schemas/Role' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/me:
+    get:
+      tags: [Auth]
+      summary: The caller
+      responses:
+        '200':
+          description: The caller's ID, name, and server-side role.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Staff' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  # ---------------------------------------------------------------- deals
+  /api/deals:
+    get:
+      tags: [Deals]
+      summary: Open deals
+      description: |
+        Open deals (not delivered or lost), most recent activity first. A GM sees every deal; a rep sees
+        their own. Each deal has `dealId`, `buyer`, `vehicleInterest`, `stage`, `source`, `ownerId`,
+        `owner`, `optedOut`, `openItems`, `lastActivityAt`, and `createdAt`.
+      responses:
+        '200':
+          description: The caller's open deals.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Deals]
+      summary: Add a buyer and their first deal
+      description: |
+        An email or a phone is required. A buyer whose email or phone is already on file is reused, so
+        history and opt-out stay in one record; an email of one buyer with the phone of another is 409.
+        A rep owns the deal they add (stage `assigned`); a GM's deal starts unassigned (stage `new`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, vehicleInterest, source]
+              properties:
+                name: { type: string, maxLength: 200 }
+                vehicleInterest: { type: string, maxLength: 200 }
+                source:
+                  type: string
+                  description: One of the listed values; older seeded deals use free text.
+                  enum: [website, web_chat, email, phone, sms, walk_in, listing_portal, referral, other]
+                email: { type: string }
+                phone: { type: string }
+                preferredChannel:
+                  type: string
+                  enum: [email, sms, call]
+                  description: Defaults to email when there is an email, otherwise sms. It must be a channel the buyer can be reached on.
+      responses:
+        '201':
+          description: |
+            `{ dealId, stage, owner, buyer, otherOpenDeals, eventId }`. `buyer.existing` is true when an
+            existing buyer matched; `buyer.optedOut` true means nobody should contact them.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/deals/stats:
+    get:
+      tags: [Deals]
+      summary: Sold, lost, and sale rate
+      description: All-time `sold` (delivered), `lost`, `closed`, and `saleRate` (null when nothing is closed). A GM sees all deals; a rep their own.
+      responses:
+        '200':
+          description: Totals.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/deals/stats/outcomes:
+    get:
+      tags: [Deals]
+      summary: Closed deal records
+      description: 20 per page, newest deal first, with `hasNextPage`.
+      parameters:
+        - name: outcome
+          in: query
+          schema: { type: string, enum: [all, sold, lost], default: all }
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+      responses:
+        '200':
+          description: One page of closed deals.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/deals/stats/reps:
+    get:
+      tags: [Deals]
+      summary: Sales results per rep (GM only)
+      description: Every rep's name, ID, sold, lost, closed, and sale rate, including reps with no closed deals.
+      responses:
+        '200':
+          description: One entry per rep.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/deals/{dealId}:
+    get:
+      tags: [Deals]
+      summary: The buyer record
+      description: Deal fields, `buyer` (contact and `optedOut`), `owner`, `timeline`, `openItems`, `appointments`, and `assignments`. Every timeline entry has an `actorType` (`buyer`, `ai`, `rep`, `gm`, `system`), so AI activity is always distinguishable from a person's.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      responses:
+        '200':
+          description: The record.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ----------------------------------------------------------- assignment
+  /api/deals/unassigned:
+    get:
+      tags: [Assignment]
+      summary: Open deals with no owner (GM only)
+      description: Oldest first.
+      responses:
+        '200':
+          description: Unassigned deals.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/staff/reps:
+    get:
+      tags: [Assignment]
+      summary: Reps a deal can go to (GM only)
+      description: Each entry has `id`, `name`, `email`, and `activeDeals` (owned, not delivered or lost).
+      responses:
+        '200':
+          description: The reps.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/deals/{dealId}/assign:
+    post:
+      tags: [Assignment]
+      summary: Assign an unassigned buyer (GM only)
+      description: |
+        In one transaction: sets the owner, moves the deal's open items to them, and records a timeline
+        entry and a structured `deal_assignments` row. 409 if the deal already has an owner, is delivered
+        or lost, or changed hands since `expectedOwnerId`.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      requestBody: { $ref: '#/components/requestBodies/AssignOrTransfer' }
+      responses:
+        '200': { $ref: '#/components/responses/AssignmentResult' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/deals/{dealId}/transfer:
+    post:
+      tags: [Assignment]
+      summary: Transfer an assigned buyer (GM only)
+      description: Same body and result as assign. 409 for an unassigned deal, a transfer to the current owner, or a delivered or lost deal. Future confirmed appointments go back to `requested` so the new rep must confirm them.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      requestBody: { $ref: '#/components/requestBodies/AssignOrTransfer' }
+      responses:
+        '200': { $ref: '#/components/responses/AssignmentResult' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/deals/{dealId}/assignments:
+    get:
+      tags: [Assignment]
+      summary: Ownership history
+      description: '`currentOwner` and `history`, oldest first. Entries written before structured records existed have `structured: false` and null `from`, `to`, `reason`.'
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      responses:
+        '200':
+          description: The history.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ----------------------------------------------------------- evaluation
+  /api/evaluations/run:
+    post:
+      tags: [Evaluation]
+      summary: Evaluate every deal with AI activity (GM only)
+      description: Safe to rerun; a rerun only adds flags for new problems and keeps existing flags and decisions. The dashboard's **Run AI evaluation** button calls it. Each deal's result has `buyer`, `dealId`, `result`, `evaluatedAt`, and `newFlags`.
+      parameters: [{ $ref: '#/components/parameters/Evaluator' }]
+      responses:
+        '200':
+          description: The results.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '503':
+          description: The model service is unavailable or did not report its version; nothing was saved.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/ai-evaluation/engine:
+    get:
+      tags: [Evaluation]
+      summary: Which evaluators are available
+      responses:
+        '200':
+          description: '`mode` is `rules` or `model`, with `name`, `version`, `ready`, and `choices` when more than one is offered.'
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/deals/{dealId}/evaluation:
+    get:
+      tags: [Evaluation]
+      summary: The buyer record's AI review (GM, owning rep)
+      description: '`status` (`not_evaluated`, `passed`, `flagged`, `confirmed_issue`, `resolved`, `false_positive`), `evaluatedAt`, every flag with its evidence message, and `unflaggedReplies`.'
+      parameters: [{ $ref: '#/components/parameters/DealId' }, { $ref: '#/components/parameters/Evaluator' }]
+      responses:
+        '200':
+          description: The review.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      tags: [Evaluation]
+      summary: Evaluate one deal (GM only)
+      parameters: [{ $ref: '#/components/parameters/DealId' }, { $ref: '#/components/parameters/Evaluator' }]
+      responses:
+        '200':
+          description: The evaluation result.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/deals/{dealId}/evaluation/preview:
+    get:
+      tags: [Evaluation]
+      summary: Dry run (GM, owning rep)
+      description: What the rules would flag now. Writes nothing.
+      parameters: [{ $ref: '#/components/parameters/DealId' }, { $ref: '#/components/parameters/Evaluator' }]
+      responses:
+        '200':
+          description: The flags that would be raised.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/deals/{dealId}/flags:
+    post:
+      tags: [Evaluation]
+      summary: Add a problem the evaluator missed (GM only)
+      description: |
+        The evidence event must be an AI reply on this deal, and the deal must have been evaluated.
+        `ignored_opt_out` cannot be added by hand. Saved with `source: manual` as a confirmed issue.
+        409 if the reply already has that flag.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [evidenceEventId, flagType]
+              properties:
+                evidenceEventId: { type: string, format: uuid }
+                flagType: { $ref: '#/components/schemas/FlagType' }
+                note: { type: string }
+      responses:
+        '201':
+          description: The new flag.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/ai-flags/queue:
+    get:
+      tags: [Evaluation]
+      summary: Flags awaiting review
+      description: A GM sees all; a rep sees flags on their own deals. Highest severity and oldest evidence first, each with `evidenceBody`.
+      responses:
+        '200':
+          description: The pending flags.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/ai-flags/{flagId}/review:
+    post:
+      tags: [Evaluation]
+      summary: Review a flag (GM only)
+      description: |
+        A false positive needs a `reason`; `other` also needs a note. The decision is also written to the
+        deal's timeline. 409 when the flag's current status does not allow the decision.
+      parameters: [{ $ref: '#/components/parameters/FlagId' }, { $ref: '#/components/parameters/Evaluator' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { type: string, enum: [confirmed_issue, false_positive, resolved] }
+                note: { type: string }
+                reason:
+                  type: string
+                  enum: [misread_wording, already_handled, visit_confirmed, not_a_problem, other]
+      responses:
+        '200':
+          description: The reviewed flag.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/ai-flags/second-review:
+    get:
+      tags: [Evaluation]
+      summary: Reviews that can get a second opinion
+      responses:
+        '200':
+          description: The candidate reviews.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/ai-flags/{flagId}/second-review:
+    post:
+      tags: [Evaluation]
+      summary: Record a second opinion on a review
+      description: 409 when the review already has a second opinion.
+      parameters: [{ $ref: '#/components/parameters/FlagId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { type: string, enum: [agree, disagree] }
+      responses:
+        '200':
+          description: The updated review.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/ai-evaluation/metrics:
+    get:
+      tags: [Evaluation]
+      summary: Evaluation metrics (GM only)
+      description: '`evaluatedConversations`, `flaggedConversations`, `flagRate`, counts by review status, `reviewedPrecision`, `falsePositiveReasons`, and `missedFlagsAddedByManager`. Rates are null when there is nothing to divide by.'
+      parameters: [{ $ref: '#/components/parameters/Evaluator' }]
+      responses:
+        '200':
+          description: The metrics.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  # ------------------------------------------------------------ follow-ups
+  /api/follow-ups/due:
+    get:
+      tags: [Follow-ups]
+      summary: Buyers who need a follow-up now
+      description: |
+        Read-only: nothing is sent or stored. A GM sees all deals, unassigned included; a rep their own.
+        Most overdue first. Each entry has `dealId`, `buyer`, `vehicleInterest`, `stage`, `owner`, `dueAt`,
+        and `reasons` (each `{ code, kind, text, since, dueAt }`). See the follow-up rules in README.md.
+      responses:
+        '200':
+          description: The due buyers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/deals/{dealId}/follow-up:
+    get:
+      tags: [Follow-ups]
+      summary: One buyer's follow-up status (GM, owning rep)
+      description: The same fields plus `status` (`due`, `not_due`, `suppressed`) and `suppressions`.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      responses:
+        '200':
+          description: The assessment.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/deals/{dealId}/follow-ups:
+    post:
+      tags: [Follow-ups]
+      summary: Record a simulated follow-up (GM, owning rep)
+      description: |
+        Never sends a real email, SMS, or call. The server rechecks ownership, stage, opt-outs across all
+        of the buyer's deals, eligibility, and the channel's contact details. Retry an uncertain request
+        with the same `requestId` and contents: the existing event is returned without a second write.
+        Reusing a `requestId` with different contents is 409.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [requestId, channel, message]
+              properties:
+                requestId: { type: string, format: uuid }
+                channel: { type: string, enum: [email, sms, call] }
+                message: { type: string, maxLength: 2000, description: Not blank. }
+      responses:
+        '200':
+          description: '`status: simulated_sent`, `eventId`, `recordedAt`, `alreadyRecorded`, and the recalculated `followUp` assessment.'
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  # ------------------------------------------------------------ open items
+  /api/open-items:
+    get:
+      tags: [Open items]
+      summary: Unresolved work
+      description: |
+        Promises, missing documents, unanswered questions, and callbacks across buyers. A GM sees every
+        deal, unassigned included; a rep sees items on their own deals. Returns `summary` (counts of
+        unresolved work in scope, whatever `status` lists) and `items`. Open items come first,
+        longest-waiting first.
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [open, resolved, cancelled, all], default: open }
+        - name: type
+          in: query
+          schema: { type: string, enum: [promise, missing_doc, unanswered_question, callback] }
+        - name: ownerId
+          in: query
+          description: A staff ID, or `none` for items nobody owns.
+          schema: { type: string }
+      responses:
+        '200':
+          description: The summary and items.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/open-items/{itemId}/resolve:
+    post:
+      tags: [Open items]
+      summary: Mark an item resolved (GM, owning rep)
+      description: The work was done. Only a GM can close work on an unassigned deal. 409 if the item is not open or its deal is delivered or lost.
+      parameters: [{ $ref: '#/components/parameters/ItemId' }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note: { type: string, maxLength: 500 }
+      responses:
+        '200': { $ref: '#/components/responses/ClosedItem' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/open-items/{itemId}/cancel:
+    post:
+      tags: [Open items]
+      summary: Cancel an item that is no longer needed (GM, owning rep)
+      parameters: [{ $ref: '#/components/parameters/ItemId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [note]
+              properties:
+                note: { type: string, maxLength: 500, description: Required; say why. }
+      responses:
+        '200': { $ref: '#/components/responses/ClosedItem' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  # --------------------------------------------------------- reply drafts
+  /api/deals/{dealId}/reply-drafts:
+    get:
+      tags: [Reply drafts]
+      summary: Saved drafts and decisions (GM, owning rep)
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      responses:
+        '200':
+          description: The drafts.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      tags: [Reply drafts]
+      summary: Generate an AI reply draft (GM, owning rep)
+      description: |
+        Calls Groq with a context the server builds from the deal (needs `GROQ_API_KEY`). Contacts no
+        buyer. Completed retries with the same `requestId` return the saved draft. Provider limits,
+        configuration errors, and outages return a short retryable error and store nothing.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [requestId, channel]
+              properties:
+                requestId: { type: string, format: uuid }
+                channel: { type: string, enum: [email, sms] }
+      responses:
+        '200':
+          description: The saved draft.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429':
+          description: The provider's usage limit was reached. Try again later.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '503':
+          description: Generation is not configured or the provider is unavailable.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/reply-drafts/{draftId}/review:
+    post:
+      tags: [Reply drafts]
+      summary: Approve, edit, or reject a draft (GM, owning rep)
+      description: A reviewed draft cannot be changed. An unsent AI draft is invalidated when the deal changes (messages, owner, contact details, appointments, open items), so it must be generated again.
+      parameters: [{ $ref: '#/components/parameters/DraftId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { type: string, enum: [approve, edit, reject] }
+                message: { type: string, description: Required only for `edit`. }
+      responses:
+        '200':
+          description: The reviewed draft.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/reply-drafts/{draftId}/send:
+    post:
+      tags: [Reply drafts]
+      summary: Record a simulated send of an approved draft (GM, owning rep)
+      description: Pending and rejected drafts cannot be sent. Opt-out, stage, contact details, and eligibility are checked again. Retries reuse the draft ID and do not duplicate contact.
+      parameters: [{ $ref: '#/components/parameters/DraftId' }]
+      responses:
+        '200':
+          description: The recorded follow-up.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  # ---------------------------------------------------------------- tasks
+  /api/tasks:
+    get:
+      tags: [Tasks]
+      summary: Tasks across deals
+      description: A GM sees all deals; a rep their own. `summary` counts `open`, `overdue`, and `dueToday` in scope, whatever `status` lists.
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [open, completed, all], default: open }
+      responses:
+        '200':
+          description: The summary and tasks, each with its `deal`.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/tasks/{taskId}:
+    patch:
+      tags: [Tasks]
+      summary: Complete or reopen a task (GM, owning rep)
+      description: 409 if the task is already in that state.
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [completed]
+              properties:
+                completed: { type: boolean }
+      responses:
+        '200':
+          description: The task.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Task' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/deals/{dealId}/tasks:
+    get:
+      tags: [Tasks]
+      summary: A deal's tasks (GM, owning rep)
+      description: Open first, soonest due first (undated last), then completed, most recent first.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      responses:
+        '200':
+          description: The tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Task' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      tags: [Tasks]
+      summary: Add a task (GM, owning rep)
+      description: 409 on a delivered or lost deal.
+      parameters: [{ $ref: '#/components/parameters/DealId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+                dueAt: { type: string, format: date-time, description: ISO 8601 time with a zone. }
+      responses:
+        '201':
+          description: The task.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Task' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  # --------------------------------------------------------- appointments
+  /api/appointments:
+    get:
+      tags: [Appointments]
+      summary: All appointments
+      description: A GM sees every deal's appointments; a rep their own deals'. Ordered by scheduled time, with customer, vehicle, and owner. `ownerId` and `owner` are null on an unassigned deal.
+      responses:
+        '200':
+          description: The appointments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Appointment' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Appointments]
+      summary: Create an appointment (GM, owning rep)
+      description: |
+        The status follows the caller's role: a GM creates a `requested` visit with no confirmer; an
+        owning rep creates a `confirmed` visit and is recorded as its confirmer. Send `scheduledFor` as
+        an ISO 8601 date-time with an explicit offset, for example `2026-11-10T10:30:00-05:00`. A local
+        time that does not exist because of a daylight-saving change is rejected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dealId, scheduledFor]
+              properties:
+                dealId: { type: string, format: uuid }
+                scheduledFor: { type: string, format: date-time }
+                outcomeNote: { type: string, maxLength: 500 }
+      responses:
+        '201':
+          description: The appointment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appointment' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/appointments/overview:
+    get:
+      tags: [Appointments]
+      summary: Queues and metrics
+      description: |
+        Returns `requestedToConfirm`, `visitsToRecord`, and metrics (requested and confirmed counts, show
+        rate). Loading it creates a `visit_outcome` open item, once, for each passed confirmed visit that
+        has no outcome.
+      responses:
+        '200':
+          description: The overview.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/appointments/{appointmentId}/confirm:
+    post:
+      tags: [Appointments]
+      summary: Confirm a requested appointment as a person (GM, owning rep)
+      parameters: [{ $ref: '#/components/parameters/AppointmentId' }]
+      responses:
+        '200':
+          description: The appointment, with `confirmed_by` recorded.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appointment' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/appointments/{appointmentId}/outcome:
+    post:
+      tags: [Appointments]
+      summary: Record whether the visit happened (GM, owning rep)
+      description: Also resolves the visit's `visit_outcome` open item in the same transaction.
+      parameters: [{ $ref: '#/components/parameters/AppointmentId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [completed, no_show] }
+                outcomeNote: { type: string, maxLength: 500 }
+      responses:
+        '200':
+          description: The appointment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appointment' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/appointments/{appointmentId}:
+    patch:
+      tags: [Appointments]
+      summary: Edit an appointment (GM, owning rep)
+      description: |
+        Updates the time, note, or status. Status changes are not restricted, so records can be
+        corrected. Setting `requested` clears the confirmation; `confirmed`, `rescheduled`, `completed`,
+        and `no_show` record a human confirmer if there is none. Every status change writes an audit row
+        and timeline entries.
+      parameters: [{ $ref: '#/components/parameters/AppointmentId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scheduledFor: { type: string, format: date-time }
+                status: { $ref: '#/components/schemas/AppointmentStatus' }
+                outcomeNote: { type: string, maxLength: 500 }
+      responses:
+        '200':
+          description: The appointment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appointment' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ------------------------------------------------------------ scenarios
+  /api/scenarios:
+    get:
+      tags: [Scenarios]
+      summary: The scenarios and agents (GM only)
+      description: Each scenario lists what it checks. Each agent has `live` (true when running it calls a billed language model). The `model` agent is listed only when live calls are configured.
+      responses:
+        '200':
+          description: '`{ scenarios, agents }`.'
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/scenarios/{scenarioId}:
+    get:
+      tags: [Scenarios]
+      summary: One scenario, as an outside agent sees it (GM only)
+      description: Adds `context` (the event and the deal the agent can read), `limits.maxActions`, and the `tools` the agent may call.
+      parameters: [{ $ref: '#/components/parameters/ScenarioId' }]
+      responses:
+        '200':
+          description: The scenario.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/scenarios/{scenarioId}/runs:
+    post:
+      tags: [Scenarios]
+      summary: Run one scenario (GM only)
+      description: |
+        Send either `agent` (an agent by name) or `actions` (the tool calls an outside agent chose, at
+        most 10), not both. The run happens in a transaction that is rolled back, so nothing is saved
+        and no customer is contacted. Returns a scorecard.
+
+        The `model` agent calls a language model and counts toward `MODEL_AGENT_MAX_PER_HOUR`
+        (429 when used up). An answer that is not valid JSON or a valid tool call is retried once,
+        then returned as 502 with no scorecard.
+      parameters: [{ $ref: '#/components/parameters/ScenarioId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [agent]
+                  properties:
+                    agent: { type: string, example: careful }
+                - type: object
+                  required: [actions]
+                  properties:
+                    actions:
+                      type: array
+                      maxItems: 10
+                      items:
+                        type: object
+                        required: [tool]
+                        properties:
+                          tool: { type: string, enum: [send_reply, create_open_item, request_appointment, do_nothing] }
+                        additionalProperties: true
+                    agentName: { type: string, maxLength: 60, description: A label for the scorecard. }
+      responses:
+        '200':
+          description: |
+            The scorecard: `steps` (the run log), `checks` (each with `passed` and evidence), `flags`,
+            `summary` (`checksPassed`, `checksTotal`, `flagsRaised`, `actionsTaken`, `verdict`), and
+            `persisted` (always false). A model run also records `agent.model`.
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429':
+          description: The hourly limit for live model runs, or the provider's own limit, was reached.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '502':
+          description: The model's answer could not be used, even after one retry. No scorecard.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '503':
+          description: The model could not be reached, or rejected the configured key.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/scenario-runs:
+    post:
+      tags: [Scenarios]
+      summary: Run every scenario for one or more agents (GM only)
+      description: |
+        Returns totals per agent and, for two or more agents, a scenario-by-scenario `comparison`. The
+        `model` agent runs only when it is named, because every scenario is one billed call.
+
+        **Live model limits.** The calls for the whole run are counted against the hourly limit before
+        the first one, so a run the limit cannot cover is refused with 429 and makes no model call.
+
+        **Partial failure.** For the `model` agent, one unusable answer (502) fails only that scenario.
+        Any other error (limit, key, timeout) would repeat, so the remaining scenarios are skipped.
+        Finished scorecards are always kept. Scenarios without a scorecard are listed in that agent's
+        `errors` (`scenario`, `brief`, `status`, `message`); they count as not passed in `totals`, and
+        the `comparison` shows verdict `error` for them.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agents:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  items: { type: string }
+                  default: [careful]
+      responses:
+        '200':
+          description: '`{ results, comparison }`. Each result has `agent`, `totals`, `scorecards`, and `errors`.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        agent: { type: string }
+                        totals:
+                          type: object
+                          properties:
+                            scenariosPassed: { type: integer }
+                            scenariosTotal: { type: integer }
+                            checksPassed: { type: integer }
+                            checksTotal: { type: integer }
+                            flagsRaised: { type: integer }
+                        scorecards:
+                          type: array
+                          items: { type: object, additionalProperties: true }
+                        errors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              scenario: { type: string }
+                              brief: { type: string }
+                              status: { type: integer, nullable: true, description: Null for a scenario that was skipped. }
+                              message: { type: string }
+                  comparison:
+                    nullable: true
+                    description: Null unless two or more agents ran.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        scenario: { type: string }
+                        brief: { type: string }
+                        results:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              agent: { type: string }
+                              verdict: { type: string, enum: [pass, fail, error] }
+                              checksPassed: { type: integer }
+                              checksTotal: { type: integer }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429':
+          description: The live model's hourly limit cannot cover the whole run. No model call was made.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+components:
+  securitySchemes:
+    StaffId:
+      type: apiKey
+      in: header
+      name: X-Staff-Id
+      description: A staff member's ID (from `POST /auth/login`). A development stand-in for real authentication.
+  parameters:
+    DealId:
+      name: dealId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    FlagId:
+      name: flagId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ItemId:
+      name: itemId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    DraftId:
+      name: draftId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    AppointmentId:
+      name: appointmentId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ScenarioId:
+      name: scenarioId
+      in: path
+      required: true
+      schema: { type: string, example: deal-j }
+    Evaluator:
+      name: X-Merto-Demo-Evaluator
+      in: header
+      required: false
+      description: Local demo only. Chooses which evaluator a request uses when more than one is offered.
+      schema: { type: string }
+  requestBodies:
+    AssignOrTransfer:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [toUserId, reason]
+            properties:
+              toUserId: { type: string, format: uuid, description: An existing staff member with role `rep`. }
+              reason: { type: string, maxLength: 500, description: Required. }
+              expectedOwnerId:
+                type: string
+                format: uuid
+                nullable: true
+                description: The owner the caller's page showed (null for unassigned). If the deal has changed hands since, the request is 409 and nothing changes.
+  responses:
+    BadRequest:
+      description: Invalid input, such as a malformed ID or a missing field.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: dealId must be a UUID. }
+    Unauthorized:
+      description: No or unknown `X-Staff-Id`.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: Send X-Staff-Id with a staff member ID. }
+    Forbidden:
+      description: The caller's role or ownership does not allow this.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: Only a GM can assign a buyer. }
+    NotFound:
+      description: The record or route does not exist.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: Route not found. }
+    Conflict:
+      description: The request conflicts with the current state.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: This deal is already assigned to Dana Kowalski. Use transfer instead. }
+    AssignmentResult:
+      description: '`{ dealId, buyer, kind, at, by, from, to, reason, openItemsMoved, eventId }`; `by`, `from`, and `to` are `{ id, name }` and `from` is null for an assignment.'
+      content:
+        application/json:
+          schema: { type: object, additionalProperties: true }
+    ClosedItem:
+      description: '`{ id, dealId, type, description, status, resolvedAt, note, by, at, eventId }`.'
+      content:
+        application/json:
+          schema: { type: object, additionalProperties: true }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    Role:
+      type: string
+      enum: [gm, rep]
+    Staff:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        role: { $ref: '#/components/schemas/Role' }
+    FlagType:
+      type: string
+      enum: [appointment_certainty, unsupported_availability, unsupported_price, missed_escalation, missed_price_handoff, ignored_opt_out, tone]
+    AppointmentStatus:
+      type: string
+      enum: [requested, confirmed, rescheduled, completed, no_show, cancelled]
+    Appointment:
+      type: object
+      description: Also carries requester and confirmer attribution.
+      properties:
+        id: { type: string, format: uuid }
+        dealId: { type: string, format: uuid }
+        scheduledFor: { type: string, format: date-time }
+        status: { $ref: '#/components/schemas/AppointmentStatus' }
+        outcomeNote: { type: string, nullable: true }
+        buyer: { type: string }
+        vehicleInterest: { type: string }
+        ownerId: { type: string, format: uuid, nullable: true }
+        owner: { type: string, nullable: true }
+      additionalProperties: true
+    Task:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        dealId: { type: string, format: uuid }
+        title: { type: string }
+        status: { type: string, enum: [open, completed] }
+        dueAt: { type: string, format: date-time, nullable: true }
+        overdue: { type: boolean, description: Open and past its due time. }
+        createdAt: { type: string, format: date-time }
+        createdBy: { type: object, additionalProperties: true }
+        completedAt: { type: string, format: date-time, nullable: true }
+        completedBy: { type: object, nullable: true, additionalProperties: true }
