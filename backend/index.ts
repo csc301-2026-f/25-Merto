@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { createApp } from './src/app.ts';
 import { postgresDatabase } from './src/db.ts';
 import { configuredEvaluationContext } from './src/evaluation/hosted.ts';
+import { modelAgentFromEnv } from './src/scenarios/model-agent.ts';
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) throw new Error('DATABASE_URL must be configured for deployment.');
@@ -21,6 +22,6 @@ if (connection.searchParams.get('sslrootcert') === 'certs/supabase-ca.crt') {
 const db = postgresDatabase(connection.toString(), { ssl });
 const app = express();
 app.use(createApp(db, { devLoginPassword: process.env.DEV_LOGIN_PASSWORD,
-  evaluationContext: configuredEvaluationContext(db) }));
+  evaluationContext: configuredEvaluationContext(db), modelAgent: modelAgentFromEnv() }));
 
 export default app;

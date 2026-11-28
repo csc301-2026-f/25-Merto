@@ -37,8 +37,10 @@ and Next.js frontend. Do not try to load Python weights inside the Node function
    See [Vercel limits](https://vercel.com/docs/functions/limitations) and
    [Large Functions](https://vercel.com/changelog/vercel-functions-can-now-be-up-to-5-gb-in-package-size-7yAwSyCig0IQDXUIDistvS/eadf06d6c3).
 3. The service uses its own bearer token. Make its API reachable by the backend;
-   if Vercel Deployment Protection is enabled, configure access for this
-   server-to-server connection (the model endpoint still requires its token).
+   if the model deployment uses Vercel Deployment Protection, set the model project's
+   automation bypass secret as `MERTO_MODEL_PROTECTION_BYPASS` on the Express backend.
+   For dev, scope the backend variables to the `dev` Preview branch and use the
+   model service's Preview origin. The model still validates its bearer token.
 4. Apply `supabase/migrations/20261103000100_mpnet_evaluation.sql` to the hosted
    database through the team's normal migration process. It adds MPNet-only
    results/review tables and leaves existing deterministic records intact.
